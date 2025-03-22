@@ -95,10 +95,10 @@ chmod +x stop.sh
 
 #### Standard Run
 ```bash
-python app.py
+python wsgi.py
 ```
 
-The application will start on `http://127.0.0.1:5002`.
+The application will start on `http://127.0.0.1:5001`.
 
 #### Docker Run
 When using Docker, the application will be available at `http://localhost:5001`.
@@ -153,18 +153,36 @@ Parameters:
 
 ```
 music/
-├── app/
-│   ├── __init__.py          # Application factory
-│   ├── static/              # Static files
-│   │   ├── css/             # CSS files
-│   │   ├── js/              # JavaScript files
-│   │   └── uploads/         # Uploaded files
-│   └── templates/           # HTML templates
-├── app.py                   # Main application
-├── requirements.txt         # Dependencies
-├── security_check.py        # Security audit script
-├── Dockerfile               # Docker configuration
-└── docker-compose.yml       # Docker Compose configuration
+├── app/                  # Main application code
+│   ├── __init__.py       # Application factory
+│   ├── routes.py         # Main route definitions
+│   ├── api/              # API endpoints
+│   ├── core/             # Core audio processing logic
+│   ├── static/           # Static files
+│   │   ├── css/          # CSS files
+│   │   ├── js/           # JavaScript files
+│   │   └── img/          # Images and icons
+│   └── templates/        # HTML templates
+├── config/               # Configuration files
+│   ├── .env.example      # Example environment variables
+│   └── docker/           # Docker configuration files
+│       ├── Dockerfile    # Container definition
+│       └── docker-compose.yml # Multi-container setup
+├── docs/                 # Documentation
+│   ├── CONTRIBUTING.md   # Contribution guidelines
+│   └── TROUBLESHOOTING.md # Common issues and solutions
+├── scripts/              # Utility scripts
+│   ├── security_check.py # Security audit script
+│   ├── generate_secret_key.py # Key generation
+│   ├── run.sh            # Start the application
+│   └── stop.sh           # Stop the application
+├── tests/                # Test suite
+├── uploads/              # Audio file uploads
+├── logs/                 # Application logs
+├── .env.example          # Example environment variables
+├── requirements.txt      # Python dependencies
+├── wsgi.py               # WSGI entry point
+└── LICENSE               # License information
 ```
 
 ### Docker Configuration
@@ -182,7 +200,7 @@ The Docker setup includes:
 Run the security check script to identify potential security issues:
 
 ```bash
-python security_check.py
+python scripts/security_check.py
 ```
 
 ## 🔍 How It Works
