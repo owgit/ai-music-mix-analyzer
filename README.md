@@ -8,7 +8,7 @@ A powerful Flask-based web application for audio mixing analysis, mastering assi
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 [![Website: mixanalytic.com](https://img.shields.io/badge/Website-mixanalytic.com-blue.svg)](https://mixanalytic.com)
-[![GitHub: owgit/music-mix-analyzer](https://img.shields.io/badge/GitHub-owgit/music--mix--analyzer-green.svg)](https://github.com/owgit/music-mix-analyzer)
+[![GitHub: owgit/ai-music-mix-analyzer](https://img.shields.io/badge/GitHub-owgit/ai--music--mix--analyzer-green.svg)](https://github.com/owgit/ai-music-mix-analyzer)
 
 ## 🎧 Features
 
@@ -34,8 +34,8 @@ A powerful Flask-based web application for audio mixing analysis, mastering assi
 
 1. Clone the repository
 ```bash
-git clone https://github.com/owgit/music-mix-analyzer.git
-cd music-mix-analyzer
+git clone https://github.com/owgit/ai-music-mix-analyzer.git
+cd ai-music-mix-analyzer
 ```
 
 2. Create and activate a virtual environment
@@ -60,8 +60,8 @@ cp .env.example .env
 
 1. Clone the repository
 ```bash
-git clone https://github.com/owgit/music-mix-analyzer.git
-cd music-mix-analyzer
+git clone https://github.com/owgit/ai-music-mix-analyzer.git
+cd ai-music-mix-analyzer
 ```
 
 2. Set up environment variables
