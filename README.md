@@ -6,7 +6,7 @@
 
 A powerful Flask-based web application for audio mixing analysis, mastering assistance, and professional music production visualization. Perfect for sound engineers, music producers, and audio enthusiasts.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
 ## 🎧 Features
 
@@ -263,7 +263,7 @@ Contributions are welcome! Please feel free to submit a Pull Request or create i
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License - see the [LICENSE](LICENSE) file for details. This license prohibits commercial use of this software without explicit permission.
 
 ## 👨‍💻 Author
 
