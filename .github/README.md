@@ -3,11 +3,12 @@
 <div align="center">
   <img src="/app/static/img/music-analyzer-icon.svg" alt="Music Mix Analyzer" />
   <p>
-    <a href="https://github.com/owgit/music-mix-analyzer/stargazers"><img src="https://img.shields.io/github/stars/owgit/music-mix-analyzer?style=flat-square" alt="Stars Badge"/></a>
-    <a href="https://github.com/owgit/music-mix-analyzer/network/members"><img src="https://img.shields.io/github/forks/owgit/music-mix-analyzer?style=flat-square" alt="Forks Badge"/></a>
-    <a href="https://github.com/owgit/music-mix-analyzer/pulls"><img src="https://img.shields.io/github/issues-pr/owgit/music-mix-analyzer?style=flat-square" alt="Pull Requests Badge"/></a>
-    <a href="https://github.com/owgit/music-mix-analyzer/issues"><img src="https://img.shields.io/github/issues/owgit/music-mix-analyzer?style=flat-square" alt="Issues Badge"/></a>
-    <a href="https://github.com/owgit/music-mix-analyzer/blob/master/LICENSE"><img src="https://img.shields.io/github/license/owgit/music-mix-analyzer?style=flat-square" alt="License Badge"/></a>
+    <a href="https://github.com/owgit/ai-music-mix-analyzer/stargazers"><img src="https://img.shields.io/github/stars/owgit/ai-music-mix-analyzer?style=flat-square" alt="Stars Badge"/></a>
+    <a href="https://github.com/owgit/ai-music-mix-analyzer/network/members"><img src="https://img.shields.io/github/forks/owgit/ai-music-mix-analyzer?style=flat-square" alt="Forks Badge"/></a>
+    <a href="https://github.com/owgit/ai-music-mix-analyzer/pulls"><img src="https://img.shields.io/github/issues-pr/owgit/ai-music-mix-analyzer?style=flat-square" alt="Pull Requests Badge"/></a>
+    <a href="https://github.com/owgit/ai-music-mix-analyzer/issues"><img src="https://img.shields.io/github/issues/owgit/ai-music-mix-analyzer?style=flat-square" alt="Issues Badge"/></a>
+    <a href="https://github.com/owgit/ai-music-mix-analyzer/blob/master/LICENSE"><img src="https://img.shields.io/github/license/owgit/ai-music-mix-analyzer?style=flat-square" alt="License Badge"/></a>
+    <a href="https://mixanalytic.com"><img src="https://img.shields.io/badge/Website-mixanalytic.com-blue.svg" alt="Website Badge"/></a>
   </p>
   
   <h3>Advanced Audio Analysis for Music Producers and Sound Engineers</h3>
@@ -81,12 +82,18 @@ Contributions are welcome! Check out our [Contributing Guidelines](../CONTRIBUTI
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file for details.
+This project is licensed under the Creative Commons BY-NC 4.0 License - see the [LICENSE](../LICENSE) file for details.
+
+## 🌐 Official Website
+
+Visit [mixanalytic.com](https://mixanalytic.com) for the latest version, documentation, and online features.
 
 ## 👤 Author
 
-Developed by Uygar Duzgun - [uygarduzgun.com](https://uygarduzgun.com)
+Developed by Uygar Duzgun
+- Website: [uygarduzgun.com](https://uygarduzgun.com)
+- Project: [mixanalytic.com](https://mixanalytic.com)
 
 ## 🔑 Keywords
 
-audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing, DSP, python audio tools 
+audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing, DSP, python audio tools, mix analytics, mixanalytic
