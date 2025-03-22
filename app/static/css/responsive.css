@@ -1,0 +1,309 @@
+/* Responsive Styles for Mix Analyzer */
+
+/* Base Mobile Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .app-brand {
+        flex-direction: column;
+    }
+    
+    .app-logo {
+        width: 60px;
+        height: 60px;
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+    
+    .app-title {
+        text-align: center;
+    }
+    
+    /* Upload Area */
+    .upload-area {
+        padding: 20px;
+    }
+    
+    .upload-title {
+        font-size: 1.1rem;
+        text-align: center;
+    }
+    
+    .upload-subtitle {
+        font-size: 0.85rem;
+        text-align: center;
+    }
+    
+    /* Track Type Selector */
+    .track-type-selector {
+        padding: 15px 10px;
+        flex-direction: column;
+    }
+    
+    .info-tooltip {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+    
+    /* Progress Steps */
+    .progress-steps {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .progress-step {
+        margin-bottom: 10px;
+    }
+    
+    .progress-step:not(:last-child)::after {
+        display: none;
+    }
+}
+
+/* Mobile Tabs System */
+@media (max-width: 768px) {
+    .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 5px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .tab-button {
+        padding: 8px 15px;
+        white-space: nowrap;
+        scroll-snap-align: start;
+        flex: 0 0 auto;
+        font-size: 0.9rem;
+    }
+    
+    /* Make an indicator to show there's more content */
+    .tabs::after {
+        content: '';
+        padding-right: 10px;
+    }
+    
+    /* Hide scrollbar aesthetically without removing functionality */
+    .tabs::-webkit-scrollbar {
+        height: 3px;
+    }
+    
+    .tabs::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color);
+        border-radius: 10px;
+    }
+}
+
+/* Mobile Analysis Cards */
+@media (max-width: 768px) {
+    .score-container {
+        flex-direction: column;
+    }
+    
+    .score-container .score-card {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .metrics-container {
+        flex-direction: column;
+    }
+    
+    .metric {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    /* AI Insights Tab */
+    .ai-sections-container {
+        flex-direction: column;
+    }
+    
+    .ai-section-card {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+/* Visualizations Mobile Adjustments */
+@media (max-width: 768px) {
+    .visualization-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .visualization-container {
+        max-height: 200px;
+    }
+    
+    .visualization-card {
+        margin-bottom: 20px;
+    }
+    
+    /* Make visualizations tap-friendly */
+    .visualization-container:hover::after {
+        content: '🔍';
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        opacity: 0.7;
+    }
+    
+    /* Preserve touch scrolling in charts */
+    canvas {
+        touch-action: pan-y;
+    }
+}
+
+/* Footer Mobile Adjustments */
+@media (max-width: 768px) {
+    .footer-content {
+        flex-direction: column;
+    }
+    
+    .footer-section {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .footer-section h3 {
+        font-size: 1.2rem;
+    }
+    
+    .footer-bottom {
+        padding: 15px 10px;
+    }
+}
+
+/* Modal Adjustments for Mobile */
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 95%;
+    }
+    
+    .modal-controls {
+        padding: 10px;
+    }
+    
+    .zoom-button {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .close-button {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .modal-title {
+        font-size: 16px;
+        padding: 8px;
+    }
+}
+
+/* Touch-friendly controls */
+@media (max-width: 768px) {
+    .upload-button, 
+    .action-button,
+    .tab-button,
+    .regenerate-btn {
+        padding: 12px 20px;
+        min-height: 44px; /* Apple's recommended minimum touch target size */
+    }
+    
+    input[type="checkbox"] {
+        transform: scale(1.2);
+    }
+}
+
+/* Touch feedback styles */
+.touch-active {
+    transform: scale(0.97) !important;
+    opacity: 0.9;
+    transition: transform 0.1s ease-out !important;
+}
+
+.visualization-container.touched {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
+
+.upload-area:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Landscape Orientation Adjustments */
+@media (max-width: 900px) and (orientation: landscape) {
+    .upload-area {
+        padding: 15px;
+    }
+    
+    .visualization-container {
+        max-height: 150px;
+    }
+    
+    .modal-image {
+        max-height: 70vh;
+    }
+}
+
+/* Text size adjustments for readability */
+@media (max-width: 480px) {
+    body {
+        font-size: 15px;
+    }
+    
+    header h1 {
+        font-size: 1.6rem;
+    }
+    
+    .upload-title {
+        font-size: 1rem;
+    }
+    
+    .score-card h3, .analysis-card h3, .visualization-card h3, .metric h4 {
+        font-size: 1.1rem;
+    }
+    
+    .score-value {
+        font-size: 2rem;
+    }
+    
+    /* Ensure lists are more readable */
+    .analysis-card li, 
+    .ai-section-card li, 
+    .ai-suggestions-card li,
+    .ai-processing-card li,
+    .ai-translation-card li {
+        margin-bottom: 12px;
+        line-height: 1.4;
+    }
+}
+
+/* Fix any potential overflow issues */
+@media (max-width: 768px) {
+    .chart-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Ensure proper resizing of canvases */
+    canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+    
+    /* Improve readability of charts on small screens */
+    #frequency-chart,
+    #transients-chart {
+        height: 250px !important;
+    }
+} 

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Mix Analyzer - Free AI-Powered Audio Analysis Tool for Musicians, Producers & Sound Engineers</title>
     
     <!-- SEO Meta Tags -->
@@ -36,6 +36,7 @@
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -86,7 +87,7 @@
         <main>
             <section class="upload-section">
                 <div class="track-type-selector">
-                    <label class="checkbox-container">
+                    <label class="checkbox-container" for="instrumental-checkbox">
                         <input type="checkbox" id="instrumental-checkbox">
                         <span class="checkbox-text">This is an instrumental track (no vocals)</span>
                     </label>
@@ -99,7 +100,7 @@
                 </div>
                 
                 <div class="upload-container" id="upload-container">
-                    <div class="upload-area" id="upload-area">
+                    <div class="upload-area" id="upload-area" role="button" tabindex="0">
                         <div class="upload-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
                                 <path d="M12 4V16M12 4L8 8M12 4L16 8M6 20H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
@@ -167,20 +168,20 @@
                     <p>Overall Mix Score</p>
                 </div>
 
-                <div class="tabs">
-                    <button class="tab-button active" data-tab="frequency">Frequency Balance</button>
-                    <button class="tab-button" data-tab="dynamics">Dynamics</button>
-                    <button class="tab-button" data-tab="stereo">Stereo Field</button>
-                    <button class="tab-button" data-tab="clarity">Clarity</button>
-                    <button class="tab-button" data-tab="harmonic">Harmonic</button>
-                    <button class="tab-button" data-tab="transients">Transients</button>
-                    <button class="tab-button" data-tab="visualizations">Visualizations</button>
-                    <button class="tab-button" data-tab="ai-insights">AI Insights</button>
+                <div class="tabs" role="tablist">
+                    <button class="tab-button active" data-tab="frequency" role="tab" aria-selected="true">Frequency Balance</button>
+                    <button class="tab-button" data-tab="dynamics" role="tab" aria-selected="false">Dynamics</button>
+                    <button class="tab-button" data-tab="stereo" role="tab" aria-selected="false">Stereo Field</button>
+                    <button class="tab-button" data-tab="clarity" role="tab" aria-selected="false">Clarity</button>
+                    <button class="tab-button" data-tab="harmonic" role="tab" aria-selected="false">Harmonic</button>
+                    <button class="tab-button" data-tab="transients" role="tab" aria-selected="false">Transients</button>
+                    <button class="tab-button" data-tab="visualizations" role="tab" aria-selected="false">Visualizations</button>
+                    <button class="tab-button" data-tab="ai-insights" role="tab" aria-selected="false">AI Insights</button>
                 </div>
 
                 <div class="tab-content">
                     <!-- Frequency Balance Tab -->
-                    <div class="tab-pane active" id="frequency-tab">
+                    <div class="tab-pane active" id="frequency-tab" role="tabpanel">
                         <div class="score-card">
                             <h3>Frequency Balance Score</h3>
                             <div class="score-value" id="frequency-score">0</div>
@@ -478,5 +479,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
 </body>
 </html> 
