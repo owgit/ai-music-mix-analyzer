@@ -1,7 +1,7 @@
 # Music Mix Analyzer - Professional Audio Analysis Tool
 
 <div align="center">
-  <img src="[/app/static/img/favicon-32x32.png](https://github.com/owgit/music-mix-analyzer/blob/main/app/static/img/music-analyzer-icon.svg)" alt="Music Mix Analyzer" />
+  <img src="/app/static/img/favicon-32x32.png" alt="Music Mix Analyzer" />
   <p>
     <a href="https://github.com/owgit/music-mix-analyzer/stargazers"><img src="https://img.shields.io/github/stars/owgit/music-mix-analyzer?style=flat-square" alt="Stars Badge"/></a>
     <a href="https://github.com/owgit/music-mix-analyzer/network/members"><img src="https://img.shields.io/github/forks/owgit/music-mix-analyzer?style=flat-square" alt="Forks Badge"/></a>
