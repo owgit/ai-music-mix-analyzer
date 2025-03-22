@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1E2C" />
+      <stop offset="100%" stop-color="#131620" />
+    </linearGradient>
+    <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4361EE" />
+      <stop offset="100%" stop-color="#7209B7" />
+    </linearGradient>
+    <linearGradient id="spectrumGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#4CC9F0" />
+      <stop offset="50%" stop-color="#4361EE" />
+      <stop offset="100%" stop-color="#7209B7" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="32" height="32" rx="8" fill="url(#bgGradient)" />
+  
+  <!-- Simplified waveform -->
+  <path d="M5 16 Q 7 12, 9 16 Q 11 20, 13 16 Q 15 10, 17 16 Q 19 22, 21 16 Q 23 12, 25 16 Q 27 19, 29 16" 
+    stroke="url(#waveGradient)" stroke-width="1.5" stroke-linecap="round" fill="none" />
+  
+  <!-- Simplified spectrum bars (just a few) -->
+  <rect x="8" y="19" width="2" height="6" rx="1" fill="url(#spectrumGradient)" />
+  <rect x="12" y="17" width="2" height="8" rx="1" fill="url(#spectrumGradient)" />
+  <rect x="16" y="20" width="2" height="5" rx="1" fill="url(#spectrumGradient)" />
+  <rect x="20" y="16" width="2" height="9" rx="1" fill="url(#spectrumGradient)" />
+  <rect x="24" y="18" width="2" height="7" rx="1" fill="url(#spectrumGradient)" />
+  
+  <!-- Circular music element -->
+  <circle cx="16" cy="11" r="4" fill="none" stroke="url(#waveGradient)" stroke-width="1.5" />
+  <circle cx="16" cy="11" r="1.5" fill="url(#waveGradient)" />
+</svg>

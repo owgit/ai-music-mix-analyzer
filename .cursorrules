@@ -1,0 +1,75 @@
+# Music Mix Analyzer - Project Rules
+
+## Code Style and Organization
+
+### Python
+- Follow PEP 8 style guidelines
+- Use docstrings for all functions and classes
+- Keep functions focused and small when possible
+- Use type hints for function parameters and return values
+- Separate CSS and JS into separate files from Python code
+
+### Frontend
+- Separate CSS into dedicated files
+- Separate JavaScript into dedicated files
+- Use modern ES6+ JavaScript practices
+- Follow consistent naming conventions for CSS classes
+
+## Project Structure
+- Core application code in app/ directory
+- Keep core audio processing logic in app/core/
+- Store routes in app/routes.py
+- Place templates in app/templates/
+- Store static assets in app/static/
+- Keep all uploads in the uploads/ directory
+- Utility scripts in scripts/ directory
+- Configuration files in config/ directory
+- Documentation files in docs/ directory
+- Tests in tests/ directory
+- Logs in logs/ directory
+
+## Security Practices
+- Always validate user inputs
+- Sanitize file uploads
+- Use UUID-based filenames for uploaded files
+- Implement rate limiting on API endpoints
+- Apply appropriate content security policies
+- Run security checks with scripts/security_check.py
+
+## Development Workflow
+- Use virtual environment for Python dependency isolation
+- Check security with scripts/security_check.py before deployment
+- Follow Docker-based deployment for consistency
+- Document all significant changes
+- Update memory bank when introducing new patterns
+- Use scripts/run.sh and scripts/stop.sh for Docker management
+
+## API Integration
+- Use .env for storing OpenAI API keys (or config/.env)
+- Follow best practices for OpenAI API usage
+- Always check for existing solutions before adding new functions
+
+## Environment
+- Support for Mac M4 architecture
+- MAMP for local development
+- Docker for containerized deployment using config/docker/
+
+## Documentation
+- Update memory bank files to reflect current project state
+- Keep README.md updated with latest setup instructions
+- Store detailed documentation in docs/ directory
+- Document code with clear comments
+- Use separate files for CSS and JavaScript with appropriate documentation
+
+## Testing
+- Write tests for all new functionality
+- Run existing tests before submitting changes
+- Document test coverage and results
+
+## User Information
+- Owner: Uygar Duzgun
+- Email: Info@uygarduzgun
+- Website: uygarduzgun.com
+- GitHub: owgit
+
+This file will be updated as new patterns and preferences are identified during development. 

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Music Mix Analyzer Documentation
+    url: https://github.com/owgit/music-mix-analyzer/blob/main/README.md
+    about: Please check our documentation before opening an issue
+  - name: Author Website
+    url: https://uygarduzgun.com
+    about: Contact the author directly for commercial support or partnerships 

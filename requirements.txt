@@ -1,0 +1,26 @@
+# Web framework
+Flask==2.3.3
+Werkzeug==2.3.7
+Flask-Limiter==3.5.0
+
+# Audio processing
+librosa==0.10.1
+pydub==0.25.1
+numpy==1.24.4
+scipy==1.10.1
+soundfile==0.12.1
+
+# Visualization
+matplotlib==3.7.3
+
+# API
+openai==1.6.1
+httpx==0.25.2
+
+# Utilities
+python-dotenv==1.0.0
+requests==2.31.0
+uuid==1.30
+
+# Testing (optional)
+# pytest==7.4.0 

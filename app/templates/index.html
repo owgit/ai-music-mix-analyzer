@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mix Analyzer - Free AI-Powered Audio Analysis Tool for Musicians, Producers & Sound Engineers</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Analyze your audio tracks for FREE with Mix Analyzer - get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, EQ recommendations, and AI-powered mix improvement suggestions for professional music production.">
+    <meta name="keywords" content="free audio analysis, AI mix analyzer, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Mix Analyzer">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
+    <meta property="og:description" content="Upload your tracks for FREE to get comprehensive AI analysis of frequency spectrum, dynamic range, stereo imaging, clarity, and artificial intelligence powered improvement suggestions for professional audio production.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
+    <meta property="twitter:description" content="Upload your tracks for FREE to get comprehensive AI analysis of frequency spectrum, dynamic range, stereo imaging, clarity, and artificial intelligence powered improvement suggestions for professional audio production.">
+    <meta property="twitter:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Mix Analyzer",
+        "url": "{{ request.url_root }}",
+        "description": "Free AI-powered audio analysis tool for musicians, producers, and audio engineers to analyze frequency spectrum, dynamics, stereo imaging and get mastering recommendations at no cost",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Free frequency spectrum analysis",
+            "AI-powered dynamic range measurement",
+            "Stereo field visualization",
+            "Artificial intelligence harmonic content analysis",
+            "Transient detection",
+            "EQ recommendations",
+            "Spectral flatness measurement",
+            "AI-powered mix suggestions at no cost"
+        ]
+    }
+    </script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="app-brand">
+                <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo">
+                <div class="app-title">
+                    <h1>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h1>
+                    <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to analyze frequency balance, dynamic range, stereo imaging, and get professional AI-powered mix improvement suggestions at no cost</p>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <div class="track-type-selector">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="instrumental-checkbox">
+                        <span class="checkbox-text">This is an instrumental track (no vocals)</span>
+                    </label>
+                    <div class="info-tooltip">
+                        <span class="info-icon">i</span>
+                        <div class="tooltip-content">
+                            Select this if your track has no vocals. It helps our artificial intelligence provide more relevant frequency analysis and EQ recommendations for free.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upload-container" id="upload-container">
+                    <div class="upload-area" id="upload-area">
+                        <div class="upload-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
+                                <path d="M12 4V16M12 4L8 8M12 4L16 8M6 20H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        <p class="upload-title">Drag and drop your audio file here for free AI-powered frequency spectrum analysis</p>
+                        <p class="upload-subtitle">MP3, WAV, FLAC, AIFF, M4A formats supported for free professional audio analysis with artificial intelligence</p>
+                        <p>or</p>
+                        <label for="file-input" class="upload-button">Choose File</label>
+                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm" hidden>
+                    </div>
+                    <div class="progress-container" id="progress-container" style="display: none;">
+                        <div class="progress-header">
+                            <div class="progress-status">
+                                <svg class="progress-icon" viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
+                                    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="currentColor" class="spinner"/>
+                                </svg>
+                                <span id="progress-stage">Uploading</span>
+                            </div>
+                            <span id="progress-percentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        <p id="progress-text">Preparing your audio file...</p>
+                        <div class="progress-steps">
+                            <div class="progress-step active" id="step-upload">
+                                <div class="step-indicator"></div>
+                                <span>Upload</span>
+                            </div>
+                            <div class="progress-step" id="step-analyze">
+                                <div class="step-indicator"></div>
+                                <span>Analyze</span>
+                            </div>
+                            <div class="progress-step" id="step-visualize">
+                                <div class="step-indicator"></div>
+                                <span>Visualize</span>
+                            </div>
+                            <div class="progress-step" id="step-ai">
+                                <div class="step-indicator"></div>
+                                <span>AI Insights</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="results-section" id="results-section" style="display: none;">
+                <div class="results-actions">
+                    <button id="analyze-new-btn" class="action-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+                        </svg>
+                        Analyze New Track
+                    </button>
+                </div>
+                
+                <h2>Analysis Results for <span id="filename"></span></h2>
+                
+                <div class="overall-score">
+                    <div class="score-circle">
+                        <span id="overall-score">0</span>
+                    </div>
+                    <p>Overall Mix Score</p>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab-button active" data-tab="frequency">Frequency Balance</button>
+                    <button class="tab-button" data-tab="dynamics">Dynamics</button>
+                    <button class="tab-button" data-tab="stereo">Stereo Field</button>
+                    <button class="tab-button" data-tab="clarity">Clarity</button>
+                    <button class="tab-button" data-tab="harmonic">Harmonic</button>
+                    <button class="tab-button" data-tab="transients">Transients</button>
+                    <button class="tab-button" data-tab="visualizations">Visualizations</button>
+                    <button class="tab-button" data-tab="ai-insights">AI Insights</button>
+                </div>
+
+                <div class="tab-content">
+                    <!-- Frequency Balance Tab -->
+                    <div class="tab-pane active" id="frequency-tab">
+                        <div class="score-card">
+                            <h3>Frequency Balance Score</h3>
+                            <div class="score-value" id="frequency-score">0</div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="frequency-analysis"></ul>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Frequency Band Energy</h3>
+                            <canvas id="frequency-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Dynamics Tab -->
+                    <div class="tab-pane" id="dynamics-tab">
+                        <div class="score-card">
+                            <h3>Dynamic Range Score</h3>
+                            <div class="score-value" id="dynamics-score">0</div>
+                        </div>
+                        <div class="metrics-container">
+                            <div class="metric">
+                                <h4>Dynamic Range</h4>
+                                <div class="metric-value" id="dynamic-range">0 dB</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Crest Factor</h4>
+                                <div class="metric-value" id="crest-factor">0 dB</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Peak to Loudness Ratio</h4>
+                                <div class="metric-value" id="plr">0 dB</div>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="dynamics-analysis"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Stereo Field Tab -->
+                    <div class="tab-pane" id="stereo-tab">
+                        <div class="score-container">
+                            <div class="score-card">
+                                <h3>Width Score</h3>
+                                <div class="score-value" id="width-score">0</div>
+                            </div>
+                            <div class="score-card">
+                                <h3>Phase Score</h3>
+                                <div class="score-value" id="phase-score">0</div>
+                            </div>
+                        </div>
+                        <div class="metrics-container">
+                            <div class="metric">
+                                <h4>Channel Correlation</h4>
+                                <div class="metric-value" id="correlation">0</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Mid/Side Ratio</h4>
+                                <div class="metric-value" id="mid-side-ratio">0</div>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="stereo-analysis"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Clarity Tab -->
+                    <div class="tab-pane" id="clarity-tab">
+                        <div class="score-card">
+                            <h3>Clarity Score</h3>
+                            <div class="score-value" id="clarity-score">0</div>
+                        </div>
+                        <div class="metrics-container">
+                            <div class="metric">
+                                <h4>Spectral Contrast</h4>
+                                <div class="metric-value" id="spectral-contrast">0</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Spectral Flatness</h4>
+                                <div class="metric-value" id="spectral-flatness">0</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Spectral Centroid</h4>
+                                <div class="metric-value" id="spectral-centroid">0 Hz</div>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="clarity-analysis"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Harmonic Analysis Tab -->
+                    <div class="tab-pane" id="harmonic-tab">
+                        <div class="score-card">
+                            <h3>Harmonic Analysis</h3>
+                            <div class="score-value" id="harmonic-key">Key: C</div>
+                        </div>
+                        <div class="metrics-container">
+                            <div class="metric">
+                                <h4>Harmonic Complexity</h4>
+                                <div class="metric-value" id="harmonic-complexity">0%</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Key Consistency</h4>
+                                <div class="metric-value" id="key-consistency">0%</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Chord Changes</h4>
+                                <div class="metric-value" id="chord-changes">0/min</div>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="harmonic-analysis"></ul>
+                        </div>
+                        <div class="visualization-container" title="Click to enlarge">
+                            <img id="chromagram-img" src="" alt="Chromagram visualization showing harmonic content and key distribution">
+                        </div>
+                    </div>
+
+                    <!-- Transients Tab -->
+                    <div class="tab-pane" id="transients-tab">
+                        <div class="score-card">
+                            <h3>Transients Score</h3>
+                            <div class="score-value" id="transients-score">0</div>
+                        </div>
+                        <div class="metrics-container">
+                            <div class="metric">
+                                <h4>Attack Time</h4>
+                                <div class="metric-value" id="attack-time">0 ms</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Transient Density</h4>
+                                <div class="metric-value" id="transient-density">0</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Percussion Energy</h4>
+                                <div class="metric-value" id="percussion-energy">0%</div>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="transients-analysis"></ul>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Transient Detection</h3>
+                            <canvas id="transients-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Visualizations Tab -->
+                    <div class="tab-pane" id="visualizations-tab">
+                        <div class="visualization-grid">
+                            <div class="visualization-card">
+                                <h3>Waveform</h3>
+                                <div class="visualization-container" title="Click to enlarge">
+                                    <img id="waveform-img" src="" alt="Audio waveform visualization showing amplitude over time">
+                                </div>
+                            </div>
+                            <div class="visualization-card">
+                                <h3>Spectrogram</h3>
+                                <div class="visualization-container" title="Click to enlarge">
+                                    <img id="spectrogram-img" src="" alt="Spectrogram visualization showing frequency content over time">
+                                </div>
+                            </div>
+                            <div class="visualization-card">
+                                <h3>Frequency Spectrum</h3>
+                                <div class="visualization-container" title="Click to enlarge">
+                                    <img id="spectrum-img" src="" alt="Frequency spectrum visualization showing energy distribution across frequencies">
+                                </div>
+                            </div>
+                            <div class="visualization-card">
+                                <h3>Chromagram</h3>
+                                <div class="visualization-container" title="Click to enlarge">
+                                    <img id="chromagram-img" src="" alt="Chromagram visualization showing harmonic content and key distribution">
+                                </div>
+                            </div>
+                            <div class="visualization-card">
+                                <h3>Stereo Field</h3>
+                                <div id="stereo-field-container" class="visualization-container" title="Click to enlarge">
+                                    <img id="stereo-field-img" src="" alt="Stereo field visualization showing spatial distribution between left and right channels">
+                                    <button id="regenerate-stereo-btn" class="regenerate-btn" title="Regenerate with enhanced detection" onclick="regenerateStereoField(document.getElementById('filename').textContent.trim())">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                                        </svg>
+                                        <span class="sr-only">Regenerate stereo field visualization</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- AI Insights Tab -->
+                    <div class="tab-pane" id="ai-insights-tab">
+                        <div class="ai-insights-container">
+                            <div class="ai-header">
+                                <h3>AI-Powered Mix Analysis</h3>
+                                <p class="ai-powered-by">Powered by GPT-4o</p>
+                            </div>
+                            
+                            <div class="ai-summary-card">
+                                <h4>Summary</h4>
+                                <p id="ai-summary">Loading AI analysis...</p>
+                            </div>
+                            
+                            <div class="ai-genre-card">
+                                <h4>Genre Context</h4>
+                                <p id="ai-genre-context">Loading genre analysis...</p>
+                            </div>
+
+                            <div class="ai-genre-card">
+                                <h4>Subgenre & Style-Specific Context</h4>
+                                <p id="ai-subgenre-context">Loading subgenre analysis...</p>
+                            </div>
+
+                            <div class="ai-sections-container">
+                                <div class="ai-section-card">
+                                    <h4>Strengths</h4>
+                                    <ul id="ai-strengths"></ul>
+                                </div>
+                                
+                                <div class="ai-section-card">
+                                    <h4>Areas for Improvement</h4>
+                                    <ul id="ai-weaknesses"></ul>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-suggestions-card">
+                                <h4>Suggestions</h4>
+                                <ul id="ai-suggestions"></ul>
+                            </div>
+
+                            <div class="ai-reference-card">
+                                <h4>Reference Tracks</h4>
+                                <ul id="ai-reference-tracks"></ul>
+                            </div>
+
+                            <div class="ai-processing-card">
+                                <h4>Processing Recommendations</h4>
+                                <ul id="ai-processing-recommendations"></ul>
+                            </div>
+                            
+                            <div class="ai-translation-card">
+                                <h4>Mix Translation Recommendations</h4>
+                                <ul id="ai-translation-recommendations"></ul>
+                            </div>
+                            
+                            <div id="ai-error" class="ai-error" style="display: none;">
+                                <p>AI analysis is not available. Please check your OpenAI API key.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h3>
+                    <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and audio engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Audio Production Knowledge</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" id="open-frequency-guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
+                        <li><a href="#" id="open-dynamics-guide">Dynamic Range & Compression Explained</a></li>
+                        <li><a href="#" id="open-harmonic-guide">AI Harmonic Analysis & EQ Techniques</a></li>
+                        <li><a href="#" id="open-stereo-guide">Understanding Stereo Field & Imaging</a></li>
+                        <li><a href="#" id="open-transients-guide">AI Transient Analysis & Detection</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Free Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" id="open-about-app">About Free Mix Analyzer</a></li>
+                        <li><a href="#" id="open-faq">FAQ</a></li>
+                        <li><a href="https://librosa.org/" target="_blank">Librosa Audio Analysis Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank">OpenAI API for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/" target="_blank">GitHub Repository</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial intelligence and spectral analysis tools</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+</body>
+</html> 

@@ -1,0 +1,28 @@
+services:
+  music-analyzer:
+    build: .
+    container_name: music-analyzer
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./app:/app/app
+      - music_data:/app/app/static/uploads
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - FLASK_APP=app:create_app
+      - FLASK_ENV=production
+      - PYTHONUNBUFFERED=1
+      - MAX_UPLOAD_SIZE=100MB
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}  # Use the API key from the host environment, or empty if not set
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  music_data:
+    driver: local 
