@@ -11,8 +11,11 @@ from flask.json.provider import DefaultJSONProvider
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-# Load environment variables from .env file
-load_dotenv()
+# Load environment variables from .env file in multiple locations
+if os.path.exists('.env'):
+    load_dotenv()
+elif os.path.exists('config/.env'):
+    load_dotenv('config/.env')
 
 # Custom JSON provider for Flask 2.3.x that handles NumPy types
 class NumpyJSONProvider(DefaultJSONProvider):
