@@ -7,6 +7,8 @@
 A powerful Flask-based web application for audio mixing analysis, mastering assistance, and professional music production visualization. Perfect for sound engineers, music producers, and audio enthusiasts.
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
+[![Website: mixanalytic.com](https://img.shields.io/badge/Website-mixanalytic.com-blue.svg)](https://mixanalytic.com)
+[![GitHub: owgit/music-mix-analyzer](https://img.shields.io/badge/GitHub-owgit/music--mix--analyzer-green.svg)](https://github.com/owgit/music-mix-analyzer)
 
 ## 🎧 Features
 
@@ -32,8 +34,8 @@ A powerful Flask-based web application for audio mixing analysis, mastering assi
 
 1. Clone the repository
 ```bash
-git clone <repository-url>
-cd music
+git clone https://github.com/owgit/music-mix-analyzer.git
+cd music-mix-analyzer
 ```
 
 2. Create and activate a virtual environment
@@ -58,8 +60,8 @@ cp .env.example .env
 
 1. Clone the repository
 ```bash
-git clone <repository-url>
-cd music
+git clone https://github.com/owgit/music-mix-analyzer.git
+cd music-mix-analyzer
 ```
 
 2. Set up environment variables
@@ -283,15 +285,21 @@ Contributions are welcome! Please feel free to submit a Pull Request or create i
 
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License - see the [LICENSE](LICENSE) file for details. This license prohibits commercial use of this software without explicit permission.
 
+## 🌐 Official Website
+
+Visit [mixanalytic.com](https://mixanalytic.com) for the latest version, documentation, and online features.
+
 ## 👨‍💻 Author
 
-Developed by Uygar Duzgun - [uygarduzgun.com](https://uygarduzgun.com)
+Developed by Uygar Duzgun
+- Website: [uygarduzgun.com](https://uygarduzgun.com)
+- Project: [mixanalytic.com](https://mixanalytic.com)
 
 ## 🔑 Keywords
 
-audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing
+audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing, mix analytics, mixanalytic
 
 ---
 
-© 2023 Uygar Duzgun. All rights reserved.
+© 2023 Uygar Duzgun. All rights reserved. | [mixanalytic.com](https://mixanalytic.com)
 
