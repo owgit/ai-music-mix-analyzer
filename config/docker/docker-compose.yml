@@ -1,12 +1,16 @@
+version: '3'
+
 services:
   music-analyzer:
     build: .
     container_name: music-analyzer
     ports:
-      - "5001:5000"
+      - "127.0.0.1:5001:5000"
     volumes:
       - ./app:/app/app
-      - music_data:/app/app/static/uploads
+      - ./config:/app/config
+      - music_data:/app/static/uploads
+      - ./logs:/var/log/app
     restart: unless-stopped
     env_file:
       - .env
@@ -15,13 +19,18 @@ services:
       - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
       - MAX_UPLOAD_SIZE=100MB
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}  # Use the API key from the host environment, or empty if not set
+      - GUNICORN_CMD_ARGS="--access-logfile /var/log/app/access.log --error-logfile /var/log/app/error.log --log-level debug"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/health" ]
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health').raise_for_status()"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   music_data:

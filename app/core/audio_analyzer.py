@@ -71,30 +71,40 @@ def analyze_mix(file_path):
     # Create mono version for certain analyses
     y_mono = np.mean(y, axis=0)
     
-    # Calculate various metrics
-    results = {
-        "frequency_balance": analyze_frequency_balance(y, sr),
-        "dynamic_range": analyze_dynamic_range(y),
-        "stereo_field": analyze_stereo_field(y_left, y_right),
-        "clarity": analyze_clarity(y, sr),
-        "harmonic_content": analyze_harmonic_content(y, sr),
-        "transients": analyze_transients(y_mono, sr)
-    }
-    
-    # Generate visualizations with the same audio data
     try:
-        results["visualizations"] = generate_visualizations(file_path, y=y, sr=sr)
+        # Calculate various metrics
+        results = {
+            "frequency_balance": analyze_frequency_balance(y, sr),
+            "dynamic_range": analyze_dynamic_range(y),
+            "stereo_field": analyze_stereo_field(y_left, y_right),
+            "clarity": analyze_clarity(y, sr),
+            "harmonic_content": analyze_harmonic_content(y, sr),
+            "transients": analyze_transients(y_mono, sr)
+        }
+        
+        # Generate visualizations with the same audio data
+        try:
+            results["visualizations"] = generate_visualizations(file_path, y=y, sr=sr)
+        except Exception as e:
+            print(f"Error generating visualizations: {str(e)}")
+            results["visualizations"] = generate_error_visualizations()
+        
+        # Calculate overall score
+        results["overall_score"] = calculate_overall_score(results)
+        
+        # Convert NumPy types to standard Python types
+        results = convert_numpy_types(results)
+        
+        return results
+        
     except Exception as e:
-        print(f"Error generating visualizations: {str(e)}")
-        results["visualizations"] = generate_error_visualizations()
-    
-    # Calculate overall score
-    results["overall_score"] = calculate_overall_score(results)
-    
-    # Convert NumPy types to standard Python types
-    results = convert_numpy_types(results)
-    
-    return results
+        print(f"Error analyzing file: {str(e)}")
+        # Return a basic error response that can be handled by the frontend
+        return {
+            "error": True,
+            "message": str(e),
+            "visualizations": generate_error_visualizations()
+        }
 
 def analyze_frequency_balance(y, sr):
     """Analyze the frequency balance of the mix"""
@@ -332,36 +342,40 @@ def get_stereo_field_analysis(correlation, mid_ratio):
     return analysis
 
 def analyze_clarity(y, sr):
-    """Analyze the clarity of the mix"""
+    """Analyze the clarity and definition of the mix"""
     # Convert to mono for clarity analysis
     y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
     
-    # Calculate spectral contrast
-    contrast = librosa.feature.spectral_contrast(y=y_mono, sr=sr)
-    mean_contrast = np.mean(contrast)
+    # Calculate spectral contrast with adjusted parameters
+    # Reduce n_bands and set fmin to avoid Nyquist frequency issues
+    contrast = librosa.feature.spectral_contrast(
+        y=y_mono, 
+        sr=sr,
+        n_bands=4,  # Reduced from default 6
+        fmin=20.0,  # Set minimum frequency
+        n_fft=2048  # Increased window size
+    )
     
     # Calculate spectral flatness
-    flatness = librosa.feature.spectral_flatness(y=y_mono)
-    mean_flatness = np.mean(flatness)
+    flatness = np.mean(librosa.feature.spectral_flatness(y=y_mono))
     
     # Calculate spectral centroid
-    centroid = librosa.feature.spectral_centroid(y=y_mono, sr=sr)[0]
-    mean_centroid = np.mean(centroid)
+    centroid = np.mean(librosa.feature.spectral_centroid(y=y_mono, sr=sr))
     
-    # Calculate clarity score
-    # Higher contrast and lower flatness typically indicate better clarity
-    contrast_score = min(100, max(0, mean_contrast * 10))
-    flatness_score = min(100, max(0, (1 - mean_flatness) * 100))
+    # Calculate clarity score (0-100)
+    contrast_score = np.mean(np.abs(contrast)) * 10  # Scale up the contrast
+    flatness_score = (1 - flatness) * 100  # Lower flatness is better for clarity
     
-    # Combine scores
-    clarity_score = (contrast_score + flatness_score) / 2
+    # Combine scores with weights
+    clarity_score = (contrast_score * 0.6 + flatness_score * 0.4)
+    clarity_score = min(100, max(0, clarity_score))  # Ensure score is 0-100
     
     return {
-        "spectral_contrast": float(mean_contrast),
-        "spectral_flatness": float(mean_flatness),
-        "spectral_centroid": float(mean_centroid),
         "clarity_score": clarity_score,
-        "analysis": get_clarity_analysis(mean_contrast, mean_flatness, mean_centroid, sr)
+        "spectral_contrast": float(np.mean(np.abs(contrast))),
+        "spectral_flatness": float(flatness),
+        "spectral_centroid": float(centroid),
+        "analysis": get_clarity_analysis(contrast, flatness, centroid, sr)
     }
 
 def get_clarity_analysis(contrast, flatness, centroid, sr):
