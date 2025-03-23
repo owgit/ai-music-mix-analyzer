@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>About Mix Analyzer - How Our AI-Powered Audio Analysis Works | Free Mixing & Mastering Tool</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Discover how Mix Analyzer uses advanced AI technology to analyze your audio tracks for professional mixing and mastering. Our free tool provides detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered mix improvement suggestions.">
+    <meta name="keywords" content="AI mixing, AI mastering, online mixing tool, free mastering assistant, music production AI, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, professional mixing, mastering online, AI audio analysis, mix improvement, AI mixing engineer">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Mix Analyzer">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.url }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="About Mix Analyzer - AI-Powered Audio Analysis Technology">
+    <meta property="og:description" content="Learn how our AI algorithms analyze your tracks for mixing and mastering. Get detailed insights into frequency balance, dynamics, stereo imaging, and professional suggestions for better mixes - all for free.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:title" content="About Mix Analyzer - AI-Powered Audio Analysis Technology">
+    <meta property="twitter:description" content="Learn how our AI algorithms analyze your tracks for mixing and mastering. Get detailed insights into frequency balance, dynamics, stereo imaging, and professional suggestions for better mixes - all for free.">
+    <meta property="twitter:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "How Mix Analyzer's AI-Powered Audio Analysis Technology Works",
+        "image": "{{ url_for('static', filename='img/og-image.jpg', _external=True) }}",
+        "author": {
+            "@type": "Organization",
+            "name": "Mix Analyzer"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Mix Analyzer",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "{{ url_for('static', filename='img/music-analyzer-icon.svg', _external=True) }}"
+            }
+        },
+        "description": "Detailed explanation of how our AI-powered audio analysis tools work to help musicians, producers, and engineers improve their mixes and masters for free.",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{ request.url }}"
+        }
+    }
+    </script>
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
+    
+    <!-- Matomo -->
+    <script>
+      var _paq = window._paq = window._paq || [];
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u="https://seo.optagonen.se/";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '3']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <!-- End Matomo Code -->
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="app-brand">
+                <a href="{{ url_for('main.index') }}">
+                    <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo">
+                </a>
+                <div class="app-title">
+                    <h1>About Mix Analyzer - How Our AI-Powered Audio Analysis Works</h1>
+                    <p>Learn how our free tool uses advanced AI algorithms to analyze your tracks and provide professional mixing and mastering recommendations</p>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="about-section">
+                <h2>Advanced AI-Powered Mixing and Mastering Analysis Technology</h2>
+                <p>Mix Analyzer is a free online tool that combines cutting-edge audio analysis algorithms with artificial intelligence to help you create professional-quality mixes and masters. Whether you're a bedroom producer, aspiring mixing engineer, or seasoned professional, our tool offers valuable insights that would traditionally require expensive equipment and years of trained ears.</p>
+                
+                <div class="analysis-tech-overview">
+                    <h3>Our Analysis Technologies</h3>
+                    <p>Mix Analyzer employs several sophisticated technologies to analyze different aspects of your audio tracks:</p>
+                    
+                    <div class="tech-grid">
+                        <div class="tech-card" data-tech="frequency">
+                            <div class="tech-card-header">
+                                <h4>Frequency Spectrum Analysis</h4>
+                                <button class="expand-button" aria-label="Show detailed frequency analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Our AI analyzes your track's frequency content using Fast Fourier Transform (FFT) and advanced spectral processing to identify frequency imbalances, potential masking issues, and opportunities for more clarity in your mix.</p>
+                            <div class="tech-card-details" hidden>
+                                <h5>Advanced Frequency Analysis Technology</h5>
+                                <div class="detail-section">
+                                    <h6>Spectral Analysis Features</h6>
+                                    <ul>
+                                        <li>Real-time FFT analysis with adjustable window sizes</li>
+                                        <li>Multi-resolution spectral analysis for precise frequency detection</li>
+                                        <li>Advanced masking detection algorithms</li>
+                                        <li>Genre-specific frequency balance recommendations</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h6>Professional Applications</h6>
+                                    <ul>
+                                        <li>Identify problematic frequency buildups</li>
+                                        <li>Detect phase issues in critical frequency bands</li>
+                                        <li>Compare against reference tracks in your genre</li>
+                                        <li>Get targeted EQ suggestions for better clarity</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Frequency Spectrum</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tech-card" data-tech="dynamics">
+                            <div class="tech-card-header">
+                                <h4>Dynamic Range Analysis</h4>
+                                <button class="expand-button" aria-label="Show detailed dynamics analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Using statistical analysis of peak levels, RMS values, and crest factors, we assess your track's dynamic range and compression characteristics.</p>
+                            <div class="tech-card-details" hidden>
+                                <h5>Professional Dynamic Range Analysis</h5>
+                                <div class="detail-section">
+                                    <h6>Key Measurements</h6>
+                                    <ul>
+                                        <li>True Peak and RMS level analysis</li>
+                                        <li>Dynamic range measurement (DR value)</li>
+                                        <li>Crest factor analysis per frequency band</li>
+                                        <li>Genre-specific dynamic recommendations</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h6>Compression Analysis</h6>
+                                    <ul>
+                                        <li>Detect over-compression issues</li>
+                                        <li>Analyze attack and release characteristics</li>
+                                        <li>Identify dynamic range sweet spots</li>
+                                        <li>Compare to commercial reference levels</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Dynamic Range</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tech-card" data-tech="stereo">
+                            <div class="tech-card-header">
+                                <h4>Stereo Field Analysis</h4>
+                                <button class="expand-button" aria-label="Show detailed stereo analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Through mid-side processing and phase correlation measurement, we evaluate your mix's stereo width and mono compatibility.</p>
+                            <div class="tech-card-details" hidden>
+                                <h5>Advanced Stereo Imaging Analysis</h5>
+                                <div class="detail-section">
+                                    <h6>Stereo Width Features</h6>
+                                    <ul>
+                                        <li>Mid/Side balance measurement</li>
+                                        <li>Phase correlation analysis</li>
+                                        <li>Stereo field visualization</li>
+                                        <li>Frequency-dependent stereo width analysis</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h6>Mono Compatibility</h6>
+                                    <ul>
+                                        <li>Phase cancellation detection</li>
+                                        <li>Stereo enhancement suggestions</li>
+                                        <li>Bass frequency mono analysis</li>
+                                        <li>Multi-speaker system compatibility checks</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Stereo Field</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tech-card" data-tech="transients">
+                            <div class="tech-card-header">
+                                <h4>Transient Analysis</h4>
+                                <button class="expand-button" aria-label="Show detailed transient analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Our percussion and transient detection algorithms measure attack sharpness, detect transient density, and analyze the impact of your drums and percussive elements.</p>
+                            <div class="tech-card-details" hidden>
+                                <h5>Professional Transient Analysis</h5>
+                                <div class="detail-section">
+                                    <h6>Transient Detection Features</h6>
+                                    <ul>
+                                        <li>Attack time measurement</li>
+                                        <li>Release curve analysis</li>
+                                        <li>Transient density mapping</li>
+                                        <li>Peak detection algorithms</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h6>Percussion Analysis</h6>
+                                    <ul>
+                                        <li>Drum hit detection</li>
+                                        <li>Impact level measurement</li>
+                                        <li>Groove analysis</li>
+                                        <li>Dynamic consistency checking</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Transients</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tech-card" data-tech="harmonic">
+                            <div class="tech-card-header">
+                                <h4>Harmonic Content Analysis</h4>
+                                <button class="expand-button" aria-label="Show detailed harmonic analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Using chromagram analysis and harmonic detection, we identify the key of your track, assess harmonic complexity, and evaluate tonal balance.</p>
+                            <div class="tech-card-details" hidden>
+                                <h5>Advanced Harmonic Analysis</h5>
+                                <div class="detail-section">
+                                    <h6>Key Detection Features</h6>
+                                    <ul>
+                                        <li>Automatic key detection</li>
+                                        <li>Scale analysis</li>
+                                        <li>Chord progression mapping</li>
+                                        <li>Harmonic compatibility checking</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h6>Tonal Balance Analysis</h6>
+                                    <ul>
+                                        <li>Harmonic series analysis</li>
+                                        <li>Overtone structure evaluation</li>
+                                        <li>Harmonic richness measurement</li>
+                                        <li>Genre-specific tonal recommendations</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Harmonic Content</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tech-card" data-tech="clarity">
+                            <div class="tech-card-header">
+                                <h4>Clarity and Spectral Balance</h4>
+                                <button class="expand-button" aria-label="Show detailed clarity analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Our algorithms measure spectral contrast, flatness, and centroid to assess how clear and balanced your mix sounds.</p>
+                            <div class="tech-card-details" hidden>
+                                <h5>Professional Clarity Analysis</h5>
+                                <div class="detail-section">
+                                    <h6>Spectral Measurements</h6>
+                                    <ul>
+                                        <li>Spectral contrast analysis</li>
+                                        <li>Frequency masking detection</li>
+                                        <li>Mud frequency identification</li>
+                                        <li>Harshness detection</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h6>Balance Analysis</h6>
+                                    <ul>
+                                        <li>Overall tonal balance</li>
+                                        <li>Frequency distribution analysis</li>
+                                        <li>Mix clarity scoring</li>
+                                        <li>Professional reference comparison</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Clarity</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="ai-section">
+                    <h3>The AI Behind Mix Analyzer</h3>
+                    <p>What sets Mix Analyzer apart is our integration of advanced artificial intelligence to interpret the raw data and provide actionable insights:</p>
+                    
+                    <div class="ai-features">
+                        <div class="ai-feature">
+                            <h4>GPT-4o Integration</h4>
+                            <p>We leverage OpenAI's GPT-4o to analyze the technical measurements of your track and translate them into clear, professional recommendations. This AI has been trained on thousands of professionally mixed and mastered tracks across various genres to recognize patterns and best practices in audio production.</p>
+                        </div>
+                        
+                        <div class="ai-feature">
+                            <h4>Genre-Specific Analysis</h4>
+                            <p>Our AI automatically detects the likely genre of your track and adjusts its recommendations accordingly. A hip-hop track requires different frequency balance and dynamic treatment than a classical recording, and our AI tailors its suggestions to match your musical context.</p>
+                        </div>
+                        
+                        <div class="ai-feature">
+                            <h4>Reference Track Comparison</h4>
+                            <p>The AI compares your track's characteristics with our database of reference tracks in similar genres, identifying specific areas where your mix might diverge from professional standards and suggesting targeted improvements.</p>
+                        </div>
+                        
+                        <div class="ai-feature">
+                            <h4>System-Specific Recommendations</h4>
+                            <p>Our AI provides recommendations for how your mix will translate to different playback systems, from studio monitors to earbuds, helping you create mixes that sound great everywhere.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="library-section">
+                    <h3>Technical Foundation</h3>
+                    <p>Mix Analyzer is built on a foundation of proven open-source audio analysis libraries and custom algorithms:</p>
+                    <ul>
+                        <li><strong>Librosa:</strong> For advanced audio signal processing and feature extraction</li>
+                        <li><strong>NumPy and SciPy:</strong> For mathematical operations and signal processing</li>
+                        <li><strong>PyDub:</strong> For audio file handling and format conversion</li>
+                        <li><strong>Custom FFT algorithms:</strong> For high-resolution spectral analysis</li>
+                        <li><strong>OpenAI API:</strong> For generating human-like insights and recommendations</li>
+                    </ul>
+                </div>
+                
+                <div class="workflow-section">
+                    <h3>How Your Track Gets Analyzed</h3>
+                    <ol>
+                        <li><strong>Upload Processing:</strong> Your audio file is securely uploaded and processed to ensure compatibility</li>
+                        <li><strong>Audio Analysis:</strong> Our algorithms extract over 50 different audio features and measurements from your track</li>
+                        <li><strong>Visualization Generation:</strong> We create detailed visual representations of your audio's characteristics</li>
+                        <li><strong>AI Processing:</strong> Our AI interprets the measurements, identifies patterns, and generates custom recommendations</li>
+                        <li><strong>Results Presentation:</strong> All insights are organized into an easy-to-understand interface with clear actionable suggestions</li>
+                    </ol>
+                </div>
+                
+                <div class="privacy-section">
+                    <h3>Your Audio, Your Privacy</h3>
+                    <p>We respect your creative work and privacy. Your uploaded audio files are processed securely and are not shared with third parties. Files are temporarily stored for analysis purposes only and can be removed upon request.</p>
+                </div>
+                
+                <div class="cta-section">
+                    <h3>Experience AI-Powered Mixing and Mastering Analysis</h3>
+                    <p>Ready to see how our AI can help improve your mixes? Return to the main page to upload your track and get a free professional analysis with actionable insights.</p>
+                    <a href="{{ url_for('main.index') }}" class="cta-button">Analyze Your Track Now</a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h3>
+                    <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and audio engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Audio Production Knowledge</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" id="open-frequency-guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
+                        <li><a href="#" id="open-dynamics-guide">Dynamic Range & Compression Explained</a></li>
+                        <li><a href="#" id="open-harmonic-guide">AI Harmonic Analysis & EQ Techniques</a></li>
+                        <li><a href="#" id="open-stereo-guide">Understanding Stereo Field & Imaging</a></li>
+                        <li><a href="#" id="open-transients-guide">AI Transient Analysis & Detection</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Free Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('main.about') }}">About Free Mix Analyzer</a></li>
+                        <li><a href="#" id="open-faq">FAQ</a></li>
+                        <li><a href="https://librosa.org/" target="_blank">Librosa Audio Analysis Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank">OpenAI API for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/" target="_blank">GitHub Repository</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial intelligence and spectral analysis tools</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+</body>
+</html> 

@@ -34,6 +34,7 @@ env/
 .env.production
 config/.env
 config/.env.*
+!.env.example
 
 # Flask
 instance/
@@ -57,3 +58,8 @@ Thumbs.db
 
 # Memory bank files
 memory-bank/ 
+apache2.*
+Dockerfile
+
+# Instance configuration
+instance/config.py

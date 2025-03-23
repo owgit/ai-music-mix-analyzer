@@ -1042,6 +1042,83 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Footer Musical Theory Links
     setupMusicTheoryModals();
+
+    // Tech Card Expansion Functionality
+    const techCards = document.querySelectorAll('.tech-card');
+
+    techCards.forEach(card => {
+        const button = card.querySelector('.expand-button');
+        const details = card.querySelector('.tech-card-details');
+        const techType = card.getAttribute('data-tech');
+
+        if (button && details) {
+            // Remove hidden attribute and set initial state
+            details.removeAttribute('hidden');
+            
+            // Set initial ARIA attributes
+            button.setAttribute('aria-expanded', 'false');
+            button.setAttribute('aria-controls', `${techType}-details`);
+            details.setAttribute('id', `${techType}-details`);
+            
+            button.addEventListener('click', () => {
+                const isExpanded = card.classList.contains('expanded');
+                
+                // Close all other cards first
+                techCards.forEach(otherCard => {
+                    if (otherCard !== card) {
+                        const otherButton = otherCard.querySelector('.expand-button');
+                        const otherDetails = otherCard.querySelector('.tech-card-details');
+                        
+                        if (otherButton && otherDetails) {
+                            otherCard.classList.remove('expanded');
+                            otherDetails.classList.remove('expanded');
+                            otherButton.classList.remove('expanded');
+                            otherButton.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+                
+                // Toggle current card
+                card.classList.toggle('expanded');
+                button.classList.toggle('expanded');
+                details.classList.toggle('expanded');
+                
+                // Update ARIA attributes
+                button.setAttribute('aria-expanded', !isExpanded);
+                
+                // Smooth scroll into view if expanding
+                if (!isExpanded) {
+                    // Calculate the card's position relative to its container
+                    const cardRect = card.getBoundingClientRect();
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    
+                    // Scroll to the card's position with offset
+                    window.scrollTo({
+                        top: cardRect.top + scrollTop - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+    });
+
+    // Handle keyboard navigation
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            // Close all expanded cards when ESC is pressed
+            techCards.forEach(card => {
+                const button = card.querySelector('.expand-button');
+                const details = card.querySelector('.tech-card-details');
+                
+                if (button && details) {
+                    card.classList.remove('expanded');
+                    button.classList.remove('expanded');
+                    details.classList.remove('expanded');
+                    button.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
 });
 
 // Function to setup musical theory modals

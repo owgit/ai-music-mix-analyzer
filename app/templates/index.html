@@ -71,6 +71,10 @@
     <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
     <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}" sizes="16x16">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
+    
+    {% if config.ENABLE_ANALYTICS %}
+        {% include 'analytics.html' %}
+    {% endif %}
 </head>
 <body>
     <div class="container">
@@ -462,7 +466,7 @@
                 <div class="footer-section">
                     <h3>Free Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="#" id="open-about-app">About Free Mix Analyzer</a></li>
+                        <li><a href="{{ url_for('main.about') }}">About Mix Analyzer Technology</a></li>
                         <li><a href="#" id="open-faq">FAQ</a></li>
                         <li><a href="https://librosa.org/" target="_blank">Librosa Audio Analysis Library</a></li>
                         <li><a href="https://platform.openai.com/docs/introduction" target="_blank">OpenAI API for AI Mix Analysis</a></li>

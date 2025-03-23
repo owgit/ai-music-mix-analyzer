@@ -23,6 +23,11 @@ def index():
     """Render the main page"""
     return render_template('index.html')
 
+@main_bp.route('/about')
+def about():
+    """Render the about page"""
+    return render_template('about.html')
+
 @main_bp.route('/upload', methods=['POST'])
 def upload_file():
     """Handle file upload and analysis"""
