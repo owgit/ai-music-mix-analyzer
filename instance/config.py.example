@@ -1,0 +1,9 @@
+"""
+Instance-specific configuration
+Copy this file to 'instance/config.py' and update the values with your actual Matomo settings
+"""
+
+# Analytics Configuration
+ENABLE_ANALYTICS = True
+MATOMO_URL = "https://your-matomo-url/"  # Example: "https://analytics.example.com/"
+MATOMO_SITE_ID = "your-site-id"  # Example: "1" 

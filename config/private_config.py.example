@@ -1,0 +1,11 @@
+"""
+Private configuration example
+Copy this file to 'config/private_config.py' and update the values with your actual settings.
+
+DO NOT commit private_config.py to version control!
+"""
+
+# Analytics Configuration
+ENABLE_ANALYTICS = True
+MATOMO_URL = "https://your-analytics-url.com/"    # Your Matomo instance URL
+MATOMO_SITE_ID = "your-site-id"                   # Your Matomo site ID 

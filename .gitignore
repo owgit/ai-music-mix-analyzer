@@ -32,13 +32,14 @@ env/
 .env.development
 .env.test
 .env.production
-config/.env
-config/.env.*
 !.env.example
 
 # Flask
-instance/
 .webassets-cache
+
+# Configuration
+config/private_config.py
+!config/private_config.py.example
 
 # Uploads
 app/static/uploads/
@@ -60,6 +61,3 @@ Thumbs.db
 memory-bank/ 
 apache2.*
 Dockerfile
-
-# Instance configuration
-instance/config.py
