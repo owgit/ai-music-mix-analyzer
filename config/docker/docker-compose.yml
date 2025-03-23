@@ -2,15 +2,17 @@ version: '3'
 
 services:
   music-analyzer:
-    build: .
+    build:
+      context: ../..
+      dockerfile: config/docker/Dockerfile
     container_name: music-analyzer
     ports:
       - "127.0.0.1:5001:5000"
     volumes:
-      - ./app:/app/app
-      - ./config:/app/config
+      - ../../app:/app/app
+      - ../../config:/app/config
       - music_data:/app/static/uploads
-      - ./logs:/var/log/app
+      - ../../logs:/var/log/app
     restart: unless-stopped
     env_file:
       - .env
@@ -19,7 +21,13 @@ services:
       - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
       - MAX_UPLOAD_SIZE=100MB
-      - GUNICORN_CMD_ARGS="--access-logfile /var/log/app/access.log --error-logfile /var/log/app/error.log --log-level debug"
+      - GUNICORN_CMD_ARGS="--workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --access-logfile /var/log/app/access.log --error-logfile /var/log/app/error.log --log-level debug"
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health').raise_for_status()"]
       interval: 30s
@@ -31,6 +39,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    tmpfs:
+      - /dev/shm
 
 volumes:
   music_data:
