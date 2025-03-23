@@ -22,17 +22,9 @@ COPY . .
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/uploads \
-    && chmod -R 755 /app/uploads
-
-# Create non-root user
-RUN useradd -m appuser && chown -R appuser:appuser /app
-
-# Switch to non-root user
-USER appuser
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:5000/health || exit 1
+    && chown -R 1007:1008 /app \
+    && chmod -R 755 /app \
+    && chmod -R 775 /app/uploads
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
