@@ -5,8 +5,8 @@
   _paq.push(['trackPageView']);
   _paq.push(['enableLinkTracking']);
   (function() {
-    var u="{{ config.MATOMO_URL }}";
-    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    var u = '{{ config.MATOMO_URL|safe }}' + '/';
+    _paq.push(['setTrackerUrl', u + 'matomo.php']);
     _paq.push(['setSiteId', '{{ config.MATOMO_SITE_ID }}']);
     var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
     g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);

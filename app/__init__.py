@@ -52,6 +52,16 @@ def create_app(test_config=None):
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
     )
     
+    # Load configuration based on environment
+    if os.environ.get('FLASK_ENV') == 'production':
+        from config.config import ProductionConfig
+        app.config.from_object(ProductionConfig)
+        ProductionConfig.init_app(app)
+    else:
+        from config.config import DevelopmentConfig
+        app.config.from_object(DevelopmentConfig)
+        DevelopmentConfig.init_app(app)
+    
     # Override with test config if passed
     if test_config is not None:
         app.config.from_mapping(test_config)
@@ -89,19 +99,22 @@ def create_app(test_config=None):
     @app.after_request
     def add_security_headers(response):
         # Content Security Policy
-        response.headers['Content-Security-Policy'] = (
-            "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; "
-            "img-src 'self' data:; "
-            "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com; "
-            "connect-src 'self'; "
-            "media-src 'self'; "
-            "object-src 'none'; "
-            "frame-ancestors 'none'; "
-            "form-action 'self'; "
-            "base-uri 'self';"
-        )
+        csp = [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://seo.optagonen.se",
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
+            "img-src 'self' data: https://seo.optagonen.se",
+            "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
+            "connect-src 'self' https://seo.optagonen.se",
+            "media-src 'self'",
+            "object-src 'none'",
+            "frame-ancestors 'none'",
+            "form-action 'self'",
+            "base-uri 'self'"
+        ]
+        
+        response.headers['Content-Security-Policy'] = "; ".join(csp)
+        
         # Other security headers
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'DENY'
@@ -120,5 +133,9 @@ def create_app(test_config=None):
     
     from app.api.routes import api_bp
     app.register_blueprint(api_bp, url_prefix='/api')
+    
+    # Register health check
+    from app.healthcheck import healthcheck_bp
+    app.register_blueprint(healthcheck_bp)
     
     return app 

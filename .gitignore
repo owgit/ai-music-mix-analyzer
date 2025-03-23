@@ -61,3 +61,6 @@ Thumbs.db
 memory-bank/ 
 apache2.*
 Dockerfile
+
+# Docker
+docker-compose.override.yml

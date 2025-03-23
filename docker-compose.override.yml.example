@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  music-analyzer:
+    environment:
+      - ENABLE_ANALYTICS=false
+      - MATOMO_URL=your-matomo-url
+      - MATOMO_SITE_ID=your-site-id
+      # Add any other private environment variables here 
