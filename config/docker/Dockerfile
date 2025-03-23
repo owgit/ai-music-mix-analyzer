@@ -21,8 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 COPY . .
 
 # Create necessary directories and set permissions
-RUN mkdir -p /app/logs /app/uploads \
-    && chmod -R 755 /app/logs /app/uploads
+RUN mkdir -p /app/uploads \
+    && chmod -R 755 /app/uploads
 
 # Create non-root user
 RUN useradd -m appuser && chown -R appuser:appuser /app
@@ -51,7 +51,6 @@ CMD ["gunicorn", "--bind", "0.0.0.0:5000", \
      "--timeout", "300", \
      "--max-requests", "1000", \
      "--max-requests-jitter", "50", \
-     "--access-logfile", "/app/logs/access.log", \
-     "--error-logfile", "/app/logs/error.log", \
      "--log-level", "info", \
+     "--capture-output", \
      "wsgi:app"] 
