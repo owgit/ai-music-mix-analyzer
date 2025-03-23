@@ -20,6 +20,7 @@ services:
       - GUNICORN_MAX_REQUESTS_JITTER=50
     volumes:
       - ../..:/app
+      - ../../uploads:/app/uploads
     tmpfs:
       - /tmp:exec,size=1G
       - /dev/shm:size=2G

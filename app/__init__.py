@@ -48,7 +48,7 @@ def create_app(test_config=None):
     # Default configuration
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        UPLOAD_FOLDER=os.path.join(app.static_folder, 'uploads'),
+        UPLOAD_FOLDER=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'),
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
     )
     

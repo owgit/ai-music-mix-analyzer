@@ -21,8 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 COPY . .
 
 # Create necessary directories and set permissions
-RUN mkdir -p /app/logs /app/static/uploads /app/static/img \
-    && chmod -R 755 /app/logs /app/static/uploads /app/static/img
+RUN mkdir -p /app/logs /app/uploads \
+    && chmod -R 755 /app/logs /app/uploads
 
 # Create non-root user
 RUN useradd -m appuser && chown -R appuser:appuser /app
@@ -38,7 +38,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 ENV PYTHONUNBUFFERED=1 \
     FLASK_APP=wsgi.py \
     FLASK_ENV=production \
-    PYTHONPATH=/app
+    PYTHONPATH=/app \
+    UPLOAD_FOLDER=/app/uploads
 
 # Expose port
 EXPOSE 5000
