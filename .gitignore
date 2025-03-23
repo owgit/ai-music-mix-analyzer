@@ -64,3 +64,5 @@ Dockerfile
 
 # Docker
 docker-compose.override.yml
+logs/access.log
+logs/error.log
