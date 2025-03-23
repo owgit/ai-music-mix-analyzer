@@ -1,70 +1,56 @@
 FROM python:3.9-slim
 
-WORKDIR /app
-
 # Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y \
     build-essential \
-    libsndfile1 \
-    ffmpeg \
     curl \
+    ffmpeg \
+    libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first to leverage Docker cache
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies with optimizations
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir gunicorn==21.2.0 \
-    && pip install --no-cache-dir setproctitle
-
-# Create necessary directories with proper permissions
-RUN mkdir -p /app/static/uploads \
-    /app/static/img \
-    /var/log/app \
-    /var/www/.config/matplotlib \
-    /dev/shm/librosa_cache \
-    && chown -R www-data:www-data /app /var/log/app /var/www/.config /dev/shm/librosa_cache \
-    && chmod -R 755 /app \
-    && chmod -R 777 /app/static/uploads /app/static/img /var/log/app /var/www/.config/matplotlib /dev/shm/librosa_cache
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt gunicorn
 
 # Copy application code
 COPY . .
 
-# Create a health check endpoint
-RUN echo 'from flask import Blueprint\nhealthcheck_bp = Blueprint("healthcheck", __name__)\n\n@healthcheck_bp.route("/health")\ndef health_check():\n    return "OK", 200' > app/healthcheck.py
+# Create necessary directories and set permissions
+RUN mkdir -p /app/logs /app/static/uploads /app/static/img \
+    && chmod -R 755 /app/logs /app/static/uploads /app/static/img
 
-# Update __init__.py to register health check
-RUN sed -i '/from app.api.routes import api_bp/a \    from app.healthcheck import healthcheck_bp\n    app.register_blueprint(healthcheck_bp)' app/__init__.py
-
-# Set environment variables
-ENV FLASK_APP=app:create_app \
-    FLASK_ENV=production \
-    PYTHONUNBUFFERED=1 \
-    MPLCONFIGDIR=/var/www/.config/matplotlib \
-    LIBROSA_CACHE_DIR=/dev/shm/librosa_cache \
-    NUMBA_CACHE_DIR=/dev/shm/numba_cache \
-    PYTHONHASHSEED=0
+# Create non-root user
+RUN useradd -m appuser && chown -R appuser:appuser /app
 
 # Switch to non-root user
-USER www-data
+USER appuser
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/health || exit 1
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    FLASK_APP=wsgi.py \
+    FLASK_ENV=production \
+    PYTHONPATH=/app
 
 # Expose port
 EXPOSE 5000
 
-# Run the application with gunicorn for production
-CMD ["gunicorn", \
-     "--bind", "0.0.0.0:5000", \
-     "--worker-class", "gthread", \
+# Run the application with Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", \
      "--workers", "2", \
      "--threads", "4", \
-     "--worker-tmp-dir", "/dev/shm", \
      "--timeout", "300", \
      "--max-requests", "1000", \
      "--max-requests-jitter", "50", \
-     "--access-logfile", "/var/log/app/access.log", \
-     "--error-logfile", "/var/log/app/error.log", \
-     "--log-level", "debug", \
-     "--limit-request-line", "8190", \
-     "--limit-request-field_size", "8190", \
+     "--access-logfile", "/app/logs/access.log", \
+     "--error-logfile", "/app/logs/error.log", \
+     "--log-level", "info", \
      "wsgi:app"] 

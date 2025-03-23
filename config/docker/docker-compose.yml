@@ -6,41 +6,40 @@ services:
       context: ../..
       dockerfile: config/docker/Dockerfile
     container_name: music-analyzer
+    restart: unless-stopped
     ports:
       - "127.0.0.1:5001:5000"
-    volumes:
-      - ../../app:/app/app
-      - ../../config:/app/config
-      - music_data:/app/static/uploads
-      - ../../logs:/var/log/app
-    restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      - FLASK_APP=app:create_app
-      - FLASK_ENV=production
       - PYTHONUNBUFFERED=1
-      - MAX_UPLOAD_SIZE=100MB
-      - GUNICORN_CMD_ARGS="--workers 2 --threads 4 --worker-class gthread --worker-tmp-dir /dev/shm --access-logfile /var/log/app/access.log --error-logfile /var/log/app/error.log --log-level debug"
+      - FLASK_APP=wsgi.py
+      - FLASK_ENV=production
+      - GUNICORN_WORKERS=2
+      - GUNICORN_THREADS=4
+      - GUNICORN_TIMEOUT=300
+      - GUNICORN_MAX_REQUESTS=1000
+      - GUNICORN_MAX_REQUESTS_JITTER=50
+    volumes:
+      - ../..:/app
+    tmpfs:
+      - /tmp:exec,size=1G
+      - /dev/shm:size=2G
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 4G
         reservations:
-          memory: 512M
+          memory: 1G
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health').raise_for_status()"]
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 40s
     logging:
       driver: "json-file"
       options:
-        max-size: "10m"
-        max-file: "3"
-    tmpfs:
-      - /dev/shm
+        max-size: "20m"
+        max-file: "5"
 
 volumes:
   music_data:

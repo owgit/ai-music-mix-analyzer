@@ -225,4 +225,9 @@ def regenerate_stereo_field(file_id):
 def serve_error_image():
     """Serve a placeholder error image"""
     from flask import send_from_directory, current_app
-    return send_from_directory(os.path.join(current_app.static_folder, 'img'), 'error.png') 
+    return send_from_directory(os.path.join(current_app.static_folder, 'img'), 'error.png')
+
+@main_bp.route('/health')
+def health_check():
+    """Health check endpoint for Docker"""
+    return jsonify({"status": "healthy"}), 200 
