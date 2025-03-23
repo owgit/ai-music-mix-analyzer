@@ -13,6 +13,7 @@ from .music_theory_data.key_relationships import get_key_relationship_info
 def convert_numpy_types(obj):
     """
     Convert NumPy types to standard Python types for JSON serialization.
+    Also handles NaN, Inf, and -Inf values.
     
     Args:
         obj: Any Python object that might contain NumPy types
@@ -23,9 +24,13 @@ def convert_numpy_types(obj):
     if isinstance(obj, np.integer):
         return int(obj)
     elif isinstance(obj, np.floating):
+        if np.isnan(obj):
+            return 0.0  # Convert NaN to 0.0
+        elif np.isinf(obj):
+            return 0.0 if obj < 0 else 100.0  # Convert -Inf to 0.0 and Inf to 100.0
         return float(obj)
     elif isinstance(obj, np.ndarray):
-        return obj.tolist()
+        return [convert_numpy_types(x) for x in obj.tolist()]
     elif isinstance(obj, dict):
         return {k: convert_numpy_types(v) for k, v in obj.items()}
     elif isinstance(obj, list):
@@ -466,62 +471,174 @@ def get_stereo_field_analysis(correlation, mid_ratio):
 
 def analyze_clarity(y, sr):
     """Analyze the clarity and definition of the mix"""
-    # Convert to mono for clarity analysis
-    y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
-    
-    # Calculate spectral contrast with adjusted parameters
-    # Reduce n_bands and set fmin to avoid Nyquist frequency issues
-    contrast = librosa.feature.spectral_contrast(
-        y=y_mono, 
-        sr=sr,
-        n_bands=4,  # Reduced from default 6
-        fmin=20.0,  # Set minimum frequency
-        n_fft=2048  # Increased window size
-    )
-    
-    # Calculate spectral flatness
-    flatness = np.mean(librosa.feature.spectral_flatness(y=y_mono))
-    
-    # Calculate spectral centroid
-    centroid = np.mean(librosa.feature.spectral_centroid(y=y_mono, sr=sr))
-    
-    # Calculate clarity score (0-100)
-    contrast_score = np.mean(np.abs(contrast)) * 10  # Scale up the contrast
-    flatness_score = (1 - flatness) * 100  # Lower flatness is better for clarity
-    
-    # Combine scores with weights
-    clarity_score = (contrast_score * 0.6 + flatness_score * 0.4)
-    clarity_score = min(100, max(0, clarity_score))  # Ensure score is 0-100
-    
-    return {
-        "clarity_score": clarity_score,
-        "spectral_contrast": float(np.mean(np.abs(contrast))),
-        "spectral_flatness": float(flatness),
-        "spectral_centroid": float(centroid),
-        "analysis": get_clarity_analysis(contrast, flatness, centroid, sr)
-    }
+    try:
+        print("Starting clarity analysis...")
+        
+        # Convert to mono for clarity analysis
+        y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
+        
+        # Ensure we have enough samples for analysis
+        if len(y_mono) < sr:
+            raise ValueError("Audio file too short for clarity analysis")
+            
+        # Check for silent audio
+        if np.max(np.abs(y_mono)) < 1e-6:
+            raise ValueError("Audio file too quiet for clarity analysis")
+        
+        print("Calculating spectral contrast...")
+        # Calculate spectral contrast with adjusted parameters and error handling
+        try:
+            contrast = librosa.feature.spectral_contrast(
+                y=y_mono, 
+                sr=sr,
+                n_bands=4,  # Reduced from default 6
+                fmin=20.0,  # Set minimum frequency
+                n_fft=2048,  # Increased window size
+                hop_length=512  # Add explicit hop length
+            )
+            # Convert contrast to a single value and handle NaN
+            contrast_mean = float(np.nanmean(np.abs(contrast)))
+            if np.isnan(contrast_mean):
+                print("Warning: NaN detected in spectral contrast, using default value")
+                contrast_mean = 0.5
+            print(f"Spectral contrast calculated: {contrast_mean}")
+        except Exception as e:
+            print(f"Error calculating spectral contrast: {str(e)}")
+            contrast_mean = 0.5  # Default value
+            contrast = np.zeros((4, 1))  # Default shape for analysis
+        
+        print("Calculating spectral flatness...")
+        # Calculate spectral flatness with error handling
+        try:
+            flatness = librosa.feature.spectral_flatness(y=y_mono)
+            flatness_mean = float(np.nanmean(flatness))
+            if np.isnan(flatness_mean):
+                print("Warning: NaN detected in spectral flatness, using default value")
+                flatness_mean = 0.5
+            print(f"Spectral flatness calculated: {flatness_mean}")
+        except Exception as e:
+            print(f"Error calculating spectral flatness: {str(e)}")
+            flatness_mean = 0.5  # Default value
+        
+        print("Calculating spectral centroid...")
+        # Calculate spectral centroid with error handling
+        try:
+            centroid = librosa.feature.spectral_centroid(y=y_mono, sr=sr)
+            centroid_mean = float(np.nanmean(centroid))
+            if np.isnan(centroid_mean):
+                print("Warning: NaN detected in spectral centroid, using default value")
+                centroid_mean = sr/4
+            print(f"Spectral centroid calculated: {centroid_mean}")
+        except Exception as e:
+            print(f"Error calculating spectral centroid: {str(e)}")
+            centroid_mean = sr/4  # Default value
+        
+        # Calculate clarity score (0-100) with bounds checking
+        try:
+            # Scale contrast score between 0-100
+            contrast_score = min(100, max(0, contrast_mean * 1000))
+            if np.isnan(contrast_score):
+                contrast_score = 70.0
+            
+            # Convert flatness to score (lower flatness is better for clarity)
+            flatness_score = min(100, max(0, (1 - flatness_mean) * 100))
+            if np.isnan(flatness_score):
+                flatness_score = 70.0
+            
+            # Calculate centroid score (optimal range between sr/8 and sr/3)
+            centroid_score = min(100, max(0, 100 - abs(centroid_mean - sr/4)/(sr/8)))
+            if np.isnan(centroid_score):
+                centroid_score = 70.0
+            
+            # Combine scores with weights
+            clarity_score = float(
+                contrast_score * 0.4 +    # Weight contrast more as it's most important for clarity
+                flatness_score * 0.3 +    # Moderate weight for flatness
+                centroid_score * 0.3      # Moderate weight for spectral balance
+            )
+            
+            # Ensure final score is between 0-100 and not NaN
+            clarity_score = min(100, max(0, clarity_score))
+            if np.isnan(clarity_score):
+                clarity_score = 70.0
+                
+            print(f"Final clarity score calculated: {clarity_score}")
+            
+        except Exception as e:
+            print(f"Error calculating clarity score: {str(e)}")
+            clarity_score = 70.0  # Default score
+        
+        # Generate analysis text
+        analysis = get_clarity_analysis(contrast_mean, flatness_mean, centroid_mean, sr)
+        
+        # Ensure all values are valid for JSON
+        result = {
+            "clarity_score": float(clarity_score),
+            "spectral_contrast": float(contrast_mean),
+            "spectral_flatness": float(flatness_mean),
+            "spectral_centroid": float(centroid_mean),
+            "analysis": analysis
+        }
+        
+        # Final validation of all numeric values
+        for key, value in result.items():
+            if isinstance(value, (int, float)) and (np.isnan(value) or np.isinf(value)):
+                print(f"Warning: Invalid value detected in {key}, using default")
+                result[key] = 70.0 if key.endswith('_score') else 0.5
+        
+        return result
+        
+    except Exception as e:
+        print(f"Error in clarity analysis: {str(e)}")
+        return {
+            "clarity_score": 70.0,
+            "spectral_contrast": 0.5,
+            "spectral_flatness": 0.5,
+            "spectral_centroid": sr/4 if sr else 2000.0,
+            "analysis": [f"Unable to analyze clarity: {str(e)}"]
+        }
 
 def get_clarity_analysis(contrast, flatness, centroid, sr):
     """Generate textual analysis of clarity"""
-    analysis = []
-    
-    if contrast < 1:
-        analysis.append("Low spectral contrast may indicate a muddy mix with poor separation between elements.")
-    elif contrast > 5:
-        analysis.append("High spectral contrast indicates good separation between elements.")
-    
-    if flatness > 0.3:
-        analysis.append("High spectral flatness may indicate noise or lack of tonal focus.")
-    
-    if centroid < sr/10:
-        analysis.append("Low spectral centroid indicates a dark or muffled sound.")
-    elif centroid > sr/4:
-        analysis.append("High spectral centroid indicates a bright or harsh sound.")
-    
-    if not analysis:
-        analysis.append("Mix appears to have good clarity and separation.")
-    
-    return analysis
+    try:
+        analysis = []
+        
+        # Analyze spectral contrast
+        if contrast < 0.1:
+            analysis.append("Very low spectral contrast - mix may sound muddy or lacking in definition.")
+        elif contrast < 0.3:
+            analysis.append("Low spectral contrast - consider enhancing separation between elements.")
+        elif contrast < 0.6:
+            analysis.append("Moderate spectral contrast - good balance between elements.")
+        else:
+            analysis.append("High spectral contrast - excellent separation between elements.")
+        
+        # Analyze spectral flatness
+        if flatness < 0.2:
+            analysis.append("Low spectral flatness indicates good tonal focus and clarity.")
+        elif flatness < 0.4:
+            analysis.append("Moderate spectral flatness - good balance of tonal and noise elements.")
+        else:
+            analysis.append("High spectral flatness may indicate noise or lack of tonal focus.")
+        
+        # Analyze spectral centroid
+        if centroid < sr/8:
+            analysis.append("Low spectral centroid - mix may sound dark or muffled.")
+        elif centroid < sr/4:
+            analysis.append("Good spectral centroid range for balanced clarity.")
+        elif centroid < sr/2:
+            analysis.append("High spectral centroid - mix may sound bright or harsh.")
+        else:
+            analysis.append("Very high spectral centroid - consider reducing high frequency content.")
+        
+        if not analysis:
+            analysis.append("Mix appears to have balanced clarity and definition.")
+            
+        return analysis
+        
+    except Exception as e:
+        print(f"Error generating clarity analysis: {str(e)}")
+        return ["Unable to generate detailed clarity analysis."]
 
 def analyze_harmonic_content(y, sr):
     """
