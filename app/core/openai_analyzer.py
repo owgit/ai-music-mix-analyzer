@@ -28,6 +28,26 @@ def get_openai_api_key():
         
     return api_key
 
+def get_openrouter_api_key():
+    """
+    Get the OpenRouter API key from environment variables.
+    Raises a ValueError if the key is not set.
+    
+    Returns:
+        str: The OpenRouter API key
+    """
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    
+    if not api_key:
+        logger.error("OpenRouter API key is not set in the environment")
+        raise ValueError("OpenRouter API key is not set. Please set the OPENROUTER_API_KEY environment variable.")
+    
+    # Log the first few characters of the key to verify it's loaded (not the entire key)
+    if api_key:
+        logger.info(f"OpenRouter API key loaded successfully (starts with: {api_key[:3]}...)")
+        
+    return api_key
+
 def strip_markdown(text):
     """
     Remove markdown formatting from text.
@@ -58,14 +78,54 @@ def strip_markdown(text):
 
 def analyze_with_gpt(analysis_results, is_instrumental=None):
     """
-    Use OpenAI's GPT-4o model to provide additional insights on the mix analysis.
+    Use AI models (OpenAI or OpenRouter) to provide additional insights on the mix analysis.
     
     Args:
         analysis_results: Dictionary containing the analysis results from our audio analyzer
         is_instrumental: Boolean indicating if the track is instrumental (None if unknown)
         
     Returns:
-        Dictionary containing GPT's analysis and suggestions
+        Dictionary containing AI analysis and suggestions
+    """
+    try:
+        # Get the AI provider from environment variable with fallback to OpenAI
+        ai_provider = os.environ.get("AI_PROVIDER", "openai").lower()
+        logger.info(f"Using AI provider: {ai_provider}")
+        
+        # Create the prompt with separate system and user messages
+        system_prompt, user_message = create_prompt(analysis_results, is_instrumental)
+        
+        # Call the appropriate API based on the provider
+        if ai_provider == "openrouter":
+            sections = analyze_with_openrouter(system_prompt, user_message)
+        else:  # Default to OpenAI
+            sections = analyze_with_openai(system_prompt, user_message)
+        
+        return sections
+        
+    except Exception as e:
+        logger.error(f"Error generating AI insights: {str(e)}")
+        return {
+            "error": str(e),
+            "summary": "Unable to generate AI analysis at this time.",
+            "strengths": ["N/A"],
+            "weaknesses": ["N/A"],
+            "suggestions": ["N/A"],
+            "reference_tracks": ["N/A"],
+            "processing_recommendations": ["N/A"],
+            "translation_recommendations": ["N/A"]
+        }
+
+def analyze_with_openai(system_prompt, user_message):
+    """
+    Use OpenAI's models to analyze the mix data.
+    
+    Args:
+        system_prompt: System prompt for the model
+        user_message: User message containing the analysis data
+        
+    Returns:
+        Dictionary containing the parsed sections of the model's response
     """
     try:
         # Get the API key using our secure function
@@ -84,9 +144,6 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
         # Create OpenAI client
         client = OpenAI(api_key=api_key, http_client=http_client)
         
-        # Create the prompt with separate system and user messages
-        system_prompt, user_message = create_prompt(analysis_results, is_instrumental)
-        
         # Call the OpenAI API
         logger.info("Sending request to OpenAI API")
         response = client.chat.completions.create(
@@ -104,22 +161,74 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
         logger.info("Received response from OpenAI API")
         
         # Parse the response into sections
-        sections = parse_response(response_text)
-        
-        return sections
-        
+        return parse_response(response_text)
+    
     except Exception as e:
-        logger.error(f"Error generating AI insights: {str(e)}")
-        return {
-            "error": str(e),
-            "summary": "Unable to generate AI analysis at this time.",
-            "strengths": ["N/A"],
-            "weaknesses": ["N/A"],
-            "suggestions": ["N/A"],
-            "reference_tracks": ["N/A"],
-            "processing_recommendations": ["N/A"],
-            "translation_recommendations": ["N/A"]
-        }
+        logger.error(f"Error using OpenAI: {str(e)}")
+        raise
+
+def analyze_with_openrouter(system_prompt, user_message):
+    """
+    Use OpenRouter's models to analyze the mix data.
+    
+    Args:
+        system_prompt: System prompt for the model
+        user_message: User message containing the analysis data
+        
+    Returns:
+        Dictionary containing the parsed sections of the model's response
+    """
+    try:
+        # Get the API key using our secure function
+        api_key = get_openrouter_api_key()
+        
+        # Get the model from environment variable
+        model = os.environ.get("OPENROUTER_MODEL", "anthropic/claude-3-haiku-20240307")
+        logger.info(f"Using OpenRouter model: {model}")
+        
+        # Site information for OpenRouter tracking
+        site_url = os.environ.get("SITE_URL", "")
+        site_title = os.environ.get("SITE_TITLE", "Mix Analyzer")
+        
+        # Create a custom HTTP client without proxies
+        http_client = httpx.Client(
+            timeout=60.0,
+            follow_redirects=True
+        )
+        
+        # Create OpenAI client with OpenRouter base URL
+        client = OpenAI(
+            api_key=api_key,
+            base_url="https://openrouter.ai/api/v1",
+            http_client=http_client
+        )
+        
+        # Call the OpenRouter API via OpenAI compatible interface
+        logger.info("Sending request to OpenRouter API")
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=2500,
+            temperature=0.7,
+            extra_headers={
+                "HTTP-Referer": site_url,
+                "X-Title": site_title
+            }
+        )
+        
+        # Extract the response
+        response_text = response.choices[0].message.content
+        logger.info("Received response from OpenRouter API")
+        
+        # Parse the response into sections
+        return parse_response(response_text)
+    
+    except Exception as e:
+        logger.error(f"Error using OpenRouter: {str(e)}")
+        raise
 
 def create_prompt(results, is_instrumental=None):
     """

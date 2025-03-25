@@ -73,6 +73,17 @@ def upload_file():
             try:
                 ai_insights = analyze_with_gpt(results, is_instrumental)
                 results["ai_insights"] = ai_insights
+                
+                # Get the AI provider and model being used
+                ai_provider = os.environ.get("AI_PROVIDER", "openai").lower()
+                if ai_provider == "openrouter":
+                    model_name = os.environ.get("OPENROUTER_MODEL", "anthropic/claude-3-haiku-20240307")
+                else:
+                    model_name = os.environ.get("OPENAI_MODEL", "gpt-4o")
+                    
+                # Add the model information to the AI insights
+                results["ai_insights"]["model_used"] = model_name
+                
             except Exception as e:
                 print(f"Error generating AI insights: {str(e)}")
                 results["ai_insights"] = {
@@ -80,7 +91,8 @@ def upload_file():
                     "summary": "Unable to generate AI insights at this time.",
                     "strengths": ["N/A"],
                     "weaknesses": ["N/A"],
-                    "suggestions": ["N/A"]
+                    "suggestions": ["N/A"],
+                    "model_used": "Unknown"
                 }
             
             # Regenerate visualizations to ensure they're up to date

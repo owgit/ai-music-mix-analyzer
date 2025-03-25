@@ -643,6 +643,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('ai-error').style.display = 'none';
         }
         
+        // Set model name
+        const modelNameElement = document.getElementById('ai-model-used');
+        if (aiInsights.model_used) {
+            modelNameElement.textContent = aiInsights.model_used;
+        } else {
+            modelNameElement.textContent = "AI Model";
+        }
+        
         // Set summary
         document.getElementById('ai-summary').textContent = aiInsights.summary;
         
