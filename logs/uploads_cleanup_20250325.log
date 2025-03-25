@@ -1,0 +1,16 @@
+2025-03-25 11:46:28,436 - INFO - Running uploads cleanup with 30 days retention (dry run)
+2025-03-25 11:46:29,808 - INFO - Checking for files older than 30 days in /Users/uygarduzgun/Sites/music/uploads
+2025-03-25 11:46:29,809 - INFO - Dry run completed. Would delete 0 directories containing uploads older than 30 days.
+2025-03-25 11:46:29,809 - INFO - Uploads cleanup completed successfully
+2025-03-25 11:47:23,573 - INFO - 
+2025-03-25 11:47:24,472 - INFO - Checking for files older than 30 days in /Users/uygarduzgun/Sites/music/uploads
+2025-03-25 11:47:24,472 - INFO - Cleanup completed. Deleted 0 directories containing uploads older than 30 days.
+2025-03-25 11:47:24,472 - INFO - Uploads cleanup completed successfully
+2025-03-25 11:47:59,747 - INFO - 
+2025-03-25 11:48:00,636 - INFO - Checking for files older than 0 days in /Users/uygarduzgun/Sites/music/uploads
+2025-03-25 11:48:00,636 - INFO - Deleting directory (older than 0 days): /Users/uygarduzgun/Sites/music/uploads/115_cminXXX
+2025-03-25 11:48:00,636 - INFO - Deleting directory (older than 0 days): /Users/uygarduzgun/Sites/music/uploads/115_Bmin_inst
+2025-03-25 11:48:00,637 - INFO - Deleting directory (older than 0 days): /Users/uygarduzgun/Sites/music/uploads/115_Bmin_prod
+2025-03-25 11:48:00,638 - INFO - Deleting directory (older than 0 days): /Users/uygarduzgun/Sites/music/uploads/115_cmin__rapp
+2025-03-25 11:48:00,638 - INFO - Cleanup completed. Deleted 4 directories containing uploads older than 0 days.
+2025-03-25 11:48:00,638 - INFO - Uploads cleanup completed successfully

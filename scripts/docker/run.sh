@@ -6,6 +6,11 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Get the project root directory
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )"
+DOCKER_COMPOSE_FILE="$PROJECT_ROOT/docker-compose.yml"
+DOCKER_COMPOSE_OVERRIDE="$PROJECT_ROOT/docker-compose.override.yml"
+
 echo -e "${YELLOW}Music Mix Analyzer - Docker Setup${NC}"
 echo "----------------------------------------"
 
@@ -28,20 +33,23 @@ if docker ps | grep -q music-analyzer; then
     echo -e "${YELLOW}Music Analyzer is already running.${NC}"
     echo "Access it at: http://localhost:5001"
     echo ""
-    echo "To stop it, run: docker-compose down"
+    echo "To stop it, run: ./scripts/docker/stop.sh"
     exit 0
 fi
 
+# Change to the project root directory
+cd "$PROJECT_ROOT"
+
 # Build and start the container
 echo -e "${YELLOW}Building and starting the Docker container...${NC}"
-docker-compose up -d
+docker-compose -f "$DOCKER_COMPOSE_FILE" up -d --build
 
 # Check if the container started successfully
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Music Analyzer is now running!${NC}"
     echo "Access it at: http://localhost:5001"
     echo ""
-    echo "To stop it, run: docker-compose down"
+    echo "To stop it, run: ./scripts/docker/stop.sh"
     echo ""
     echo "To view logs, run: docker-compose logs -f"
 else

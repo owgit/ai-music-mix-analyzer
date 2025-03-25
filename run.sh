@@ -1,1 +1,1 @@
-scripts/run.sh
+scripts/docker/run.sh

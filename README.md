@@ -205,6 +205,147 @@ Run the security check script to identify potential security issues:
 python scripts/security_check.py
 ```
 
+This script checks for common security misconfigurations and vulnerabilities.
+
+## 📄 Environment Configuration
+
+### Environment Files
+
+The project uses a structured approach to environment variables:
+
+1. **Root `.env` File**
+   - Primary source of all configuration variables
+   - Contains API keys, model settings, security keys and application settings
+   - Created from `.env.example` when setting up the project
+   - Values defined here are used by both standard and Docker installations
+
+2. **Docker-specific Settings**
+   - `config/docker/.env` contains only Docker-specific overrides
+   - These values extend or override the root .env file settings when using Docker
+
+3. **Local Overrides**
+   - `docker-compose.override.yml` allows additional customization for your local Docker installation
+   - Created from `docker-compose.override.yml.example`
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| **API Keys** |  |  |
+| `OPENAI_API_KEY` | Your OpenAI API key | None (required) |
+| `OPENROUTER_API_KEY` | Your OpenRouter API key (optional) | None |
+| **Model Configuration** |  |  |
+| `AI_PROVIDER` | Which AI provider to use ("openai" or "openrouter") | "openai" |
+| `OPENAI_MODEL` | OpenAI model to use | "gpt-4o-mini" |
+| `OPENROUTER_MODEL` | OpenRouter model to use | "anthropic/claude-3-haiku-20240307" |
+| **Security** |  |  |
+| `API_KEY` | Internal API authentication key | Generated |
+| `SECRET_KEY` | Flask secret key | Generated |
+| **Analytics** |  |  |
+| `ENABLE_ANALYTICS` | Whether to enable analytics | "false" |
+| `MATOMO_URL` | Analytics platform URL | None |
+| `MATOMO_SITE_ID` | Analytics site ID | None |
+
+### Sanitizing Environment Files
+
+To prevent accidentally committing API keys and secrets:
+
+```bash
+python scripts/sanitize_env.py
+```
+
+This script removes sensitive information from all environment files before committing.
+
+## 🛠 Script Organization & Project Management
+
+### Management Script
+
+The project includes a unified management script (`manage.py`) that provides a streamlined interface for common tasks:
+
+```bash
+# Run the Flask application
+./manage.py run [--production] [--port PORT]
+
+# Run project checks
+./manage.py check [--all|--project|--security|--env|--imports|--uploads]
+
+# Set up the environment
+./manage.py setup [--generate-key] [--apple-silicon]
+
+# Run Docker commands
+./manage.py docker --start|--stop|--update
+
+# Handle security tasks
+./manage.py security --sanitize [--dry-run] | --check
+```
+
+### Script Directory Structure
+
+Scripts are organized in a modular structure for better maintainability:
+
+```
+scripts/
+├── __init__.py          # Makes scripts a Python package
+├── run_checks.py        # Comprehensive check runner
+├── utils/               # Utility scripts
+│   ├── __init__.py
+│   ├── env_loader.py    # Environment variable loader
+│   ├── sanitize_env.py  # Environment file sanitizer
+│   └── migrate_uploads.py # Uploads directory migration
+├── setup/               # Setup scripts
+│   ├── __init__.py
+│   ├── generate_secret_key.py # Secret key generator
+│   └── setup_apple_silicon.sh # Apple Silicon setup
+├── checks/              # Validation scripts
+│   ├── __init__.py
+│   ├── check_app_structure.py # App structure validation
+│   ├── check_env_consistency.py # Environment validation
+│   ├── security_check.py # Security audit
+│   └── ... (other check scripts)
+└── docker/              # Docker-related scripts
+    ├── __init__.py
+    ├── run.sh           # Start Docker containers
+    ├── stop.sh          # Stop Docker containers
+    └── update.sh        # Update Docker containers
+```
+
+### Common Script Tasks
+
+**Environment Setup**:
+```bash
+# Generate a new secure secret key
+python -m scripts.setup.generate_secret_key --update-env
+
+# Check environment configuration
+python -m scripts.checks.check_env_consistency
+```
+
+**Security**:
+```bash
+# Sanitize environment files (remove API keys)
+python -m scripts.utils.sanitize_env
+
+# Run security check
+python -m scripts.checks.security_check
+```
+
+**Docker Management**:
+```bash
+# Start Docker containers
+./scripts/docker/run.sh
+
+# Stop Docker containers
+./scripts/docker/stop.sh
+```
+
+**Project Validation**:
+```bash
+# Run all project checks
+python scripts/run_checks.py
+```
+
+## 🖥️ User Interface
+
 ## 🔍 How It Works
 
 The application combines advanced DSP (Digital Signal Processing) algorithms with modern web technologies to provide deep insights into your mix:

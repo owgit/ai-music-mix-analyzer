@@ -6,13 +6,16 @@ import os
 import sys
 from dotenv import load_dotenv
 
-# Try to load environment variables from multiple locations
-if os.path.exists('.env'):
-    load_dotenv()
-elif os.path.exists('config/.env'):
-    load_dotenv('config/.env')
-else:
-    print("Warning: No .env file found in root or config directory.")
+# Try to load environment variables only if not already loaded
+if not os.environ.get('ENV_LOADED'):
+    if os.path.exists('.env'):
+        load_dotenv()
+    elif os.path.exists('config/.env'):
+        load_dotenv('config/.env')
+    else:
+        print("Warning: No .env file found in root or config directory.")
+    # Mark environment as loaded
+    os.environ['ENV_LOADED'] = 'true'
 
 # Add the current directory to the Python path
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
