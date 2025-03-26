@@ -46,6 +46,10 @@ app/static/uploads/
 uploads/
 *.DS_Store
 
+# Feedback data
+app/data/feedback/
+*.json
+
 # IDE files
 .idea/
 .vscode/

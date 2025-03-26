@@ -86,6 +86,14 @@
                     <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to analyze frequency balance, dynamic range, stereo imaging, and get professional AI-powered mix improvement suggestions at no cost</p>
                 </div>
             </div>
+            <div class="header-actions">
+                <button id="open-feedback-btn" class="feedback-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                        <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" fill="currentColor"/>
+                    </svg>
+                    Beta Feedback
+                </button>
+            </div>
         </header>
 
         <main>
@@ -480,9 +488,71 @@
         </footer>
     </div>
 
+    <!-- Feedback Beta Modal -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-content feedback-modal-content">
+            <div class="modal-title">Beta Feedback</div>
+            <button class="close-button" id="close-feedback-modal">&times;</button>
+            
+            <div class="feedback-form-container">
+                <form id="feedback-form">
+                    <div class="feedback-field">
+                        <label for="feedback-email">Email (optional)</label>
+                        <input type="email" id="feedback-email" name="email" placeholder="Your email address">
+                    </div>
+                    
+                    <div class="feedback-field">
+                        <label for="feedback-rating">Rating</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5" required>
+                            <label for="star5" title="5 stars">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4" title="4 stars">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3" title="3 stars">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2" title="2 stars">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1" title="1 star">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-field">
+                        <label for="feedback-type">Feedback Type</label>
+                        <select id="feedback-type" name="feedback_type" required>
+                            <option value="" disabled selected>Select a feedback type</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="improvement">Improvement Suggestion</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="feedback-field">
+                        <label for="feedback-message">Your Feedback</label>
+                        <textarea id="feedback-message" name="message" rows="4" placeholder="Please share your thoughts, suggestions, or report issues..." required></textarea>
+                    </div>
+                    
+                    <div class="feedback-field checkbox-field">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="feedback-consent" name="consent" required>
+                            <span class="checkbox-text">I consent to having this feedback stored for product improvement purposes</span>
+                        </label>
+                    </div>
+                    
+                    <div class="feedback-submit">
+                        <button type="submit" id="submit-feedback" class="feedback-submit-btn">Submit Feedback</button>
+                        <div id="feedback-status" class="feedback-status"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
 </body>
 </html> 

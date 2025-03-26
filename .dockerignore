@@ -52,6 +52,8 @@ app/static/uploads/*
 uploads/
 memory-bank/
 app.py.old
+app/data/feedback/*
+!app/data/feedback/.gitkeep
 
 # Test files
 test_*.py

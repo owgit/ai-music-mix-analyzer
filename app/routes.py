@@ -7,6 +7,9 @@ from flask import Blueprint, render_template, request, jsonify, redirect, url_fo
 from werkzeug.utils import secure_filename
 import uuid
 import traceback
+import json
+import datetime
+from pathlib import Path
 
 from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types
 from app.core.openai_analyzer import analyze_with_gpt
@@ -242,4 +245,61 @@ def serve_error_image():
 @main_bp.route('/health')
 def health_check():
     """Health check endpoint for Docker"""
-    return jsonify({"status": "healthy"}), 200 
+    return jsonify({"status": "healthy"}), 200
+
+@main_bp.route('/api/feedback', methods=['POST'])
+def submit_feedback():
+    """Handle feedback submission and store it securely"""
+    try:
+        # Get the feedback data from request
+        data = request.json
+        
+        # Validate required fields
+        required_fields = ['rating', 'feedback_type', 'message', 'consent']
+        if not all(field in data for field in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        # Ensure consent is provided
+        if not data.get('consent'):
+            return jsonify({'error': 'Consent is required'}), 400
+        
+        # Create the feedback directory if it doesn't exist
+        from flask import current_app
+        feedback_dir = os.path.join(current_app.instance_path, '..', 'app', 'data', 'feedback')
+        os.makedirs(feedback_dir, exist_ok=True)
+        
+        # Create a unique ID for the feedback
+        feedback_id = str(uuid.uuid4())
+        timestamp = datetime.datetime.now().isoformat()
+        
+        # Prepare the feedback data
+        feedback_data = {
+            'id': feedback_id,
+            'timestamp': timestamp,
+            'rating': data.get('rating'),
+            'feedback_type': data.get('feedback_type'),
+            'message': data.get('message'),
+            'email': data.get('email', ''),  # Optional
+            'user_agent': request.user_agent.string,
+            'ip_hash': hash(request.remote_addr)  # Store hash instead of actual IP
+        }
+        
+        # Create the filename with timestamp for uniqueness
+        date_prefix = datetime.datetime.now().strftime('%Y%m%d')
+        filename = f"{date_prefix}_{feedback_id}.json"
+        file_path = os.path.join(feedback_dir, filename)
+        
+        # Write the data to file
+        with open(file_path, 'w') as f:
+            json.dump(feedback_data, f, indent=2)
+        
+        return jsonify({
+            'success': True,
+            'message': 'Feedback submitted successfully',
+            'feedback_id': feedback_id
+        })
+        
+    except Exception as e:
+        print(f"Error submitting feedback: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500 

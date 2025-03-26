@@ -306,4 +306,41 @@
     #transients-chart {
         height: 250px !important;
     }
+}
+
+/* Responsive styles for feedback modal and button */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .header-actions {
+        margin-left: 0;
+        margin-top: 15px;
+    }
+    
+    .feedback-modal-content {
+        width: 90%;
+        max-height: 80vh;
+    }
+    
+    .star-rating label {
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .feedback-button {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+    
+    .feedback-field {
+        margin-bottom: 15px;
+    }
+    
+    .star-rating label {
+        font-size: 22px;
+    }
 } 
