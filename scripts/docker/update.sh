@@ -96,11 +96,30 @@ if [[ ! -f ".dockerignore" ]] && [[ -f "config/docker/.dockerignore" ]]; then
 fi
 
 echo "Rebuilding Docker containers..."
+
+# Stop and remove existing containers first
+echo "Stopping and removing existing containers..."
+docker-compose down --remove-orphans
+
+# Remove existing container if it exists
+if docker ps -a | grep -q "music-analyzer"; then
+    echo "Removing existing music-analyzer container..."
+    docker rm -f music-analyzer
+fi
+
+# Build and start containers
+echo "Building fresh containers..."
 docker-compose build
 
-echo "Restarting Docker containers..."
-docker-compose down
+echo "Starting containers..."
 docker-compose up -d
 
-echo "Update completed successfully!"
-echo "To view logs, run: docker-compose logs -f" 
+# Check if containers started successfully
+if docker ps | grep -q "music-analyzer"; then
+    echo "Update completed successfully!"
+    echo "To view logs, run: docker-compose logs -f"
+else
+    echo "Error: Failed to start containers. Check logs for details."
+    docker-compose logs
+    exit 1
+fi 
