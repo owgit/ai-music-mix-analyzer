@@ -109,7 +109,7 @@ fi
 
 # Build and start containers
 echo "Building fresh containers..."
-docker-compose build
+docker-compose build --no-cache
 
 echo "Starting containers..."
 docker-compose up -d
