@@ -2,7 +2,7 @@
 # Mix Analyzer - Docker Update Script
 
 # Change to the project root directory
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../.."
 PROJECT_ROOT=$(pwd)
 echo "Project root: $PROJECT_ROOT"
 
@@ -17,6 +17,9 @@ if [ $? -ne 0 ]; then
     echo "Error: Git pull failed. Aborting update."
     exit 1
 fi
+
+# Ensure config directory exists
+mkdir -p config/docker
 
 echo "Rebuilding Docker containers..."
 docker-compose build
