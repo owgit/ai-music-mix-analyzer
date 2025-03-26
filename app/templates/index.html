@@ -114,7 +114,7 @@
                         <p class="upload-subtitle">MP3, WAV, FLAC, AIFF, M4A formats supported for free professional audio analysis with artificial intelligence</p>
                         <p>or</p>
                         <label for="file-input" class="upload-button">Choose File</label>
-                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm" hidden>
+                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm" data-track-upload="true" hidden>
                     </div>
                     <div class="progress-container" id="progress-container" style="display: none;">
                         <div class="progress-header">
@@ -173,14 +173,14 @@
                 </div>
 
                 <div class="tabs" role="tablist">
-                    <button class="tab-button active" data-tab="frequency" role="tab" aria-selected="true">Frequency Balance</button>
-                    <button class="tab-button" data-tab="dynamics" role="tab" aria-selected="false">Dynamics</button>
-                    <button class="tab-button" data-tab="stereo" role="tab" aria-selected="false">Stereo Field</button>
-                    <button class="tab-button" data-tab="clarity" role="tab" aria-selected="false">Clarity</button>
-                    <button class="tab-button" data-tab="harmonic" role="tab" aria-selected="false">Harmonic</button>
-                    <button class="tab-button" data-tab="transients" role="tab" aria-selected="false">Transients</button>
-                    <button class="tab-button" data-tab="visualizations" role="tab" aria-selected="false">Visualizations</button>
-                    <button class="tab-button" data-tab="ai-insights" role="tab" aria-selected="false">AI Insights</button>
+                    <button class="tab-button active" data-tab="frequency" role="tab" aria-label="Frequency Balance" aria-selected="true">Frequency Balance</button>
+                    <button class="tab-button" data-tab="dynamics" role="tab" aria-label="Dynamics" aria-selected="false">Dynamics</button>
+                    <button class="tab-button" data-tab="stereo" role="tab" aria-label="Stereo Field" aria-selected="false">Stereo Field</button>
+                    <button class="tab-button" data-tab="clarity" role="tab" aria-label="Clarity" aria-selected="false">Clarity</button>
+                    <button class="tab-button" data-tab="harmonic" role="tab" aria-label="Harmonic" aria-selected="false">Harmonic</button>
+                    <button class="tab-button" data-tab="transients" role="tab" aria-label="Transients" aria-selected="false">Transients</button>
+                    <button class="tab-button" data-tab="visualizations" role="tab" aria-label="Visualizations" aria-selected="false">Visualizations</button>
+                    <button class="tab-button" data-tab="ai-insights" role="tab" aria-label="AI Insights" aria-selected="false">AI Insights</button>
                 </div>
 
                 <div class="tab-content">
@@ -345,7 +345,7 @@
                             <div class="visualization-card">
                                 <h3>Waveform</h3>
                                 <div class="visualization-container" title="Click to enlarge">
-                                    <img id="waveform-img" src="" alt="Audio waveform visualization showing amplitude over time">
+                                    <img id="waveform-img" src="" alt="Audio waveform visualization showing amplitude over time" data-track-name="Waveform">
                                 </div>
                             </div>
                             <div class="visualization-card">
@@ -466,11 +466,11 @@
                 <div class="footer-section">
                     <h3>Free Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('main.about') }}">About Mix Analyzer Technology</a></li>
-                        <li><a href="#" id="open-faq">FAQ</a></li>
-                        <li><a href="https://librosa.org/" target="_blank">Librosa Audio Analysis Library</a></li>
-                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/" target="_blank">GitHub Repository</a></li>
+                        <li><a href="{{ url_for('main.about') }}" data-track-download="About Mix Analyzer">About Mix Analyzer Technology</a></li>
+                        <li><a href="#" id="open-faq" data-track-download="FAQ">FAQ</a></li>
+                        <li><a href="https://librosa.org/" target="_blank" data-track-download="Librosa Docs">Librosa Audio Analysis Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" data-track-download="OpenAI Docs">OpenAI API for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/" target="_blank" data-track-download="GitHub Repo">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>

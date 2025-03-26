@@ -43,6 +43,8 @@ config/private_config.py
 
 # Uploads
 app/static/uploads/
+uploads/
+*.DS_Store
 
 # IDE files
 .idea/
