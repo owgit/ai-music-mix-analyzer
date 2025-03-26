@@ -10,6 +10,7 @@ from dotenv import load_dotenv, find_dotenv
 from flask.json.provider import DefaultJSONProvider
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import datetime
 
 # Load environment variables from .env file only if not already loaded
 if not os.environ.get('ENV_LOADED'):
@@ -53,6 +54,7 @@ def create_app(test_config=None):
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
         UPLOAD_FOLDER=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'),
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
+        VERSION=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
     )
     
     # Load configuration based on environment
@@ -123,6 +125,12 @@ def create_app(test_config=None):
         response.headers['X-Frame-Options'] = 'DENY'
         response.headers['X-XSS-Protection'] = '1; mode=block'
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        
+        # Add cache control headers for CSS files
+        if response.mimetype == 'text/css' or request.path.endswith('.css'):
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
         
         # Only set HSTS in production
         if not app.debug:

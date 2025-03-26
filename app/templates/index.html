@@ -34,9 +34,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
     
     <!-- Structured Data -->
     <script type="application/ld+json">
