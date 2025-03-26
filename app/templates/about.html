@@ -65,6 +65,28 @@
     }
     </script>
     
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ request.url_root }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "About Mix Analyzer",
+                "item": "{{ request.url }}"
+            }
+        ]
+    }
+    </script>
+    
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
     <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
@@ -405,7 +427,7 @@
                         <li><a href="#" id="open-faq">FAQ</a></li>
                         <li><a href="https://librosa.org/" target="_blank">Librosa Audio Analysis Library</a></li>
                         <li><a href="https://platform.openai.com/docs/introduction" target="_blank">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/" target="_blank">GitHub Repository</a></li>
+                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>

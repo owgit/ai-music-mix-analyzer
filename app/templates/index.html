@@ -66,6 +66,98 @@
     }
     </script>
     
+    <!-- Enhanced Structured Data for Analysis Sections -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "Frequency Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "Advanced frequency spectrum analysis with FFT processing to identify imbalances and masking issues",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "Dynamics Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "Dynamic range measurement with RMS analysis, crest factor calculation, and compression detection",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "Stereo Field Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "Stereo width measurement, phase correlation analysis, and mid/side balance assessment",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "AI Mix Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "GPT-powered analysis offering genre-specific mix improvement suggestions and professional recommendations",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            }
+        ]
+    }
+    </script>
+    
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ request.url_root }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Mix Analyzer",
+                "item": "{{ request.url }}"
+            }
+        ]
+    }
+    </script>
+    
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
     <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
@@ -478,7 +570,7 @@
                         <li><a href="#" id="open-faq" data-track-download="FAQ">FAQ</a></li>
                         <li><a href="https://librosa.org/" target="_blank" data-track-download="Librosa Docs">Librosa Audio Analysis Library</a></li>
                         <li><a href="https://platform.openai.com/docs/introduction" target="_blank" data-track-download="OpenAI Docs">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/" target="_blank" data-track-download="GitHub Repo">GitHub Repository</a></li>
+                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" data-track-download="GitHub Repo">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>
