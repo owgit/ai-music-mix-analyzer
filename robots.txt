@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /uploads/
+Disallow: /api/
+Disallow: /*.json$
+
+# Specific directives for major crawlers
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Baiduspider
+Disallow: /
+
+# Sitemap location
+Sitemap: https://example.com/sitemap.xml
+
+# Update this URL to your actual domain when deploying 
