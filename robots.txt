@@ -18,6 +18,6 @@ User-agent: Baiduspider
 Disallow: /
 
 # Sitemap location
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://mixanalytic.com//sitemap.xml
 
 # Update this URL to your actual domain when deploying 
