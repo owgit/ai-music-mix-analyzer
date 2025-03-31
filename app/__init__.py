@@ -107,8 +107,18 @@ def create_app(test_config=None):
     @app.before_request
     def redirect_to_https():
         """Redirect all HTTP requests to HTTPS"""
-        if app.config['FORCE_HTTPS'] and request.scheme == 'http':
-            url = request.url.replace('http://', 'https://', 1)
+        # Check for proxy headers first (common when behind load balancers)
+        proto = request.headers.get('X-Forwarded-Proto')
+        host = request.headers.get('X-Forwarded-Host') or request.host
+        
+        # Only redirect if:
+        # 1. FORCE_HTTPS is enabled
+        # 2. The request came via HTTP protocol or X-Forwarded-Proto is 'http'
+        if app.config['FORCE_HTTPS'] and (proto == 'http' or (proto is None and request.scheme == 'http')):
+            # Construct URL with https
+            url = f"https://{host}{request.path}"
+            if request.query_string:
+                url += f"?{request.query_string.decode('utf-8')}"
             # Return a 301 permanent redirect
             return redirect(url, code=301)
     
