@@ -10,6 +10,7 @@ class Config:
     ENABLE_ANALYTICS = False
     MATOMO_URL = None
     MATOMO_SITE_ID = None
+    FORCE_HTTPS = False
 
     @classmethod
     def init_app(cls, app):
@@ -41,6 +42,7 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     """Production config"""
     # Analytics settings will be loaded from private_config.py
+    FORCE_HTTPS = True
     pass
 
 class TestingConfig(Config):

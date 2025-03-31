@@ -8,4 +8,7 @@ DO NOT commit private_config.py to version control!
 # Analytics Configuration
 ENABLE_ANALYTICS = True
 MATOMO_URL = "https://your-analytics-url.com/"    # Your Matomo instance URL
-MATOMO_SITE_ID = "your-site-id"                   # Your Matomo site ID 
+MATOMO_SITE_ID = "your-site-id"                   # Your Matomo site ID
+
+# URL Configuration
+FORCE_HTTPS = True                               # Force HTTPS for all external URLs 

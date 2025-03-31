@@ -56,6 +56,7 @@ def create_app(test_config=None):
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
         VERSION=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
         LAST_UPDATED=datetime.datetime.now().strftime("%Y-%m-%d"),  # Current date for Schema.org dateModified
+        FORCE_HTTPS=os.environ.get('FORCE_HTTPS', 'false').lower() == 'true'
     )
     
     # Load configuration based on environment
@@ -63,6 +64,7 @@ def create_app(test_config=None):
         from config.config import ProductionConfig
         app.config.from_object(ProductionConfig)
         ProductionConfig.init_app(app)
+        app.config['FORCE_HTTPS'] = True  # Always force HTTPS in production
     else:
         from config.config import DevelopmentConfig
         app.config.from_object(DevelopmentConfig)
@@ -149,5 +151,16 @@ def create_app(test_config=None):
     # Register health check
     from app.healthcheck import healthcheck_bp
     app.register_blueprint(healthcheck_bp)
+    
+    # Add template context processor to force HTTPS URLs
+    @app.context_processor
+    def utility_processor():
+        def secure_url(url):
+            """Ensure URL is using HTTPS protocol when needed"""
+            if app.config['FORCE_HTTPS'] and url and url.startswith('http:'):
+                return url.replace('http:', 'https:', 1)
+            return url
+        
+        return dict(secure_url=secure_url)
     
     return app 

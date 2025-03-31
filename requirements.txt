@@ -22,5 +22,8 @@ python-dotenv==1.0.0
 requests==2.31.0
 uuid==1.30
 
-# Testing (optional)
-# pytest==7.4.0 
+# Testing
+pytest==7.4.0
+pytest-cov==4.1.0
+pytest-mock==3.11.1
+selenium==4.15.2 

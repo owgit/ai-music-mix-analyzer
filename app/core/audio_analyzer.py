@@ -496,11 +496,10 @@ def analyze_clarity(y, sr):
                 n_fft=2048,  # Increased window size
                 hop_length=512  # Add explicit hop length
             )
-            # Convert contrast to a single value and handle NaN
-            contrast_mean = float(np.nanmean(np.abs(contrast)))
-            if np.isnan(contrast_mean):
-                print("Warning: NaN detected in spectral contrast, using default value")
-                contrast_mean = 0.5
+            if contrast.size > 0:
+                contrast_mean = float(np.nanmean(np.abs(contrast)))
+            else:
+                contrast_mean = 0.0  # Default value when the array is empty
             print(f"Spectral contrast calculated: {contrast_mean}")
         except Exception as e:
             print(f"Error calculating spectral contrast: {str(e)}")
@@ -511,10 +510,13 @@ def analyze_clarity(y, sr):
         # Calculate spectral flatness with error handling
         try:
             flatness = librosa.feature.spectral_flatness(y=y_mono)
-            flatness_mean = float(np.nanmean(flatness))
-            if np.isnan(flatness_mean):
-                print("Warning: NaN detected in spectral flatness, using default value")
-                flatness_mean = 0.5
+            if flatness.size > 0:
+                flatness_mean = float(np.nanmean(flatness))
+                if np.isnan(flatness_mean):
+                    print("Warning: NaN detected in spectral flatness, using default value")
+                    flatness_mean = 0.5
+            else:
+                flatness_mean = 0.5  # Default value when array is empty
             print(f"Spectral flatness calculated: {flatness_mean}")
         except Exception as e:
             print(f"Error calculating spectral flatness: {str(e)}")
@@ -524,10 +526,13 @@ def analyze_clarity(y, sr):
         # Calculate spectral centroid with error handling
         try:
             centroid = librosa.feature.spectral_centroid(y=y_mono, sr=sr)
-            centroid_mean = float(np.nanmean(centroid))
-            if np.isnan(centroid_mean):
-                print("Warning: NaN detected in spectral centroid, using default value")
-                centroid_mean = sr/4
+            if centroid.size > 0:
+                centroid_mean = float(np.nanmean(centroid))
+                if np.isnan(centroid_mean):
+                    print("Warning: NaN detected in spectral centroid, using default value")
+                    centroid_mean = sr/4
+            else:
+                centroid_mean = sr/4  # Default value when array is empty
             print(f"Spectral centroid calculated: {centroid_mean}")
         except Exception as e:
             print(f"Error calculating spectral centroid: {str(e)}")

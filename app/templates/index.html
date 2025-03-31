@@ -12,21 +12,21 @@
     <meta name="author" content="Mix Analyzer">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ request.url }}">
+    <link rel="canonical" href="{{ secure_url(request.url) }}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:url" content="{{ secure_url(request.url) }}">
     <meta property="og:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
     <meta property="og:description" content="Upload your tracks for FREE to get comprehensive AI analysis of frequency spectrum, dynamic range, stereo imaging, clarity, and artificial intelligence powered improvement suggestions for professional audio production.">
-    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:url" content="{{ secure_url(request.url) }}">
     <meta property="twitter:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
     <meta property="twitter:description" content="Upload your tracks for FREE to get comprehensive AI analysis of frequency spectrum, dynamic range, stereo imaging, clarity, and artificial intelligence powered improvement suggestions for professional audio production.">
-    <meta property="twitter:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,7 +44,7 @@
         "@context": "https://schema.org",
         "@type": "WebApplication",
         "name": "Mix Analyzer",
-        "url": "{{ request.url_root }}",
+        "url": "{{ secure_url(request.url_root) }}",
         "description": "Free AI-powered audio analysis tool for musicians, producers, and audio engineers to analyze frequency spectrum, dynamics, stereo imaging and get mastering recommendations at no cost",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any",
@@ -147,13 +147,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "{{ request.url_root }}"
+                "item": "{{ secure_url(request.url_root) }}"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Mix Analyzer",
-                "item": "{{ request.url }}"
+                "item": "{{ secure_url(request.url) }}"
             }
         ]
     }
@@ -165,8 +165,8 @@
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Mix Analyzer",
-        "url": "{{ request.url_root }}",
-        "logo": "{{ url_for('static', filename='img/music-analyzer-icon.svg', _external=True) }}",
+        "url": "{{ secure_url(request.url_root) }}",
+        "logo": "{{ secure_url(url_for('static', filename='img/music-analyzer-icon.svg', _external=True)) }}",
         "description": "Free AI-powered audio analysis tool for musicians, producers, and audio engineers.",
         "sameAs": [
             "https://github.com/owgit/ai-music-mix-analyzer"
@@ -196,26 +196,26 @@
                 "@type": "HowToStep",
                 "name": "Upload Audio",
                 "text": "Drag and drop your audio file or click to select a file from your computer.",
-                "image": "{{ url_for('static', filename='img/upload-icon.svg', _external=True) }}",
-                "url": "{{ request.url }}#upload-area"
+                "image": "{{ secure_url(url_for('static', filename='img/upload-icon.svg', _external=True)) }}",
+                "url": "{{ secure_url(request.url) }}#upload-area"
             },
             {
                 "@type": "HowToStep",
                 "name": "Analysis Process",
                 "text": "Our AI analyzes frequency balance, dynamics, stereo field, clarity, and more.",
-                "url": "{{ request.url }}#progress-container"
+                "url": "{{ secure_url(request.url) }}#progress-container"
             },
             {
                 "@type": "HowToStep",
                 "name": "View Results",
                 "text": "Review detailed analysis with visualizations and AI-powered recommendations.",
-                "url": "{{ request.url }}#results-section"
+                "url": "{{ secure_url(request.url) }}#results-section"
             },
             {
                 "@type": "HowToStep",
                 "name": "Implement Changes",
                 "text": "Apply the AI suggestions to improve your mix based on professional standards.",
-                "url": "{{ request.url }}#ai-insights-tab"
+                "url": "{{ secure_url(request.url) }}#ai-insights-tab"
             }
         ]
     }
@@ -242,7 +242,7 @@
             "bestRating": "5",
             "worstRating": "1"
         },
-        "screenshot": "{{ url_for('static', filename='img/spectrum-example.jpg', _external=True) }}",
+        "screenshot": "{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}",
         "featureList": [
             "AI-powered frequency spectrum analysis",
             "Dynamic range measurement",

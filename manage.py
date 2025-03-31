@@ -190,6 +190,40 @@ def handle_maintenance(args):
         logger.error(f"Error handling maintenance command: {str(e)}")
         return False
 
+def run_tests(args):
+    """Run tests with pytest"""
+    try:
+        # Check if pytest is installed
+        import pytest
+    except ImportError:
+        logger.error("Pytest is not installed. Please install it with: pip install pytest")
+        return False
+    
+    # Build pytest command arguments
+    cmd = ['-v']  # Verbose output by default
+    
+    # Add test type based on arguments
+    if args.unit:
+        cmd.append('tests/unit/')
+    elif args.integration:
+        cmd.append('tests/integration/')
+    elif args.e2e:
+        cmd.append('tests/e2e/')
+    elif args.path:
+        cmd.append(args.path)
+    else:
+        # Run all tests by default
+        cmd.append('tests/')
+    
+    # Add coverage reporting if requested
+    if args.coverage:
+        cmd.extend(['--cov=app', '--cov-report=term-missing'])
+    
+    # Run pytest with the constructed command
+    logger.info(f"Running tests with pytest: {' '.join(cmd)}")
+    result = pytest.main(cmd)
+    return result == 0
+
 def main():
     """Main function to parse arguments and run commands"""
     parser = argparse.ArgumentParser(
@@ -257,6 +291,20 @@ def main():
     maintenance_parser.add_argument('--dry-run', action='store_true',
                                   help='Dry run (do not delete files)')
     
+    # Test command
+    test_parser = subparsers.add_parser('test', help='Run tests')
+    test_group = test_parser.add_mutually_exclusive_group()
+    test_group.add_argument('--unit', '-u', action='store_true',
+                          help='Run unit tests')
+    test_group.add_argument('--integration', '-i', action='store_true',
+                          help='Run integration tests')
+    test_group.add_argument('--e2e', '-e', action='store_true',
+                          help='Run end-to-end tests')
+    test_group.add_argument('--path', '-p', type=str,
+                          help='Run tests at the specified path')
+    test_parser.add_argument('--coverage', '-c', action='store_true',
+                           help='Generate test coverage report')
+    
     # Parse arguments
     args = parser.parse_args()
     
@@ -273,6 +321,8 @@ def main():
         success = handle_security(args)
     elif args.command == 'maintenance':
         success = handle_maintenance(args)
+    elif args.command == 'test':
+        success = run_tests(args)
     else:
         parser.print_help()
         return 0

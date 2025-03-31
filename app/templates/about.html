@@ -12,21 +12,21 @@
     <meta name="author" content="Mix Analyzer">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="{{ request.url }}">
+    <link rel="canonical" href="{{ secure_url(request.url) }}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:url" content="{{ secure_url(request.url) }}">
     <meta property="og:title" content="About Mix Analyzer - AI-Powered Audio Analysis Technology">
     <meta property="og:description" content="Learn how our AI algorithms analyze your tracks for mixing and mastering. Get detailed insights into frequency balance, dynamics, stereo imaging, and professional suggestions for better mixes - all for free.">
-    <meta property="og:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ request.url }}">
+    <meta property="twitter:url" content="{{ secure_url(request.url) }}">
     <meta property="twitter:title" content="About Mix Analyzer - AI-Powered Audio Analysis Technology">
     <meta property="twitter:description" content="Learn how our AI algorithms analyze your tracks for mixing and mastering. Get detailed insights into frequency balance, dynamics, stereo imaging, and professional suggestions for better mixes - all for free.">
-    <meta property="twitter:image" content="{{ url_for('static', filename='img/og-image.jpg', _external=True) }}">
+    <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,8 +44,8 @@
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "Mix Analyzer",
-        "url": "{{ request.url_root }}",
-        "logo": "{{ url_for('static', filename='img/music-analyzer-icon.svg', _external=True) }}",
+        "url": "{{ secure_url(request.url_root) }}",
+        "logo": "{{ secure_url(url_for('static', filename='img/music-analyzer-icon.svg', _external=True)) }}",
         "description": "Free AI-powered audio analysis tool for mixing and mastering engineers, musicians, and producers.",
         "sameAs": [
             "https://github.com/owgit/ai-music-mix-analyzer"
@@ -74,7 +74,7 @@
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": "How Mix Analyzer's AI-Powered Audio Analysis Technology Works",
-        "image": "{{ url_for('static', filename='img/og-image.jpg', _external=True) }}",
+        "image": "{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}",
         "author": {
             "@type": "Organization",
             "name": "Mix Analyzer"
@@ -84,13 +84,13 @@
             "name": "Mix Analyzer",
             "logo": {
                 "@type": "ImageObject",
-                "url": "{{ url_for('static', filename='img/music-analyzer-icon.svg', _external=True) }}"
+                "url": "{{ secure_url(url_for('static', filename='img/music-analyzer-icon.svg', _external=True)) }}"
             }
         },
         "description": "Detailed explanation of how our AI-powered audio analysis tools work to help musicians, producers, and engineers improve their mixes and masters for free.",
         "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": "{{ request.url }}"
+            "@id": "{{ secure_url(request.url) }}"
         },
         "datePublished": "2023-11-15T08:00:00+08:00",
         "dateModified": "2025-01-10T08:00:00+08:00"
@@ -107,13 +107,13 @@
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "{{ request.url_root }}"
+                "item": "{{ secure_url(request.url_root) }}"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "About Mix Analyzer",
-                "item": "{{ request.url }}"
+                "item": "{{ secure_url(request.url) }}"
             }
         ]
     }
@@ -274,35 +274,35 @@
                 "name": "Upload Processing",
                 "text": "Upload your audio file securely to our platform. We'll process it to ensure compatibility.",
                 "position": 1,
-                "url": "{{ request.url_root }}"
+                "url": "{{ secure_url(request.url_root) }}"
             },
             {
                 "@type": "HowToStep",
                 "name": "Audio Analysis",
                 "text": "Our algorithms extract over 50 different audio features and measurements from your track.",
                 "position": 2,
-                "url": "{{ request.url_root }}"
+                "url": "{{ secure_url(request.url_root) }}"
             },
             {
                 "@type": "HowToStep",
                 "name": "Visualization Generation",
                 "text": "We create detailed visual representations of your audio's characteristics.",
                 "position": 3,
-                "url": "{{ request.url_root }}"
+                "url": "{{ secure_url(request.url_root) }}"
             },
             {
                 "@type": "HowToStep",
                 "name": "AI Processing",
                 "text": "Our AI interprets the measurements, identifies patterns, and generates custom recommendations.",
                 "position": 4,
-                "url": "{{ request.url_root }}"
+                "url": "{{ secure_url(request.url_root) }}"
             },
             {
                 "@type": "HowToStep",
                 "name": "Results Presentation",
                 "text": "All insights are organized into an easy-to-understand interface with clear actionable suggestions.",
                 "position": 5,
-                "url": "{{ request.url_root }}"
+                "url": "{{ secure_url(request.url_root) }}"
             }
         ],
         "tool": [
