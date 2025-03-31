@@ -3,12 +3,12 @@ Main routes for the Music Mix Analyzer application
 """
 
 import os
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, send_from_directory, Response
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, send_from_directory, Response, current_app
 from werkzeug.utils import secure_filename
 import uuid
 import traceback
 import json
-import datetime
+from datetime import datetime
 from pathlib import Path
 
 from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types
@@ -38,8 +38,8 @@ def sitemap():
     
     # Define your URLs
     urls = [
-        {'loc': host_base + '/', 'lastmod': datetime.datetime.now().strftime('%Y-%m-%d'), 'priority': '1.0'},
-        {'loc': host_base + '/about', 'lastmod': datetime.datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
+        {'loc': host_base + '/', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '1.0'},
+        {'loc': host_base + '/about', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
         # Add more URLs as needed
     ]
     
@@ -49,7 +49,30 @@ def sitemap():
 @main_bp.route('/robots.txt')
 def robots():
     """Serve robots.txt"""
-    return send_from_directory(current_app.static_folder, '../robots.txt')
+    host_base = request.host_url.rstrip('/')
+    robots_txt = f"""User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /uploads/
+Disallow: /api/
+Disallow: /*.json$
+
+# Specific directives for major crawlers
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Baiduspider
+Disallow: /
+
+# Sitemap location
+Sitemap: {host_base}/sitemap.xml
+"""
+    return Response(robots_txt, mimetype='text/plain')
 
 @main_bp.route('/upload', methods=['POST'])
 def upload_file():
@@ -80,7 +103,6 @@ def upload_file():
         file_id = secure_filename(os.path.splitext(file.filename)[0])
         
         # Create directory for this upload
-        from flask import current_app
         upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id)
         os.makedirs(upload_dir, exist_ok=True)
         
@@ -153,7 +175,6 @@ def regenerate_visualizations_route(file_id):
     """Regenerate visualizations for a specific file"""
     try:
         # Construct the path to the uploaded file
-        from flask import current_app
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id, f"{file_id}.mp3")
         
         if not os.path.exists(file_path):
@@ -176,7 +197,6 @@ def regenerate_stereo_field(file_id):
     """Regenerate just the stereo field visualization with enhanced detection"""
     try:
         # Construct the path to the uploaded file
-        from flask import current_app
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id, f"{file_id}.mp3")
         
         if not os.path.exists(file_path):
@@ -259,8 +279,7 @@ def regenerate_stereo_field(file_id):
 @main_bp.route('/static/img/error.png')
 def serve_error_image():
     """Serve a placeholder error image"""
-    from flask import send_from_directory, current_app
-    return send_from_directory(os.path.join(current_app.static_folder, 'img'), 'error.png')
+    return send_from_directory(current_app.static_folder, 'img/error.png')
 
 @main_bp.route('/health')
 def health_check():
@@ -284,7 +303,6 @@ def submit_feedback():
             return jsonify({'error': 'Consent is required'}), 400
         
         # Create the feedback directory if it doesn't exist
-        from flask import current_app
         feedback_dir = os.path.join(current_app.instance_path, '..', 'app', 'data', 'feedback')
         os.makedirs(feedback_dir, exist_ok=True)
         
