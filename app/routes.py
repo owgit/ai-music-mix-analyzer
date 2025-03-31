@@ -41,10 +41,14 @@ def sitemap():
     if current_app.config['FORCE_HTTPS'] and host_base.startswith('http:'):
         host_base = host_base.replace('http:', 'https:', 1)
     
-    # Define your URLs
+    # Create XML with explicit HTTPS links for canonical URLs
+    # The sitemap.xml template will use these URLs directly
+    site_domain = request.host
+    
+    # Define your URLs with explicit https protocol
     urls = [
-        {'loc': host_base + '/', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '1.0'},
-        {'loc': host_base + '/about', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
+        {'loc': f'https://{site_domain}/', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '1.0'},
+        {'loc': f'https://{site_domain}/about', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
         # Add more URLs as needed
     ]
     
@@ -54,12 +58,8 @@ def sitemap():
 @main_bp.route('/robots.txt')
 def robots():
     """Serve robots.txt"""
-    # Get base URL with appropriate protocol
-    host_base = request.host_url.rstrip('/')
-    
-    # Force HTTPS in production
-    if current_app.config['FORCE_HTTPS'] and host_base.startswith('http:'):
-        host_base = host_base.replace('http:', 'https:', 1)
+    # Get site domain for explicit HTTPS URLs
+    site_domain = request.host
     
     robots_txt = f"""User-agent: *
 Allow: /
@@ -80,8 +80,8 @@ Crawl-delay: 2
 User-agent: Baiduspider
 Disallow: /
 
-# Sitemap location
-Sitemap: {host_base}/sitemap.xml
+# Sitemap location - explicitly using HTTPS
+Sitemap: https://{site_domain}/sitemap.xml
 """
     return Response(robots_txt, mimetype='text/plain')
 
