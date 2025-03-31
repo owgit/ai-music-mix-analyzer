@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Mix Analyzer - Free AI-Powered Audio Analysis Tool for Musicians, Producers & Sound Engineers</title>
+    <title>Mix Analyzer - Free AI Audio Analysis Tool for Music Production</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Analyze your audio tracks for FREE with Mix Analyzer - get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, EQ recommendations, and AI-powered mix improvement suggestions for professional music production.">
+    <meta name="description" content="Free AI audio analysis tool for musicians. Get frequency spectrum analysis, dynamic range measurement, stereo visualization, and mix improvement suggestions to enhance your music production.">
     <meta name="keywords" content="free audio analysis, AI mix analyzer, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Mix Analyzer">
@@ -18,14 +18,14 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ secure_url(request.url) }}">
     <meta property="og:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
-    <meta property="og:description" content="Upload your tracks for FREE to get comprehensive AI analysis of frequency spectrum, dynamic range, stereo imaging, clarity, and artificial intelligence powered improvement suggestions for professional audio production.">
+    <meta property="og:description" content="Upload tracks for FREE to analyze frequency spectrum, dynamic range, stereo imaging, and get AI-powered suggestions for better audio production.">
     <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ secure_url(request.url) }}">
     <meta property="twitter:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
-    <meta property="twitter:description" content="Upload your tracks for FREE to get comprehensive AI analysis of frequency spectrum, dynamic range, stereo imaging, clarity, and artificial intelligence powered improvement suggestions for professional audio production.">
+    <meta property="twitter:description" content="Upload tracks for FREE to analyze frequency spectrum, dynamic range, stereo imaging, and get AI-powered suggestions for better audio production.">
     <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Fonts -->
@@ -314,7 +314,7 @@
             <div class="app-brand">
                 <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true">
                 <div class="app-title">
-                    <h1>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h1>
+                    <h1>Mix Analyzer - Audio Analysis Tool</h1>
                     <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to analyze frequency balance, dynamic range, stereo imaging, and get professional AI-powered mix improvement suggestions at no cost</p>
                 </div>
             </div>
@@ -694,12 +694,12 @@
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h3>
+                    <span class="footer-title">Mix Analyzer</span>
                     <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and audio engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
                 </div>
                 
                 <div class="footer-section">
-                    <h3>Audio Production Knowledge</h3>
+                    <span class="footer-title">Audio Production Knowledge</span>
                     <ul class="footer-links">
                         <li><a href="{{ url_for('main.index') }}#frequency-guide" id="open-frequency-guide" aria-label="Read AI-Powered Frequency Spectrum Analysis Guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
                         <li><a href="{{ url_for('main.index') }}#dynamics-guide" id="open-dynamics-guide" aria-label="Read Dynamic Range & Compression Explained">Dynamic Range & Compression Explained</a></li>
@@ -710,7 +710,7 @@
                 </div>
                 
                 <div class="footer-section">
-                    <h3>Free Resources</h3>
+                    <span class="footer-title">Free Resources</span>
                     <ul class="footer-links">
                         <li><a href="{{ url_for('main.about') }}" data-track-download="About Mix Analyzer" aria-label="Learn about Mix Analyzer Technology">About Mix Analyzer Technology</a></li>
                         <li><a href="{{ url_for('main.index') }}#faq" id="open-faq" data-track-download="FAQ" aria-label="Read Frequently Asked Questions">FAQ</a></li>
@@ -926,6 +926,15 @@
     .floating-coffee-text {
         display: block;
         padding: 10px 15px;
+    }
+    
+    /* Footer title style */
+    .footer-title {
+        display: block;
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--primary-color, #333);
     }
     </style>
 </body>
