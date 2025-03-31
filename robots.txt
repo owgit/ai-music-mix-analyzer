@@ -17,7 +17,7 @@ Crawl-delay: 2
 User-agent: Baiduspider
 Disallow: /
 
-# Sitemap location - Will be automatically updated by the server
-Sitemap: {{ request.host_url }}sitemap.xml
+# Sitemap location - explicitly using HTTPS
+Sitemap: https://mixanalytic.com/sitemap.xml
 
 # Update this URL to your actual domain when deploying 
