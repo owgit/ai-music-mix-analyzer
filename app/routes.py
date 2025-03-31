@@ -34,7 +34,12 @@ def about():
 @main_bp.route('/sitemap.xml')
 def sitemap():
     """Generate a sitemap.xml"""
+    # Get base URL with appropriate protocol
     host_base = request.host_url.rstrip('/')
+    
+    # Force HTTPS in production
+    if current_app.config['FORCE_HTTPS'] and host_base.startswith('http:'):
+        host_base = host_base.replace('http:', 'https:', 1)
     
     # Define your URLs
     urls = [
@@ -49,7 +54,13 @@ def sitemap():
 @main_bp.route('/robots.txt')
 def robots():
     """Serve robots.txt"""
+    # Get base URL with appropriate protocol
     host_base = request.host_url.rstrip('/')
+    
+    # Force HTTPS in production
+    if current_app.config['FORCE_HTTPS'] and host_base.startswith('http:'):
+        host_base = host_base.replace('http:', 'https:', 1)
+    
     robots_txt = f"""User-agent: *
 Allow: /
 Disallow: /admin/
