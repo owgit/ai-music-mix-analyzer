@@ -55,6 +55,7 @@ def create_app(test_config=None):
         UPLOAD_FOLDER=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'),
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
         VERSION=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
+        LAST_UPDATED=datetime.datetime.now().strftime("%Y-%m-%d"),  # Current date for Schema.org dateModified
     )
     
     # Load configuration based on environment
@@ -106,11 +107,11 @@ def create_app(test_config=None):
         # Content Security Policy
         csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://seo.optagonen.se",
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://seo.optagonen.se https://*.cloudflareinsights.com",
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
             "img-src 'self' data: https://seo.optagonen.se",
             "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
-            "connect-src 'self' https://seo.optagonen.se",
+            "connect-src 'self' https://seo.optagonen.se https://*.cloudflareinsights.com",
             "media-src 'self'",
             "object-src 'none'",
             "frame-ancestors 'none'",
