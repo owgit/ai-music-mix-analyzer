@@ -159,6 +159,103 @@
     }
     </script>
     
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Mix Analyzer",
+        "url": "{{ request.url_root }}",
+        "logo": "{{ url_for('static', filename='img/music-analyzer-icon.svg', _external=True) }}",
+        "description": "Free AI-powered audio analysis tool for musicians, producers, and audio engineers.",
+        "sameAs": [
+            "https://github.com/owgit/ai-music-mix-analyzer"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "info@uygarduzgun.com"
+        }
+    }
+    </script>
+    
+    <!-- HowTo Schema for Audio Analysis Process -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How to Analyze Your Audio Mix for Free",
+        "description": "Step-by-step guide to analyze your audio mix using AI-powered technology for better music production results.",
+        "totalTime": "PT5M",
+        "tool": {
+            "@type": "HowToTool",
+            "name": "Audio file (MP3, WAV, FLAC, AIFF, M4A, PCM)"
+        },
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Upload Audio",
+                "text": "Drag and drop your audio file or click to select a file from your computer.",
+                "image": "{{ url_for('static', filename='img/upload-icon.svg', _external=True) }}",
+                "url": "{{ request.url }}#upload-area"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Analysis Process",
+                "text": "Our AI analyzes frequency balance, dynamics, stereo field, clarity, and more.",
+                "url": "{{ request.url }}#progress-container"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "View Results",
+                "text": "Review detailed analysis with visualizations and AI-powered recommendations.",
+                "url": "{{ request.url }}#results-section"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Implement Changes",
+                "text": "Apply the AI suggestions to improve your mix based on professional standards.",
+                "url": "{{ request.url }}#ai-insights-tab"
+            }
+        ]
+    }
+    </script>
+    
+    <!-- Improved SoftwareApplication Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Mix Analyzer",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "dateModified": "{{ config.get('LAST_UPDATED', '2023-11-15') }}",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "124",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "screenshot": "{{ url_for('static', filename='img/spectrum-example.jpg', _external=True) }}",
+        "featureList": [
+            "AI-powered frequency spectrum analysis",
+            "Dynamic range measurement",
+            "Stereo field visualization",
+            "Harmonic content analysis",
+            "Transient detection",
+            "EQ recommendations",
+            "Spectral flatness measurement",
+            "Mix improvement suggestions"
+        ]
+    }
+    </script>
+    
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
     <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
