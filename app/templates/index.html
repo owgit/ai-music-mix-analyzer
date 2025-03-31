@@ -168,20 +168,62 @@
     {% if config.ENABLE_ANALYTICS %}
         {% include 'analytics.html' %}
     {% endif %}
+    
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What audio formats are supported by Mix Analyzer?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer supports MP3, WAV, FLAC, AIFF, AIF, M4A, and PCM audio formats for free analysis."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does the AI-powered analysis work?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Our artificial intelligence analyzes your audio file across multiple dimensions including frequency balance, dynamic range, stereo field, clarity, harmonic content, and transients. The AI then provides personalized recommendations based on genre-specific best practices."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is my audio data kept private?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. Your uploaded audio files are processed on our secure servers and are not shared with third parties. Files are automatically deleted after processing is complete."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the maximum file size I can upload?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer accepts audio files up to 50MB in size for free analysis."
+                }
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="app-brand">
-                <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo">
+                <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true">
                 <div class="app-title">
                     <h1>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h1>
                     <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to analyze frequency balance, dynamic range, stereo imaging, and get professional AI-powered mix improvement suggestions at no cost</p>
                 </div>
             </div>
             <div class="header-actions">
-                <button id="open-feedback-btn" class="feedback-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                <button id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
                         <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" fill="currentColor"/>
                     </svg>
                     Beta Feedback
@@ -190,23 +232,24 @@
         </header>
 
         <main>
-            <section class="upload-section">
+            <section class="upload-section" aria-labelledby="upload-section-title">
+                <h2 id="upload-section-title" class="visually-hidden">Audio Upload</h2>
                 <div class="track-type-selector">
                     <label class="checkbox-container" for="instrumental-checkbox">
                         <input type="checkbox" id="instrumental-checkbox">
                         <span class="checkbox-text">This is an instrumental track (no vocals)</span>
                     </label>
                     <div class="info-tooltip">
-                        <span class="info-icon">i</span>
-                        <div class="tooltip-content">
+                        <span class="info-icon" aria-hidden="true">i</span>
+                        <div class="tooltip-content" role="tooltip">
                             Select this if your track has no vocals. It helps our artificial intelligence provide more relevant frequency analysis and EQ recommendations for free.
                         </div>
                     </div>
                 </div>
                 
                 <div class="upload-container" id="upload-container">
-                    <div class="upload-area" id="upload-area" role="button" tabindex="0">
-                        <div class="upload-icon">
+                    <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Drag and drop audio file here or click to select file">
+                        <div class="upload-icon" aria-hidden="true">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
                                 <path d="M12 4V16M12 4L8 8M12 4L16 8M6 20H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
                             </svg>
@@ -215,7 +258,7 @@
                         <p class="upload-subtitle">MP3, WAV, FLAC, AIFF, M4A formats supported for free professional audio analysis with artificial intelligence</p>
                         <p>or</p>
                         <label for="file-input" class="upload-button">Choose File</label>
-                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm" data-track-upload="true" hidden>
+                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm" data-track-upload="true" hidden aria-label="Select audio file for analysis">
                     </div>
                     <div class="progress-container" id="progress-container" style="display: none;">
                         <div class="progress-header">
@@ -556,22 +599,22 @@
                 <div class="footer-section">
                     <h3>Audio Production Knowledge</h3>
                     <ul class="footer-links">
-                        <li><a href="#" id="open-frequency-guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
-                        <li><a href="#" id="open-dynamics-guide">Dynamic Range & Compression Explained</a></li>
-                        <li><a href="#" id="open-harmonic-guide">AI Harmonic Analysis & EQ Techniques</a></li>
-                        <li><a href="#" id="open-stereo-guide">Understanding Stereo Field & Imaging</a></li>
-                        <li><a href="#" id="open-transients-guide">AI Transient Analysis & Detection</a></li>
+                        <li><a href="{{ url_for('main.index') }}#frequency-guide" id="open-frequency-guide" aria-label="Read AI-Powered Frequency Spectrum Analysis Guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
+                        <li><a href="{{ url_for('main.index') }}#dynamics-guide" id="open-dynamics-guide" aria-label="Read Dynamic Range & Compression Explained">Dynamic Range & Compression Explained</a></li>
+                        <li><a href="{{ url_for('main.index') }}#harmonic-guide" id="open-harmonic-guide" aria-label="Read AI Harmonic Analysis & EQ Techniques">AI Harmonic Analysis & EQ Techniques</a></li>
+                        <li><a href="{{ url_for('main.index') }}#stereo-guide" id="open-stereo-guide" aria-label="Read Understanding Stereo Field & Imaging">Understanding Stereo Field & Imaging</a></li>
+                        <li><a href="{{ url_for('main.index') }}#transients-guide" id="open-transients-guide" aria-label="Read AI Transient Analysis & Detection">AI Transient Analysis & Detection</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
                     <h3>Free Resources</h3>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('main.about') }}" data-track-download="About Mix Analyzer">About Mix Analyzer Technology</a></li>
-                        <li><a href="#" id="open-faq" data-track-download="FAQ">FAQ</a></li>
-                        <li><a href="https://librosa.org/" target="_blank" data-track-download="Librosa Docs">Librosa Audio Analysis Library</a></li>
-                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" data-track-download="OpenAI Docs">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" data-track-download="GitHub Repo">GitHub Repository</a></li>
+                        <li><a href="{{ url_for('main.about') }}" data-track-download="About Mix Analyzer" aria-label="Learn about Mix Analyzer Technology">About Mix Analyzer Technology</a></li>
+                        <li><a href="{{ url_for('main.index') }}#faq" id="open-faq" data-track-download="FAQ" aria-label="Read Frequently Asked Questions">FAQ</a></li>
+                        <li><a href="https://librosa.org/" target="_blank" rel="noopener" data-track-download="Librosa Docs" aria-label="Visit Librosa Audio Analysis Library website">Librosa Audio Analysis Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" rel="noopener" data-track-download="OpenAI Docs" aria-label="Visit OpenAI API documentation">OpenAI API for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" rel="noopener" data-track-download="GitHub Repo" aria-label="Visit GitHub Repository">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>
@@ -647,5 +690,6 @@
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
     <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/faq-data.js') }}"></script>
 </body>
 </html> 

@@ -1568,4 +1568,24 @@ footer {
     .tech-card-details.expanded {
         padding: 1.5rem;
     }
-} 
+}
+
+/* Accessibility helpers */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Ensure interactive elements have visible focus states */
+a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Rest of CSS */ 

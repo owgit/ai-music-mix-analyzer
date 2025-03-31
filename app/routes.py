@@ -3,7 +3,7 @@ Main routes for the Music Mix Analyzer application
 """
 
 import os
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, send_from_directory, Response
 from werkzeug.utils import secure_filename
 import uuid
 import traceback
@@ -23,13 +23,38 @@ def allowed_file(filename):
 
 @main_bp.route('/')
 def index():
-    """Render the main page"""
+    """Home page route"""
     return render_template('index.html')
 
 @main_bp.route('/about')
 def about():
-    """Render the about page"""
+    """About page route"""
     return render_template('about.html')
+
+@main_bp.route('/sitemap.xml')
+def sitemap():
+    """Generate a sitemap.xml"""
+    host_base = request.host_url.rstrip('/')
+    
+    # Define your URLs
+    urls = [
+        {'loc': host_base + '/', 'lastmod': datetime.datetime.now().strftime('%Y-%m-%d'), 'priority': '1.0'},
+        {'loc': host_base + '/about', 'lastmod': datetime.datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
+        # Add more URLs as needed
+    ]
+    
+    sitemap_xml = render_template('sitemap.xml', urls=urls)
+    return Response(sitemap_xml, mimetype='application/xml')
+
+@main_bp.route('/robots.txt')
+def robots():
+    """Serve robots.txt"""
+    host_base = request.host_url.rstrip('/')
+    robots_txt = f"""User-agent: *
+Allow: /
+Sitemap: {host_base}/sitemap.xml
+"""
+    return Response(robots_txt, mimetype='text/plain')
 
 @main_bp.route('/upload', methods=['POST'])
 def upload_file():
