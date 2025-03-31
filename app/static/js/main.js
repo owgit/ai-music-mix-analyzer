@@ -99,6 +99,15 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error("Upload area element not found!");
     }
     
+    // Prevent propagation from upload button to avoid double file selection 
+    const uploadButton = document.querySelector('.upload-button');
+    if (uploadButton) {
+        uploadButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log("Upload button clicked directly");
+        });
+    }
+    
     // Tab switching with smooth transitions
     tabButtons.forEach(button => {
         button.addEventListener('click', function() {
