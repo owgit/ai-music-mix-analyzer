@@ -3,7 +3,7 @@ Music Mix Analyzer - A web application for analyzing audio mixes
 """
 
 import os
-from flask import Flask, current_app, request, jsonify
+from flask import Flask, current_app, request, jsonify, redirect
 import json
 import numpy as np
 from dotenv import load_dotenv, find_dotenv
@@ -103,6 +103,15 @@ def create_app(test_config=None):
             "API endpoints will reject all requests until a valid API key is configured."
         )
     
+    # Add HTTP to HTTPS redirect middleware
+    @app.before_request
+    def redirect_to_https():
+        """Redirect all HTTP requests to HTTPS"""
+        if app.config['FORCE_HTTPS'] and request.scheme == 'http':
+            url = request.url.replace('http://', 'https://', 1)
+            # Return a 301 permanent redirect
+            return redirect(url, code=301)
+    
     # Configure security headers
     @app.after_request
     def add_security_headers(response):
@@ -111,7 +120,7 @@ def create_app(test_config=None):
             "default-src 'self'",
             "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://seo.optagonen.se https://*.cloudflareinsights.com",
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
-            "img-src 'self' data: https://seo.optagonen.se",
+            "img-src 'self' data: https://seo.optagonen.se https://img.buymeacoffee.com",
             "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
             "connect-src 'self' https://seo.optagonen.se https://*.cloudflareinsights.com",
             "media-src 'self'",
