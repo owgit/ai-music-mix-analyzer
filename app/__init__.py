@@ -111,6 +111,12 @@ def create_app(test_config=None):
         proto = request.headers.get('X-Forwarded-Proto')
         host = request.headers.get('X-Forwarded-Host') or request.host
         
+        # Special handling for sitemap.xml to prevent multiple redirects
+        if request.path == '/sitemap.xml':
+            if proto == 'http' or (proto is None and request.scheme == 'http'):
+                # Explicitly redirect sitemap.xml to HTTPS
+                return redirect(f"https://{host}/sitemap.xml", code=301)
+        
         # Only redirect if:
         # 1. FORCE_HTTPS is enabled
         # 2. The request came via HTTP protocol or X-Forwarded-Proto is 'http'

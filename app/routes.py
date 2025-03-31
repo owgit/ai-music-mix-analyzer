@@ -34,15 +34,7 @@ def about():
 @main_bp.route('/sitemap.xml')
 def sitemap():
     """Generate a sitemap.xml"""
-    # Get base URL with appropriate protocol
-    host_base = request.host_url.rstrip('/')
-    
-    # Force HTTPS in production
-    if current_app.config['FORCE_HTTPS'] and host_base.startswith('http:'):
-        host_base = host_base.replace('http:', 'https:', 1)
-    
-    # Create XML with explicit HTTPS links for canonical URLs
-    # The sitemap.xml template will use these URLs directly
+    # Use site domain for explicit HTTPS URLs
     site_domain = request.host
     
     # Define your URLs with explicit https protocol
@@ -53,7 +45,14 @@ def sitemap():
     ]
     
     sitemap_xml = render_template('sitemap.xml', urls=urls)
-    return Response(sitemap_xml, mimetype='application/xml')
+    response = Response(sitemap_xml, mimetype='application/xml')
+    
+    # Add cache control headers to prevent caching with wrong URL
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    
+    return response
 
 @main_bp.route('/robots.txt')
 def robots():
