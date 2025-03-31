@@ -49,12 +49,7 @@ def sitemap():
 @main_bp.route('/robots.txt')
 def robots():
     """Serve robots.txt"""
-    host_base = request.host_url.rstrip('/')
-    robots_txt = f"""User-agent: *
-Allow: /
-Sitemap: {host_base}/sitemap.xml
-"""
-    return Response(robots_txt, mimetype='text/plain')
+    return send_from_directory(current_app.static_folder, '../robots.txt')
 
 @main_bp.route('/upload', methods=['POST'])
 def upload_file():
