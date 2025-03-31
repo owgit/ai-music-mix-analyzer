@@ -38,7 +38,37 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     
-    <!-- Structured Data -->
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Mix Analyzer",
+        "url": "{{ request.url_root }}",
+        "logo": "{{ url_for('static', filename='img/music-analyzer-icon.svg', _external=True) }}",
+        "description": "Free AI-powered audio analysis tool for mixing and mastering engineers, musicians, and producers.",
+        "sameAs": [
+            "https://github.com/owgit/ai-music-mix-analyzer"
+        ],
+        "knowsAbout": [
+            "Music Production",
+            "Audio Engineering",
+            "Sound Analysis",
+            "Frequency Spectrum Analysis",
+            "Dynamic Range Analysis",
+            "AI in Music Production",
+            "Stereo Field Analysis"
+        ],
+        "offers": {
+            "@type": "Offer",
+            "name": "Free Audio Analysis",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    
+    <!-- Page Article Schema -->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -61,7 +91,9 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "{{ request.url }}"
-        }
+        },
+        "datePublished": "2023-11-15T08:00:00+08:00",
+        "dateModified": "2025-01-10T08:00:00+08:00"
     }
     </script>
     
@@ -82,6 +114,205 @@
                 "position": 2,
                 "name": "About Mix Analyzer",
                 "item": "{{ request.url }}"
+            }
+        ]
+    }
+    </script>
+    
+    <!-- Analysis Technology Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@type": "TechArticle",
+                    "name": "Frequency Spectrum Analysis",
+                    "headline": "Advanced AI-Powered Frequency Spectrum Analysis",
+                    "description": "Our AI analyzes your track's frequency content using Fast Fourier Transform (FFT) and advanced spectral processing to identify frequency imbalances, potential masking issues, and opportunities for more clarity in your mix.",
+                    "abstract": "Real-time FFT analysis with adjustable window sizes, multi-resolution spectral analysis for precise frequency detection, advanced masking detection algorithms, and genre-specific frequency balance recommendations.",
+                    "proficiencyLevel": "Beginner to Advanced"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@type": "TechArticle",
+                    "name": "Dynamic Range Analysis",
+                    "headline": "Professional Dynamic Range Analysis",
+                    "description": "Using statistical analysis of peak levels, RMS values, and crest factors, we assess your track's dynamic range and compression characteristics.",
+                    "abstract": "True Peak and RMS level analysis, dynamic range measurement (DR value), crest factor analysis per frequency band, and genre-specific dynamic recommendations.",
+                    "proficiencyLevel": "Beginner to Advanced"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                    "@type": "TechArticle",
+                    "name": "Stereo Field Analysis",
+                    "headline": "Advanced Stereo Imaging Analysis",
+                    "description": "Through mid-side processing and phase correlation measurement, we evaluate your mix's stereo width and mono compatibility.",
+                    "abstract": "Mid/Side balance measurement, phase correlation analysis, stereo field visualization, and frequency-dependent stereo width analysis.",
+                    "proficiencyLevel": "Beginner to Advanced"
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                    "@type": "TechArticle",
+                    "name": "AI-Powered Analysis",
+                    "headline": "The AI Behind Mix Analyzer",
+                    "description": "We leverage OpenAI's GPT-4o to analyze the technical measurements of your track and translate them into clear, professional recommendations.",
+                    "abstract": "Genre-specific analysis, reference track comparison, system-specific recommendations, and custom tailored mixing suggestions.",
+                    "proficiencyLevel": "Beginner to Advanced"
+                }
+            }
+        ]
+    }
+    </script>
+    
+    <!-- Software Application Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Mix Analyzer",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Web Browser",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Frequency Spectrum Analysis",
+            "Dynamic Range Analysis",
+            "Stereo Field Analysis",
+            "Transient Analysis",
+            "Harmonic Content Analysis",
+            "Clarity and Spectral Balance Analysis",
+            "AI-Powered Mix Recommendations"
+        ]
+    }
+    </script>
+    
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "How does Mix Analyzer's AI improve my music mixes?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer uses advanced AI algorithms to analyze your track's frequency balance, dynamic range, stereo field, harmonic content, and more. It then provides professional recommendations based on genre-specific standards and comparison with reference tracks to help you make targeted improvements to your mix."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What file formats does Mix Analyzer support?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer supports common audio formats including WAV, MP3, AIFF, FLAC, OGG, and M4A files. For best results, we recommend uploading high-quality WAV or FLAC files."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is Mix Analyzer free to use?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, Mix Analyzer is completely free to use. You can upload your tracks and receive detailed professional analysis and AI-powered recommendations at no cost."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does frequency spectrum analysis help my mix?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Frequency spectrum analysis identifies frequency imbalances, masking issues, and muddy or harsh frequency areas in your mix. This helps you make targeted EQ adjustments to create a clearer, more balanced sound with better separation between instruments."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is dynamic range analysis and why is it important?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Dynamic range analysis measures the difference between the loudest and quietest parts of your track, along with compression characteristics. This helps you achieve the right balance of dynamics for your genre, avoiding over-compression that can lead to listener fatigue or insufficient dynamics that can make your mix sound weak."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does Mix Analyzer ensure my audio files remain private?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Your uploaded audio files are processed securely and are not shared with third parties. Files are temporarily stored for analysis purposes only and can be removed upon request. We respect your creative work and privacy."
+                }
+            }
+        ]
+    }
+    </script>
+    
+    <!-- HowTo Schema for Analysis Workflow -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How to Analyze Your Music Mix with Mix Analyzer",
+        "description": "Step-by-step guide to analyzing your music track with Mix Analyzer's AI-powered tools.",
+        "totalTime": "PT5M",
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Upload Processing",
+                "text": "Upload your audio file securely to our platform. We'll process it to ensure compatibility.",
+                "position": 1,
+                "url": "{{ request.url_root }}"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Audio Analysis",
+                "text": "Our algorithms extract over 50 different audio features and measurements from your track.",
+                "position": 2,
+                "url": "{{ request.url_root }}"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Visualization Generation",
+                "text": "We create detailed visual representations of your audio's characteristics.",
+                "position": 3,
+                "url": "{{ request.url_root }}"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "AI Processing",
+                "text": "Our AI interprets the measurements, identifies patterns, and generates custom recommendations.",
+                "position": 4,
+                "url": "{{ request.url_root }}"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Results Presentation",
+                "text": "All insights are organized into an easy-to-understand interface with clear actionable suggestions.",
+                "position": 5,
+                "url": "{{ request.url_root }}"
+            }
+        ],
+        "tool": [
+            {
+                "@type": "HowToTool",
+                "name": "Audio file (WAV, MP3, AIFF, FLAC, OGG, or M4A)"
+            },
+            {
+                "@type": "HowToTool",
+                "name": "Web browser"
             }
         ]
     }
@@ -108,6 +339,14 @@
                     <h1>About Mix Analyzer - How Our AI-Powered Audio Analysis Works</h1>
                     <p>Learn how our free tool uses advanced AI algorithms to analyze your tracks and provide professional mixing and mastering recommendations</p>
                 </div>
+            </div>
+            <div class="header-actions">
+                <a href="https://buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" id="buy-coffee-btn" class="coffee-button" aria-label="Buy me a coffee">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                        <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3z" fill="currentColor"/>
+                    </svg>
+                    Buy Me a Coffee
+                </a>
             </div>
         </header>
 
@@ -433,6 +672,7 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2025 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial intelligence and spectral analysis tools</p>
+                <p class="footer-support">Love this tool? <a href="https://buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener">Buy me a coffee</a> to support development.</p>
             </div>
         </footer>
     </div>
@@ -441,5 +681,25 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
     <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    
+    <!-- Floating Buy Me a Coffee button -->
+    <a href="https://buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" class="floating-coffee-button" aria-label="Buy me a coffee">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3z" fill="currentColor"/>
+        </svg>
+        <span>Buy Me a Coffee</span>
+    </a>
+    
+    <script>
+    // Show floating coffee button when scrolling
+    window.addEventListener('scroll', function() {
+        const floatingButton = document.querySelector('.floating-coffee-button');
+        if (window.scrollY > 300) {
+            floatingButton.classList.add('visible');
+        } else {
+            floatingButton.classList.remove('visible');
+        }
+    });
+    </script>
 </body>
 </html> 
