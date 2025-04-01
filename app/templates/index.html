@@ -803,28 +803,9 @@
     <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
     <script src="{{ url_for('static', filename='js/faq-data.js') }}"></script>
     
-    <!-- Floating Buy Me a Coffee button -->
-    <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" class="floating-coffee-button-container" aria-label="Buy me a coffee">
-        <div class="floating-coffee-blur"></div>
-        <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="floating-coffee-img"
-        onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'floating-coffee-text\'>☕ Buy me a coffee</div>'"/>
-    </a>
-    
-    <script>
-    // Show floating coffee button when scrolling
-    window.addEventListener('scroll', function() {
-        const floatingButton = document.querySelector('.floating-coffee-button-container');
-        if (window.scrollY > 300) {
-            floatingButton.classList.add('visible');
-        } else {
-            floatingButton.classList.remove('visible');
-        }
-    });
-    </script>
-
     <!-- Add style for the animated blur effect -->
     <style>
-    .coffee-button-container, .floating-coffee-button-container {
+    .coffee-button-container {
         position: relative;
         border-radius: 8px;
         overflow: hidden;
@@ -832,14 +813,14 @@
         transition: all 0.3s ease;
     }
     
-    .coffee-button-img, .floating-coffee-img {
+    .coffee-button-img {
         position: relative;
         z-index: 2;
         height: 38px;
         display: block;
     }
     
-    .coffee-button-blur, .floating-coffee-blur {
+    .coffee-button-blur {
         position: absolute;
         inset: -5px;
         z-index: 1;
@@ -850,30 +831,13 @@
         animation: gradient 5s ease infinite;
     }
     
-    .floating-coffee-button-container {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .floating-coffee-button-container.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    
     @keyframes gradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
     }
     
-    .coffee-button-container:hover .coffee-button-blur,
-    .floating-coffee-button-container:hover .floating-coffee-blur {
+    .coffee-button-container:hover .coffee-button-blur {
         animation: gradient 3s ease infinite;
         opacity: 0.85;
     }
@@ -911,7 +875,7 @@
     }
     
     /* Fallback button styles */
-    .coffee-button-text, .floating-coffee-text {
+    .coffee-button-text {
         background-color: #FFDD00;
         color: #000000;
         font-weight: bold;
@@ -921,11 +885,6 @@
         white-space: nowrap;
         text-align: center;
         border: 1px solid #000000;
-    }
-    
-    .floating-coffee-text {
-        display: block;
-        padding: 10px 15px;
     }
     
     /* Footer title style */
