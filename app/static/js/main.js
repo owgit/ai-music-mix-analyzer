@@ -1,6 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM fully loaded and parsed");
     
+    // Header scroll effect
+    const header = document.querySelector('header');
+    let lastScrollY = window.scrollY;
+    
+    function handleHeaderScroll() {
+        const currentScrollY = window.scrollY;
+        
+        if (currentScrollY > 20) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
+        
+        lastScrollY = currentScrollY;
+    }
+    
+    // Initial check
+    handleHeaderScroll();
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+    
     // DOM Elements
     const uploadArea = document.getElementById('upload-area');
     const fileInput = document.getElementById('file-input');

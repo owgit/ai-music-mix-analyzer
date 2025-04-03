@@ -320,12 +320,12 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <header>
+    <header>
+        <div class="header-container">
             <div class="app-brand">
                 <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true">
                 <div class="app-title">
-                    <h1>  AI-Powered Audio Analysis Tool</h1>
+                    <h1>AI-Powered Audio Analysis Tool</h1>
                 </div>
             </div>
             <div class="header-actions">
@@ -341,10 +341,10 @@
                     onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'"/>
                 </a>
             </div>
-        </header>
+        </div>
+    </header>
 
-
-
+    <div class="container">
         <main>
             <section class="upload-section" aria-labelledby="upload-section-title">
                 <h2 id="upload-section-title" class="visually-hidden">Audio Upload</h2>
@@ -776,7 +776,7 @@
             <section class="intro-section">
                 <div class="intro-content">
                     <h2>Professional Audio Analysis with AI</h2>
-                    <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to transform your mix with professional-grade audio analysis. Our AI engine analyzes frequency spectrum, spatial imaging, and dynamics to deliver precise, actionable insights. Perfect for producers, engineers, and musicians seeking studio-quality results.</p>
+                    <p>Transform your mix with our advanced AI-powered audio analysis tool. Our intelligent engine analyzes frequency spectrum, spatial imaging, dynamics, and harmonic content to deliver precise, actionable insights. Upload your audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to get instant professional-grade feedback tailored to your track. Perfect for producers, engineers, and musicians seeking studio-quality results without the guesswork.</p>
                 </div>
             </section>
         </main>
@@ -784,7 +784,7 @@
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>  AI-Powered Audio Analysis Tool</h3>
+                    <h3>AI-Powered Audio Analysis Tool</h3>
                     <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
                 </div>
                 
@@ -898,7 +898,7 @@
     <style>
     .coffee-button-container {
         position: relative;
-        border-radius: 8px;
+        border-radius: 12px;
         overflow: hidden;
         display: inline-block;
         transition: all 0.3s ease;
@@ -909,6 +909,7 @@
         z-index: 2;
         height: 38px;
         display: block;
+        border-radius: 10px;
     }
     
     .coffee-button-blur {
@@ -917,9 +918,9 @@
         z-index: 1;
         background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
         background-size: 400% 400%;
-        filter: blur(8px);
-        opacity: 0.7;
-        animation: gradient 5s ease infinite;
+        filter: blur(10px);
+        opacity: 0.6;
+        animation: gradient 6s ease infinite;
     }
     
     @keyframes gradient {
@@ -930,13 +931,14 @@
     
     .coffee-button-container:hover .coffee-button-blur {
         animation: gradient 3s ease infinite;
-        opacity: 0.85;
+        opacity: 0.8;
+        transform: scale(1.05);
     }
     
     .footer-coffee-container {
         position: relative;
         display: inline-block;
-        border-radius: 8px;
+        border-radius: 10px;
         overflow: hidden;
         vertical-align: middle;
         margin-left: 5px;
@@ -970,12 +972,13 @@
         background-color: #FFDD00;
         color: #000000;
         font-weight: bold;
-        padding: 8px 12px;
-        border-radius: 5px;
-        font-family: 'Lato', sans-serif;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-family: var(--font-family, 'Inter', sans-serif);
         white-space: nowrap;
         text-align: center;
-        border: 1px solid #000000;
+        border: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
     
     /* Footer title style */

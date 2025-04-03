@@ -40,86 +40,194 @@ body {
     padding: 20px;
 }
 
-/* Header */
+/* ======================
+   FULL-WIDTH MINIMAL HEADER
+   ====================== */
 header {
-    padding: 30px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    left: 0;
+    right: 0;
+}
+
+.header-container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
-    font-weight: 700;
-}
-
-header p {
-    color: var(--text-secondary);
-    max-width: 600px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Add scrolled class for enhanced effect when scrolling */
+header.scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    padding: 8px 0;
+}
+
+/* Minimal Logo */
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+}
+
+.site-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #111;
+    margin: 0;
+}
+
+/* Minimal Navigation */
+.nav-menu {
+    display: flex;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.nav-link {
+    position: relative;
+    padding: 0.5rem 0;
+    font-weight: 400;
+    color: #444;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #111;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: #111;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* Mobile Menu */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 15px;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        background: white;
+        flex-direction: column;
+        gap: 0;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        display: none;
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .nav-link {
+        padding: 1rem 2rem;
+    }
+    
+    .menu-toggle {
+        display: block;
+    }
 }
 
 /* Header actions */
 .header-actions {
     display: flex;
-    gap: 12px;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.3s ease;
+    margin-left: auto;
+    justify-self: flex-end;
 }
 
 .feedback-button {
     display: flex;
     align-items: center;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
+    gap: 8px;
     padding: 8px 16px;
-    cursor: pointer;
+    background: rgba(79, 70, 229, 0.08);
+    color: #4F46E5;
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: 12px;
+    font-size: 14px;
     font-weight: 600;
-    font-size: 0.95rem;
-    transition: var(--transition);
-    box-shadow: 0 4px 8px rgba(67, 97, 238, 0.25);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .feedback-button svg {
-    margin-right: 8px;
-}
-
-.feedback-button:hover {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(67, 97, 238, 0.3);
-}
-
-/* Buy Me a Coffee Button - Minimalist Design */
-.coffee-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #ffffff;
-    color: #121212;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 24px;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.coffee-button svg {
-    margin-right: 8px;
     width: 16px;
     height: 16px;
 }
 
-.coffee-button:hover {
-    background-color: #f5f5f5;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+.feedback-button:hover {
+    background: rgba(79, 70, 229, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.15);
+}
+
+/* Buy Me a Coffee Button - Modern Design */
+.coffee-button-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.coffee-button-container:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 16px rgba(255, 153, 0, 0.2);
 }
 
 /* Floating coffee button (appears when scrolling) */
@@ -188,18 +296,40 @@ header p {
 .app-brand {
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 1rem;
+    gap: 12px;
+    transition: all 0.3s ease;
 }
 
 .app-logo {
-    width: 100px;
-    height: 100px;
-    margin-right: 1.5rem;
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
 }
 
 .app-title {
-    text-align: left;
+    margin: 0;
+    transition: all 0.3s ease;
+}
+
+.app-title h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #333;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+/* Adjust app brand when header is scrolled */
+header.scrolled .app-brand {
+    transform: scale(0.95);
+}
+
+header.scrolled .app-logo {
+    width: 36px;
+    height: 36px;
 }
 
 @keyframes pulse {
@@ -213,16 +343,16 @@ header p {
 
 @media (max-width: 768px) {
     .app-brand {
-        flex-direction: column;
+        gap: 8px;
     }
     
     .app-logo {
-        margin-right: 0;
-        margin-bottom: 1rem;
+        width: 32px;
+        height: 32px;
     }
     
-    .app-title {
-        text-align: center;
+    .app-title h1 {
+        font-size: 1.1rem;
     }
 }
 
@@ -348,6 +478,7 @@ header p {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 50px auto;
 }
 
 /* Info Tooltip */
@@ -2101,4 +2232,109 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
 
 .card-body {
     padding: 20px;
+}
+
+/* ======================
+   LAYOUT IMPROVEMENTS
+   ====================== */
+
+/* Base Layout Structure */
+.container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: grid;
+    grid-template-columns: 
+        [full-start] minmax(2rem, 1fr) 
+        [main-start] minmax(0, 1200px) [main-end]
+        minmax(2rem, 1fr) [full-end];
+}
+
+.container > * {
+    grid-column: main;
+}
+
+.full-bleed {
+    grid-column: full;
+    width: 100%;
+}
+
+/* Main Content Sections */
+.main-content {
+    display: grid;
+    gap: 3rem;
+    padding: 3rem 0;
+}
+
+.section {
+    display: grid;
+    gap: 2rem;
+}
+
+/* Responsive Grid Adjustments */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 1.5rem;
+        grid-template-columns: 
+            [full-start] minmax(1.5rem, 1fr) 
+            [main-start] minmax(0, 100%) [main-end]
+            minmax(1.5rem, 1fr) [full-end];
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        gap: 2rem;
+        padding: 2rem 0;
+    }
+}
+
+/* Add enhanced styling for coffee button img */
+.coffee-button-img {
+    position: relative;
+    z-index: 2;
+    height: 38px;
+    display: block;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.coffee-button-blur {
+    position: absolute;
+    inset: -5px;
+    z-index: 1;
+    background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
+    background-size: 400% 400%;
+    filter: blur(10px);
+    opacity: 0.6;
+    animation: gradient 6s ease infinite;
+    transform: scale(1);
+    transition: all 0.3s ease;
+}
+
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.coffee-button-container:hover .coffee-button-blur {
+    animation: gradient 3s ease infinite;
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+/* Fallback button styles */
+.coffee-button-text {
+    background-color: #FFDD00;
+    color: #000000;
+    font-weight: bold;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-family: var(--font-family);
+    white-space: nowrap;
+    text-align: center;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
