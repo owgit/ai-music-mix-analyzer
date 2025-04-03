@@ -25,6 +25,21 @@
         text-align: center;
     }
     
+    /* Intro Section */
+    .intro-section {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .intro-section h2 {
+        font-size: 1.4rem;
+    }
+    
+    .intro-section p {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
     /* Upload Area */
     .upload-area {
         padding: 20px;
