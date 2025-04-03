@@ -1946,4 +1946,49 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     .metric-description {
         font-size: 0.8em;
     }
+}
+
+/* AI Frequency Card */
+.ai-frequency-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.ai-frequency-card .ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.ai-frequency-card .ai-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--primary-color);
+}
+
+.ai-frequency-card .ai-section-card {
+    margin-top: 15px;
+    padding-bottom: 10px;
+}
+
+.ai-frequency-card .ai-section-card h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--text-color);
+}
+
+.ai-frequency-card ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.ai-frequency-card ul li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: var(--text-color);
 } 

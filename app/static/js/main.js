@@ -383,6 +383,11 @@ document.addEventListener('DOMContentLoaded', function() {
             frequencyAnalysis.appendChild(li);
         });
         
+        // Display AI frequency analysis if available
+        if (data.results.ai_insights) {
+            displayAIFrequencyInsights(data.results.ai_insights, frequencyBalance);
+        }
+        
         // Create frequency chart
         createFrequencyChart(frequencyBalance.band_energy);
         
@@ -745,6 +750,169 @@ document.addEventListener('DOMContentLoaded', function() {
             const li = document.createElement('li');
             li.textContent = "No mix translation recommendations provided.";
             translationRecommendationsList.appendChild(li);
+        }
+    }
+    
+    // Display AI Frequency Insights
+    function displayAIFrequencyInsights(aiInsights, frequencyBalance) {
+        // Check if there was an error
+        if (aiInsights.error) {
+            document.getElementById('ai-freq-error').style.display = 'block';
+            document.getElementById('ai-freq-error').querySelector('p').textContent = aiInsights.error;
+            return;
+        } else {
+            document.getElementById('ai-freq-error').style.display = 'none';
+        }
+        
+        // Set model name
+        const modelNameElement = document.getElementById('ai-model-used-freq');
+        if (aiInsights.model_used) {
+            modelNameElement.textContent = aiInsights.model_used;
+        } else {
+            modelNameElement.textContent = "AI Model";
+        }
+        
+        // Extract frequency-related issues from the weaknesses and summary
+        const frequencyIssuesList = document.getElementById('ai-frequency-issues');
+        frequencyIssuesList.innerHTML = '';
+        
+        // Expanded array of frequency-related keywords to filter by
+        const frequencyKeywords = [
+            'frequency', 'eq', 'equalization', 'bass', 'treble', 'mid', 'low', 'high', 
+            'hz', 'khz', 'muddy', 'boomy', 'harsh', 'thin', 'boxy', 'sibilant', 
+            'presence', 'fundamental', 'resonance', 'balance', 'spectrum', 'sub-bass',
+            'low-end', 'high-end', 'boost', 'cut', 'attenuate', 'rumble', 'warmth',
+            'brittle', 'bright', 'dull', 'dark', 'clarity', 'definition', 'bandwidth',
+            'honky', 'nasal', 'tinny', 'bloated', 'scoop', 'notch', 'filter',
+            'db', 'decibel', 'upper', 'lower', 'octave', 'range', 'band', 'hertz'
+        ];
+        
+        // Get all possible sources of frequency-related issues
+        let allIssuesSources = [...aiInsights.weaknesses];
+        
+        // Add summary if it contains frequency terms
+        if (aiInsights.summary && frequencyKeywords.some(keyword => 
+            aiInsights.summary.toLowerCase().includes(keyword.toLowerCase()))) {
+            allIssuesSources.push(aiInsights.summary);
+        }
+        
+        // Also check the genre context for frequency information
+        if (aiInsights.genre_context && frequencyKeywords.some(keyword => 
+            aiInsights.genre_context.toLowerCase().includes(keyword.toLowerCase()))) {
+            // Extract sentences containing frequency keywords
+            const sentences = aiInsights.genre_context.split(/[.!?]+/).filter(sentence => 
+                sentence.trim() && frequencyKeywords.some(keyword => 
+                    sentence.toLowerCase().includes(keyword.toLowerCase())
+                )
+            );
+            allIssuesSources = allIssuesSources.concat(sentences);
+        }
+        
+        // Filter for frequency-related issues
+        const frequencyIssues = allIssuesSources.filter(issue => 
+            issue && frequencyKeywords.some(keyword => issue.toLowerCase().includes(keyword.toLowerCase()))
+        );
+        
+        if (frequencyIssues.length > 0) {
+            frequencyIssues.forEach(issue => {
+                const li = document.createElement('li');
+                li.textContent = issue.trim();
+                frequencyIssuesList.appendChild(li);
+            });
+        } else {
+            // Check if we can extract frequency info directly from band energy analysis
+            if (frequencyBalance && frequencyBalance.analysis && frequencyBalance.analysis.length > 0) {
+                frequencyBalance.analysis.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    frequencyIssuesList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "No specific frequency issues identified.";
+                frequencyIssuesList.appendChild(li);
+            }
+        }
+        
+        // Extract frequency-related recommendations
+        const frequencyRecommendationsList = document.getElementById('ai-frequency-recommendations');
+        frequencyRecommendationsList.innerHTML = '';
+        
+        // Combine all possible sources of recommendations
+        let allRecommendations = [...aiInsights.suggestions];
+        
+        if (aiInsights.processing_recommendations && aiInsights.processing_recommendations.length > 0) {
+            allRecommendations = allRecommendations.concat(aiInsights.processing_recommendations);
+        }
+        
+        // Also check strengths for positive frequency information
+        if (aiInsights.strengths && aiInsights.strengths.length > 0) {
+            const frequencyStrengths = aiInsights.strengths.filter(strength => 
+                frequencyKeywords.some(keyword => strength.toLowerCase().includes(keyword.toLowerCase()))
+            );
+            if (frequencyStrengths.length > 0) {
+                allRecommendations = allRecommendations.concat(frequencyStrengths.map(strength => 
+                    `Maintain: ${strength}`
+                ));
+            }
+        }
+        
+        // If we have specific genre context with frequency info, add it
+        if (aiInsights.genre_context) {
+            const genreSentences = aiInsights.genre_context.split(/[.!?]+/).filter(sentence => 
+                sentence.trim() && frequencyKeywords.some(keyword => 
+                    sentence.toLowerCase().includes(keyword.toLowerCase())
+                )
+            );
+            
+            if (genreSentences.length > 0) {
+                allRecommendations.push(`Genre context: ${genreSentences.join(' ')}`);
+            }
+        }
+        
+        // Filter for frequency-related recommendations
+        const frequencyRecommendations = allRecommendations.filter(recommendation => 
+            recommendation && frequencyKeywords.some(keyword => recommendation.toLowerCase().includes(keyword.toLowerCase()))
+        );
+        
+        if (frequencyRecommendations.length > 0) {
+            frequencyRecommendations.forEach(recommendation => {
+                const li = document.createElement('li');
+                li.textContent = recommendation.trim();
+                frequencyRecommendationsList.appendChild(li);
+            });
+        } else {
+            // As a fallback, provide generic recommendations based on the frequency balance data
+            if (frequencyBalance && frequencyBalance.band_energy) {
+                // Find the band with the lowest and highest energy
+                const bands = Object.entries(frequencyBalance.band_energy);
+                bands.sort((a, b) => a[1] - b[1]);
+                
+                const lowestBand = bands[0];
+                const highestBand = bands[bands.length - 1];
+                
+                if (lowestBand && highestBand) {
+                    const li1 = document.createElement('li');
+                    li1.textContent = `Consider boosting the ${lowestBand[0].replace('_', ' ')} band which has the lowest energy in your mix.`;
+                    frequencyRecommendationsList.appendChild(li1);
+                    
+                    if (highestBand[1] > 90) {
+                        const li2 = document.createElement('li');
+                        li2.textContent = `The ${highestBand[0].replace('_', ' ')} band has very high energy (${Math.round(highestBand[1])}%). Consider attenuating this range slightly for better balance.`;
+                        frequencyRecommendationsList.appendChild(li2);
+                    }
+                    
+                    const li3 = document.createElement('li');
+                    li3.textContent = "Check for proper frequency balance across all bands to ensure clarity and separation in your mix.";
+                    frequencyRecommendationsList.appendChild(li3);
+                    
+                    return;
+                }
+            }
+            
+            const li = document.createElement('li');
+            li.textContent = "No specific frequency recommendations provided.";
+            frequencyRecommendationsList.appendChild(li);
         }
     }
     
