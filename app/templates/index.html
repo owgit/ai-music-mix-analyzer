@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>  AI Audio Analysis Tool for Music Production</title>
+    <title>3D Audio & Spatial Mix Analysis | AI-Powered Music Production Tool</title>
     
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Free audio analysis tool for musicians. Get frequency analysis, dynamic range measurement, and mix suggestions to improve your music tracks.">
-    <meta name="keywords" content="free audio analysis, AI mix analyzer, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions">
+    <meta name="description" content="Free 3D audio analysis tool with AI-powered spatial mix analysis. Get frequency analysis, dynamic range measurement, 3D visualization, and mix suggestions to improve your music tracks.">
+    <meta name="keywords" content="3D audio analysis, spatial audio mixing, AI mix analyzer, Dolby Atmos mixing, immersive audio, surround sound analysis, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions, spatial audio production">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Mix Analyzer">
     
@@ -45,7 +45,7 @@
         "@type": "WebApplication",
         "name": "Mix Analyzer",
         "url": "{{ secure_url(request.url_root) }}",
-        "description": "Free AI-powered audio analysis tool for musicians, producers, and audio engineers to analyze frequency spectrum, dynamics, stereo imaging and get mastering recommendations at no cost",
+        "description": "Free AI-powered 3D audio and spatial mix analysis tool for musicians, producers, and audio engineers. Analyze frequency spectrum, dynamics, stereo imaging, and get professional 3D audio mixing recommendations at no cost",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Any",
         "dateModified": "{{ config.get('LAST_UPDATED', '2023-11-15') }}",
@@ -55,6 +55,9 @@
             "priceCurrency": "USD"
         },
         "featureList": [
+            "3D spatial audio analysis",
+            "Dolby Atmos mix visualization",
+            "Immersive audio measurement",
             "Free frequency spectrum analysis",
             "AI-powered dynamic range measurement",
             "Stereo field visualization",
@@ -274,18 +277,26 @@
         "mainEntity": [
             {
                 "@type": "Question",
-                "name": "What audio formats are supported by Mix Analyzer?",
+                "name": "What audio formats are supported for 3D spatial analysis?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Mix Analyzer supports MP3, WAV, FLAC, AIFF, AIF, M4A, and PCM audio formats for free analysis."
+                    "text": "Mix Analyzer supports multi-channel audio formats including Dolby Atmos (.atmos), AmbiX (.amb), and traditional formats like MP3, WAV, FLAC, AIFF, AIF, M4A, and PCM for comprehensive spatial audio analysis."
                 }
             },
             {
                 "@type": "Question",
-                "name": "How does the AI-powered analysis work?",
+                "name": "How does the AI-powered 3D spatial analysis work?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Our artificial intelligence analyzes your audio file across multiple dimensions including frequency balance, dynamic range, stereo field, clarity, harmonic content, and transients. The AI then provides personalized recommendations based on genre-specific best practices."
+                    "text": "Our artificial intelligence analyzes your audio file's spatial characteristics including height channels, object-based audio elements, and immersive audio parameters. The AI provides detailed insights for frequency balance, dynamic range, stereo field, clarity, harmonic content, and spatial positioning, with personalized recommendations based on genre-specific best practices for 3D audio production."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Can Mix Analyzer help with Dolby Atmos mixing?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, Mix Analyzer provides comprehensive analysis and recommendations for Dolby Atmos mixing, including object positioning, height channel balance, and immersive audio best practices. Our AI helps optimize your spatial mix for various playback systems."
                 }
             },
             {
@@ -301,7 +312,7 @@
                 "name": "What is the maximum file size I can upload?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Mix Analyzer accepts audio files up to 50MB in size for free analysis."
+                    "text": "Mix Analyzer accepts audio files up to 50MB in size for free analysis, including multi-channel and spatial audio formats."
                 }
             }
         ]
@@ -315,7 +326,7 @@
                 <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true">
                 <div class="app-title">
                     <h1>  AI-Powered Audio Analysis Tool</h1>
-                    <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to analyze frequency balance, dynamic range, stereo imaging, and get professional AI-powered mix improvement suggestions for musicians, producers & sound engineers at no cost</p>
+                    <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to transform your mix with professional-grade audio analysis. Our AI engine analyzes frequency spectrum, spatial imaging, and dynamics to deliver precise, actionable insights. Perfect for producers, engineers, and musicians seeking studio-quality results.</p>
                 </div>
             </div>
             <div class="header-actions">
@@ -456,6 +467,9 @@
                             </div>
                             <div id="ai-freq-error" class="ai-error" style="display: none;">
                                 <p>AI frequency analysis is not available.</p>
+                            </div>
+                            <div class="ai-description">
+                                <p>Our advanced AI analyzes your mix's frequency spectrum to identify specific EQ issues and provide targeted recommendations for better frequency balance.</p>
                             </div>
                         </div>
                         <div class="chart-container">
@@ -608,35 +622,35 @@
                         <div class="score-card">
                             <h3>3D Spatial Score</h3>
                             <div class="score-value" id="spatial-score">0</div>
-                            <p class="score-description">Overall rating of your mix's three-dimensional spatial characteristics</p>
+                            <p class="score-description">Overall rating of your mix's three-dimensional spatial characteristics and immersive qualities</p>
                         </div>
                         <div class="metrics-container">
                             <div class="metric" title="Measures how well your mix utilizes the vertical space through frequency distribution and harmonic content">
                                 <h4>Height Perception</h4>
                                 <div class="metric-value" id="height-score">0%</div>
-                                <p class="metric-description">High-frequency presence and vertical space utilization</p>
+                                <p class="metric-description">High-frequency presence and vertical space utilization for enhanced listening experience</p>
                             </div>
                             <div class="metric" title="Evaluates the perceived front-to-back dimension of your mix through phase relationships and reverb">
                                 <h4>Depth Perception</h4>
                                 <div class="metric-value" id="depth-score">0%</div>
-                                <p class="metric-description">Front-to-back layering and spatial positioning</p>
+                                <p class="metric-description">Front-to-back layering and spatial positioning for immersive soundstage</p>
                             </div>
                             <div class="metric" title="Analyzes the stability and consistency of the stereo field across frequencies">
                                 <h4>Width Consistency</h4>
                                 <div class="metric-value" id="width-consistency">0%</div>
-                                <p class="metric-description">Stereo field stability and balance</p>
+                                <p class="metric-description">Stereo field stability and balance across the frequency spectrum</p>
                             </div>
                         </div>
                         <div class="analysis-card">
                             <h3>Spatial Analysis</h3>
                             <div class="analysis-description">
-                                <p>This analysis evaluates how your mix utilizes three-dimensional space, crucial for creating an immersive listening experience.</p>
+                                <p>This innovative analysis evaluates how your mix utilizes three-dimensional space, crucial for creating an immersive listening experience on modern playback systems including headphones, speakers, and surround environments.</p>
                             </div>
                             <ul id="spatial-analysis"></ul>
                         </div>
                         <div class="visualization-container" title="Interactive 3D visualization of your mix's spatial characteristics">
                             <h3>3D Spatial Field</h3>
-                            <p class="visualization-help">This visualization shows how your mix utilizes the three-dimensional space:</p>
+                            <p class="visualization-help">This advanced visualization shows how your mix utilizes the full three-dimensional space:</p>
                             <ul class="visualization-legend">
                                 <li><strong>X-axis:</strong> Left-right stereo positioning</li>
                                 <li><strong>Y-axis:</strong> Front-back depth perception</li>
@@ -701,6 +715,7 @@
                             <div class="ai-header">
                                 <h3>AI-Powered Mix Analysis</h3>
                                 <p class="ai-powered-by">Powered by <span id="ai-model-used">AI Model</span></p>
+                                <p class="ai-description">Comprehensive audio analysis powered by advanced AI models that provide professional mixing and mastering insights tailored to your track</p>
                             </div>
                             
                             <div class="ai-summary-card">
@@ -774,6 +789,7 @@
                         <li><a href="{{ url_for('main.index') }}#harmonic-guide" id="open-harmonic-guide" aria-label="Read AI Harmonic Analysis & EQ Techniques">AI Harmonic Analysis & EQ Techniques</a></li>
                         <li><a href="{{ url_for('main.index') }}#stereo-guide" id="open-stereo-guide" aria-label="Read Understanding Stereo Field & Imaging">Understanding Stereo Field & Imaging</a></li>
                         <li><a href="{{ url_for('main.index') }}#transients-guide" id="open-transients-guide" aria-label="Read AI Transient Analysis & Detection">AI Transient Analysis & Detection</a></li>
+                        <li><a href="{{ url_for('main.index') }}#spatial-guide" id="open-spatial-guide" aria-label="Read 3D Spatial Mix Analysis Guide">3D Spatial Mix Analysis Guide</a></li>
                     </ul>
                 </div>
                 

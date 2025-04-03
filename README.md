@@ -16,10 +16,12 @@ A powerful Flask-based web application for audio mixing analysis, mastering assi
 - **Visualization Suite**: Generate high-resolution spectrograms and waveform visualizations
 - **Stereo Field Analysis**: Comprehensive stereo imaging and phase correlation analysis
 - **AI-Powered Mix Feedback**: Get intelligent suggestions using OpenAI's GPT models or alternative AI providers
+- **Tab-specific AI Insights**: Context-specific AI analysis for each audio feature (frequency, dynamics, stereo, etc.)
 - **Frequency Response**: Analyze frequency distribution across 7 distinct bands and identify problematic areas
 - **Dynamic Range**: Measure compression levels and dynamic range in your mixes with multiple metrics
 - **Harmonic Content**: Analyze key detection and harmonic complexity
 - **Transient Analysis**: Evaluate percussion energy and attack characteristics
+- **3D Spatial Analysis**: Visualize and analyze height, depth, and width perception in your mixes
 - **Security**: Enterprise-grade file handling with robust security measures
 
 ## 🚀 Getting Started
@@ -352,6 +354,15 @@ The application performs these professional-grade analyses:
    - Transient density evaluation
    - Percussion energy analysis
 
+7. **3D Spatial Analysis**:
+   - Height perception measurement
+   - Depth perception analysis
+   - Width consistency evaluation
+   - Interactive 3D visualization
+   - Color-coded stereo width mapping
+   - Surround compatibility assessment
+   - Headphone/speaker optimization
+
 ### AI-Powered Mix Feedback
 
 When an AI API key is provided, the application can:
@@ -362,6 +373,11 @@ When an AI API key is provided, the application can:
 - Offer specific suggestions for enhancing the mix
 - Recommend reference tracks for comparison
 - Suggest specific processing techniques
+- Deliver context-specific insights within each tab:
+  - Frequency-specific recommendations in the Frequency Balance tab
+  - Dynamics recommendations in the Dynamic Range tab
+  - Stereo field suggestions in the Stereo Analysis tab
+  - Spatial enhancement ideas in the 3D Spatial tab
 
 The AI analysis is performed using either:
 - OpenAI's GPT models (default)
@@ -375,11 +391,13 @@ The application generates several visualizations to help you understand your mix
 2. **Spectrogram**: Displays frequency content over time
 3. **Frequency Spectrum**: Shows the average energy at each frequency
 4. **Stereo Field**: Visualizes the relationship between left and right channels
+5. **3D Spatial Field**: Interactive 3D visualization of your mix's spatial characteristics
 
 All visualizations are interactive:
 - Click on any visualization to open it in a larger view
 - Use the zoom controls to zoom in and out
 - Drag to pan around when zoomed in
+- Rotate and adjust the 3D visualization for different perspectives
 - Press the Reset button to return to the original view
 
 ## 🤝 Contributing

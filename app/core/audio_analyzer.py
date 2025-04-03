@@ -7,6 +7,8 @@ import os
 from pydub import AudioSegment
 import tempfile
 import matplotlib
+import time  # Add time module for tracking performance
+import traceback  # Add traceback for detailed error logging
 matplotlib.use('Agg')  # Use non-interactive backend
 from .music_theory_data.key_relationships import get_key_relationship_info
 
@@ -50,12 +52,27 @@ def analyze_mix(file_path):
     Returns:
         Dictionary containing analysis results
     """
+    # Track total analysis time
+    total_start_time = time.time()
+    
     try:
-        print(f"Loading audio file for analysis: {file_path}")
+        print(f"\n{'='*50}")
+        print(f"STARTING ANALYSIS: {file_path}")
+        print(f"{'='*50}\n")
+        
+        # Step 1: Load audio file
+        print(f"\n{'*'*40}")
+        print(f"Step 1: Loading audio file for analysis: {file_path}")
+        load_start_time = time.time()
+        
         # Load the audio file with mono=False to preserve stereo
         y, sr = librosa.load(file_path, sr=None, mono=False)
         
+        load_time = time.time() - load_start_time
+        print(f"Audio loaded in {load_time:.2f} seconds")
+        print(f"Sample rate: {sr} Hz")
         print(f"Loaded audio shape: {y.shape}, dimensions: {y.ndim}")
+        print(f"Audio duration: {len(y[0])/sr:.2f} seconds")
         
         # Handle mono files by duplicating the channel
         if y.ndim == 1:
@@ -66,9 +83,11 @@ def analyze_mix(file_path):
             y = np.vstack((y[0], y[0]))
         elif y.ndim == 2 and y.shape[0] > 2:
             print("Multi-channel file detected, using first two channels")
+            print(f"Original channels: {y.shape[0]}")
             y = y[:2]
         
         print(f"Final audio shape: {y.shape}, dimensions: {y.ndim}")
+        print(f"Max amplitude: Left={np.max(np.abs(y[0])):.4f}, Right={np.max(np.abs(y[1])):.4f}")
         
         # Get left and right channels
         y_left = y[0]
@@ -152,70 +171,165 @@ def analyze_mix(file_path):
         # Calculate various metrics with error handling
         results = {}
         
+        # Step 2: Analyze frequency balance
+        print(f"\n{'*'*40}")
+        print("Step 2: Analyzing frequency balance...")
+        start_time = time.time()
         try:
             results["frequency_balance"] = analyze_frequency_balance(y, sr)
+            print(f"Frequency balance analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Balance score: {results['frequency_balance']['balance_score']:.2f}")
+            for band, energy in results['frequency_balance']['band_energy'].items():
+                print(f"  {band}: {energy:.2f}%")
         except Exception as e:
             print(f"Error in frequency balance analysis: {str(e)}")
             results["frequency_balance"] = default_results["frequency_balance"]
             
+        # Step 3: Analyze dynamic range
+        print(f"\n{'*'*40}")
+        print("Step 3: Analyzing dynamic range...")
+        start_time = time.time()
         try:
             results["dynamic_range"] = analyze_dynamic_range(y)
+            print(f"Dynamic range analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Dynamic range: {results['dynamic_range']['dynamic_range_db']:.2f} dB")
+            print(f"Crest factor: {results['dynamic_range']['crest_factor_db']:.2f} dB")
+            print(f"PLR: {results['dynamic_range']['plr']:.2f} dB")
+            print(f"Dynamic range score: {results['dynamic_range']['dynamic_range_score']:.2f}")
         except Exception as e:
             print(f"Error in dynamic range analysis: {str(e)}")
             results["dynamic_range"] = default_results["dynamic_range"]
             
+        # Step 4: Analyze stereo field
+        print(f"\n{'*'*40}")
+        print("Step 4: Analyzing stereo field...")
+        start_time = time.time()
         try:
             results["stereo_field"] = analyze_stereo_field(y_left, y_right)
+            print(f"Stereo field analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Channel correlation: {results['stereo_field']['correlation']:.4f}")
+            print(f"Mid/Side ratio: {results['stereo_field']['mid_ratio']:.4f}/{results['stereo_field']['side_ratio']:.4f}")
+            print(f"Width score: {results['stereo_field']['width_score']:.2f}")
+            print(f"Phase score: {results['stereo_field']['phase_score']:.2f}")
         except Exception as e:
             print(f"Error in stereo field analysis: {str(e)}")
             results["stereo_field"] = default_results["stereo_field"]
             
+        # Step 5: Analyze clarity
+        print(f"\n{'*'*40}")
+        print("Step 5: Analyzing clarity...")
+        start_time = time.time()
         try:
             results["clarity"] = analyze_clarity(y, sr)
+            print(f"Clarity analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Clarity score: {results['clarity']['clarity_score']:.2f}")
+            print(f"Spectral contrast: {results['clarity']['spectral_contrast']:.4f}")
+            print(f"Spectral flatness: {results['clarity']['spectral_flatness']:.4f}")
+            print(f"Spectral centroid: {results['clarity']['spectral_centroid']:.2f} Hz")
         except Exception as e:
             print(f"Error in clarity analysis: {str(e)}")
             results["clarity"] = default_results["clarity"]
             
+        # Step 6: Analyze harmonic content
+        print(f"\n{'*'*40}")
+        print("Step 6: Analyzing harmonic content...")
+        start_time = time.time()
         try:
             results["harmonic_content"] = analyze_harmonic_content(y, sr)
+            print(f"Harmonic content analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Detected key: {results['harmonic_content']['key']}")
+            print(f"Harmonic complexity: {results['harmonic_content']['harmonic_complexity']:.2f}%")
+            print(f"Key consistency: {results['harmonic_content']['key_consistency']:.2f}%")
+            print(f"Chord changes per minute: {results['harmonic_content']['chord_changes_per_minute']:.2f}")
+            if 'top_key_candidates' in results['harmonic_content']:
+                print("Top key candidates: ", end="")
+                for key_candidate in results['harmonic_content']['top_key_candidates'][:3]:
+                    print(f"{key_candidate}, ", end="")
+                print()
         except Exception as e:
             print(f"Error in harmonic content analysis: {str(e)}")
             results["harmonic_content"] = default_results["harmonic_content"]
             
+        # Step 7: Analyze transients
+        print(f"\n{'*'*40}")
+        print("Step 7: Analyzing transients...")
+        start_time = time.time()
         try:
             results["transients"] = analyze_transients(y_mono, sr)
+            print(f"Transients analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Transients score: {results['transients']['transients_score']:.2f}")
+            print(f"Attack time: {results['transients']['attack_time']:.2f} ms")
+            print(f"Transient density: {results['transients']['transient_density']:.2f} onsets/sec")
+            print(f"Percussion energy: {results['transients']['percussion_energy']:.2f}%")
+            print(f"Detected {len(results['transients'].get('transient_data', []))} transients")
         except Exception as e:
             print(f"Error in transients analysis: {str(e)}")
             results["transients"] = default_results["transients"]
             
+        # Step 8: Analyze 3D spatial
+        print(f"\n{'*'*40}")
+        print("Step 8: Analyzing 3D spatial imaging...")
+        start_time = time.time()
         try:
             results["3d_spatial"] = analyze_3d_spatial(y, sr)
+            print(f"3D spatial analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Height score: {results['3d_spatial']['height_score']:.2f}%")
+            print(f"Depth score: {results['3d_spatial']['depth_score']:.2f}%")
+            print(f"Width consistency: {results['3d_spatial']['width_consistency']:.2f}%")
         except Exception as e:
             print(f"Error in 3D spatial analysis: {str(e)}")
             results["3d_spatial"] = default_results["3d_spatial"]
             
+        # Step 9: Analyze surround compatibility
+        print(f"\n{'*'*40}")
+        print("Step 9: Analyzing surround sound compatibility...")
+        start_time = time.time()
         try:
             results["surround_compatibility"] = analyze_surround_compatibility(y, sr)
+            print(f"Surround compatibility analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Mono compatibility: {results['surround_compatibility']['mono_compatibility']:.2f}%")
+            print(f"Phase score: {results['surround_compatibility']['phase_score']:.2f}%")
         except Exception as e:
             print(f"Error in surround compatibility analysis: {str(e)}")
             results["surround_compatibility"] = default_results["surround_compatibility"]
             
+        # Step 10: Analyze headphone/speaker optimization
+        print(f"\n{'*'*40}")
+        print("Step 10: Analyzing headphone/speaker optimization...")
+        start_time = time.time()
         try:
             results["headphone_speaker_optimization"] = analyze_headphone_speaker_optimization(y, sr)
+            print(f"Headphone/speaker optimization analysis completed in {time.time() - start_time:.2f} seconds")
+            print(f"Headphone score: {results['headphone_speaker_optimization']['headphone_score']:.2f}%")
+            print(f"Speaker score: {results['headphone_speaker_optimization']['speaker_score']:.2f}%")
         except Exception as e:
             print(f"Error in headphone/speaker optimization analysis: {str(e)}")
             results["headphone_speaker_optimization"] = default_results["headphone_speaker_optimization"]
         
-        # Generate visualizations with the same audio data
+        # Step 11: Generate visualizations
+        print(f"\n{'*'*40}")
+        print("Step 11: Generating visualizations...")
+        start_time = time.time()
         try:
             results["visualizations"] = generate_visualizations(file_path, y=y, sr=sr)
+            print(f"Visualizations generated in {time.time() - start_time:.2f} seconds")
+            
+            # Print the paths to the generated files
+            for vis_type, vis_path in results["visualizations"].items():
+                if vis_path:
+                    print(f"Generated {vis_type}: {vis_path}")
         except Exception as e:
             print(f"Error generating visualizations: {str(e)}")
             results["visualizations"] = generate_error_visualizations()
         
-        # Calculate overall score
+        # Step 12: Calculate overall score
+        print(f"\n{'*'*40}")
+        print("Step 12: Calculating overall score...")
+        start_time = time.time()
         try:
             results["overall_score"] = calculate_overall_score(results)
+            print(f"Overall score calculated in {time.time() - start_time:.2f} seconds")
+            print(f"Final overall score: {results['overall_score']:.1f}/100")
         except Exception as e:
             print(f"Error calculating overall score: {str(e)}")
             results["overall_score"] = 70.0
@@ -235,6 +349,12 @@ def analyze_mix(file_path):
                     if subkey not in results[key]:
                         results[key][subkey] = default_results[key][subkey]
         
+        total_time = time.time() - total_start_time
+        print(f"\n{'='*50}")
+        print(f"ANALYSIS COMPLETE: {file_path}")
+        print(f"Total analysis time: {total_time:.2f} seconds ({total_time/60:.2f} minutes)")
+        print(f"{'='*50}\n")
+        
         return results
         
     except Exception as e:
@@ -245,22 +365,43 @@ def analyze_mix(file_path):
         error_results["message"] = str(e)
         error_results["visualizations"] = generate_error_visualizations()
         error_results["overall_score"] = 70.0
+        
+        total_time = time.time() - total_start_time
+        print(f"\n{'='*50}")
+        print(f"ANALYSIS FAILED: {file_path}")
+        print(f"Error: {str(e)}")
+        print(f"Total time: {total_time:.2f} seconds")
+        print(f"{'='*50}\n")
+        
         return error_results
 
 def analyze_frequency_balance(y, sr):
     """Analyze the frequency balance of the mix"""
+    start_time = time.time()
     try:
+        print(f"\n{'-'*30}")
+        print("FREQUENCY BALANCE ANALYSIS:")
+        
         # Convert to mono for frequency analysis
+        print("Converting to mono for frequency analysis...")
+        mono_start = time.time()
         y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
+        print(f"Conversion completed in {time.time() - mono_start:.4f} seconds")
         
         # Compute the short-time Fourier transform
+        print("Computing STFT...")
+        stft_start = time.time()
         D = np.abs(librosa.stft(y_mono))
+        print(f"STFT shape: {D.shape}")
+        print(f"STFT computed in {time.time() - stft_start:.4f} seconds")
         
         # Convert to dB scale
+        print("Converting to dB scale...")
         D_db = librosa.amplitude_to_db(D, ref=np.max)
         
         # Get frequency bands
         freqs = librosa.fft_frequencies(sr=sr)
+        print(f"Frequency range: {freqs[0]:.1f}Hz - {freqs[-1]:.1f}Hz with {len(freqs)} points")
         
         # Define frequency bands (in Hz)
         bands = {
@@ -273,20 +414,26 @@ def analyze_frequency_balance(y, sr):
             "air": (10000, 20000)
         }
         
+        print("Analyzing frequency bands...")
         # Calculate average energy in each band
         band_energy = {}
         for band_name, (low, high) in bands.items():
+            band_start = time.time()
             # Find indices for the frequency range
             indices = np.where((freqs >= low) & (freqs <= high))[0]
             if len(indices) > 0:
                 # Calculate mean energy in this band
                 band_energy[band_name] = float(np.mean(D_db[:, indices]))
+                print(f"  {band_name}: {len(indices)} frequency bins, raw energy: {band_energy[band_name]:.2f}dB (calculated in {time.time() - band_start:.4f}s)")
             else:
                 band_energy[band_name] = -80.0  # Default low value if no frequencies in range
+                print(f"  {band_name}: No frequency bins in range, using default -80.0dB")
         
         # Normalize values to 0-100 scale
+        print("Normalizing band energy to 0-100 scale...")
         min_energy = min(band_energy.values())
         max_energy = max(band_energy.values())
+        print(f"Raw energy range: {min_energy:.2f}dB to {max_energy:.2f}dB")
         range_energy = max_energy - min_energy if max_energy > min_energy else 1
         
         normalized_energy = {
@@ -294,7 +441,12 @@ def analyze_frequency_balance(y, sr):
             for band, energy in band_energy.items()
         }
         
+        # Print normalized energy values
+        for band, energy in normalized_energy.items():
+            print(f"  {band}: normalized to {energy:.2f}%")
+        
         # Calculate balance score based on ideal curve and deviation
+        print("Calculating balance score against ideal curve...")
         ideal_curve = {
             "sub_bass": 85,
             "bass": 90,
@@ -307,12 +459,24 @@ def analyze_frequency_balance(y, sr):
         
         # Calculate deviation from ideal curve
         deviations = [abs(normalized_energy[band] - ideal_curve[band]) for band in bands.keys()]
+        for i, band in enumerate(bands.keys()):
+            print(f"  {band}: ideal={ideal_curve[band]:.1f}%, actual={normalized_energy[band]:.1f}%, deviation={deviations[i]:.1f}%")
+            
         avg_deviation = float(np.mean(deviations))
+        print(f"Average deviation from ideal curve: {avg_deviation:.2f}%")
         
         # Convert to a 0-100 score (lower deviation is better)
         balance_score = float(max(0, min(100, 100 - avg_deviation)))
+        print(f"Final balance score: {balance_score:.2f}/100")
         
         analysis = get_frequency_balance_analysis(normalized_energy)
+        print("Generated analysis:")
+        for item in analysis:
+            print(f"  - {item}")
+        
+        total_time = time.time() - start_time
+        print(f"Frequency balance analysis completed in {total_time:.2f} seconds")
+        print(f"{'-'*30}\n")
         
         return {
             "band_energy": normalized_energy,
@@ -321,6 +485,7 @@ def analyze_frequency_balance(y, sr):
         }
     except Exception as e:
         print(f"Error in frequency balance analysis: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         # Return default values
         default_energy = {
             "sub_bass": 70.0,
@@ -371,46 +536,102 @@ def get_frequency_balance_analysis(normalized_energy):
 
 def analyze_dynamic_range(y):
     """Analyze the dynamic range of the mix"""
-    # Convert to mono for dynamic range analysis
-    y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
-    
-    # Calculate RMS energy in small windows
-    frame_length = 2048
-    hop_length = 512
-    rms = librosa.feature.rms(y=y_mono, frame_length=frame_length, hop_length=hop_length)[0]
-    
-    # Convert to dB
-    rms_db = 20 * np.log10(rms + 1e-8)  # Adding small value to avoid log(0)
-    
-    # Calculate dynamic range metrics
-    crest_factor = np.max(np.abs(y_mono)) / np.sqrt(np.mean(y_mono**2))
-    crest_factor_db = 20 * np.log10(crest_factor)
-    
-    # Calculate percentiles for dynamic range
-    p95 = np.percentile(rms_db[rms_db > -80], 95)  # 95th percentile (loud parts)
-    p5 = np.percentile(rms_db[rms_db > -80], 5)    # 5th percentile (quiet parts)
-    dynamic_range = p95 - p5
-    
-    # Calculate PLR (Peak to Loudness Ratio)
-    peak = np.max(np.abs(y_mono))
-    peak_db = 20 * np.log10(peak + 1e-8)
-    loudness = np.mean(rms_db[rms_db > -80])
-    plr = peak_db - loudness
-    
-    # Score based on dynamic range (0-100)
-    # A good mix typically has at least 10-15 dB of dynamic range
-    dr_score = min(100, max(0, dynamic_range * 5))
-    
-    # Analyze if the mix is over-compressed
-    is_overcompressed = dynamic_range < 8
-    
-    return {
-        "dynamic_range_db": dynamic_range,
-        "crest_factor_db": crest_factor_db,
-        "plr": plr,
-        "dynamic_range_score": dr_score,
-        "analysis": get_dynamic_range_analysis(dynamic_range, crest_factor_db)
-    }
+    start_time = time.time()
+    try:
+        print(f"\n{'-'*30}")
+        print("DYNAMIC RANGE ANALYSIS:")
+        
+        # Convert to mono for dynamic range analysis
+        print("Converting to mono for dynamic range analysis...")
+        mono_start = time.time()
+        y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
+        print(f"Conversion completed in {time.time() - mono_start:.4f} seconds")
+        print(f"Audio max amplitude: {np.max(np.abs(y_mono)):.4f}")
+        
+        # Calculate RMS energy in small windows
+        print("Calculating RMS energy in windows...")
+        rms_start = time.time()
+        frame_length = 2048
+        hop_length = 512
+        print(f"Frame length: {frame_length}, Hop length: {hop_length}")
+        rms = librosa.feature.rms(y=y_mono, frame_length=frame_length, hop_length=hop_length)[0]
+        print(f"RMS calculation completed in {time.time() - rms_start:.4f} seconds")
+        print(f"RMS shape: {rms.shape}")
+        print(f"RMS range: {np.min(rms):.6f} to {np.max(rms):.6f}")
+        
+        # Convert to dB
+        print("Converting RMS to dB...")
+        rms_db = 20 * np.log10(rms + 1e-8)  # Adding small value to avoid log(0)
+        print(f"RMS dB range: {np.min(rms_db):.2f}dB to {np.max(rms_db):.2f}dB")
+        
+        # Calculate crest factor
+        print("Calculating crest factor...")
+        peak = np.max(np.abs(y_mono))
+        rms_overall = np.sqrt(np.mean(y_mono**2))
+        crest_factor = peak / rms_overall
+        crest_factor_db = 20 * np.log10(crest_factor)
+        print(f"Peak amplitude: {peak:.6f}")
+        print(f"Overall RMS: {rms_overall:.6f}")
+        print(f"Crest factor: {crest_factor:.2f} ({crest_factor_db:.2f}dB)")
+        
+        # Calculate percentiles for dynamic range
+        print("Calculating dynamic range using percentiles...")
+        percentile_start = time.time()
+        valid_rms = rms_db[rms_db > -80]  # Only consider non-silent parts
+        print(f"Valid RMS samples: {len(valid_rms)} of {len(rms_db)} ({len(valid_rms)/len(rms_db)*100:.1f}%)")
+        
+        p95 = np.percentile(valid_rms, 95)  # 95th percentile (loud parts)
+        p5 = np.percentile(valid_rms, 5)    # 5th percentile (quiet parts)
+        dynamic_range = p95 - p5
+        print(f"5th percentile: {p5:.2f}dB")
+        print(f"95th percentile: {p95:.2f}dB")
+        print(f"Dynamic range (p95-p5): {dynamic_range:.2f}dB")
+        print(f"Percentile calculation completed in {time.time() - percentile_start:.4f} seconds")
+        
+        # Calculate PLR (Peak to Loudness Ratio)
+        print("Calculating PLR (Peak to Loudness Ratio)...")
+        peak_db = 20 * np.log10(peak + 1e-8)
+        loudness = np.mean(valid_rms)
+        plr = peak_db - loudness
+        print(f"Peak level: {peak_db:.2f}dB")
+        print(f"Average loudness: {loudness:.2f}dB")
+        print(f"PLR: {plr:.2f}dB")
+        
+        # Score based on dynamic range (0-100)
+        print("Calculating dynamic range score...")
+        dr_score = min(100, max(0, dynamic_range * 5))
+        print(f"Dynamic range score: {dr_score:.2f}/100")
+        
+        # Analyze if the mix is over-compressed
+        is_overcompressed = dynamic_range < 8
+        print(f"Is over-compressed: {is_overcompressed}")
+        
+        analysis = get_dynamic_range_analysis(dynamic_range, crest_factor_db)
+        print("Generated analysis:")
+        for item in analysis:
+            print(f"  - {item}")
+        
+        total_time = time.time() - start_time
+        print(f"Dynamic range analysis completed in {total_time:.2f} seconds")
+        print(f"{'-'*30}\n")
+        
+        return {
+            "dynamic_range_db": dynamic_range,
+            "crest_factor_db": crest_factor_db,
+            "plr": plr,
+            "dynamic_range_score": dr_score,
+            "analysis": analysis
+        }
+    except Exception as e:
+        print(f"Error in dynamic range analysis: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
+        return {
+            "dynamic_range_db": 12.0,
+            "crest_factor_db": 15.0,
+            "plr": 12.0,
+            "dynamic_range_score": 70.0,
+            "analysis": ["Unable to analyze dynamic range."]
+        }
 
 def get_dynamic_range_analysis(dynamic_range, crest_factor_db):
     """Generate textual analysis of dynamic range"""
@@ -1284,45 +1505,88 @@ def analyze_3d_spatial(y, sr):
     Returns:
         Dictionary containing 3D spatial analysis results
     """
+    start_time = time.time()
     try:
-        print("Analyzing 3D spatial imaging...")
+        print(f"\n{'-'*30}")
+        print("3D SPATIAL ANALYSIS:")
         
         # Ensure stereo audio
         if y.ndim == 1:
+            print("Converting mono to stereo for 3D analysis...")
             y = np.vstack((y, y))
+            print("Conversion complete")
 
+        print(f"Audio shape: {y.shape}")
+        print(f"Channel 1 max amplitude: {np.max(np.abs(y[0])):.4f}")
+        print(f"Channel 2 max amplitude: {np.max(np.abs(y[1])):.4f}")
+        
         # Calculate interaural level differences (ILD) for height perception
+        print("Calculating interaural level differences (ILD) for height perception...")
+        ild_start = time.time()
         ild = np.mean(np.abs(y[0] - y[1]))
+        print(f"ILD: {ild:.6f} (calculated in {time.time() - ild_start:.4f}s)")
+        
         height_score = min(100, max(0, ild * 100))
+        print(f"Height score: {height_score:.2f}/100")
 
         # Calculate interaural time differences (ITD) for depth perception
+        print("Calculating interaural time differences (ITD) for depth perception...")
+        itd_start = time.time()
         correlation = np.corrcoef(y[0], y[1])[0, 1]
+        print(f"Channel correlation: {correlation:.6f} (calculated in {time.time() - itd_start:.4f}s)")
+        
         depth_score = min(100, max(0, (1 - abs(correlation)) * 100))
+        print(f"Depth score: {depth_score:.2f}/100")
 
         # Calculate width consistency
+        print("Calculating width consistency across frequency bands...")
+        width_start = time.time()
         window_size = 2048
         hop_length = 512
-        width_variation = np.std([
-            np.corrcoef(y[0][i:i+window_size], y[1][i:i+window_size])[0, 1]
-            for i in range(0, len(y[0]) - window_size, hop_length)
-        ])
+        print(f"Window size: {window_size}, Hop length: {hop_length}")
+        
+        # Calculate correlation at different points in the audio
+        correlations = []
+        for i in range(0, len(y[0]) - window_size, hop_length):
+            if i % (hop_length * 20) == 0:  # Print status every 20 windows
+                print(f"  Processing window at {i/sr:.2f}s...")
+            corr = np.corrcoef(y[0][i:i+window_size], y[1][i:i+window_size])[0, 1]
+            correlations.append(corr)
+        
+        width_variation = np.std(correlations)
+        print(f"Number of correlation windows: {len(correlations)}")
+        print(f"Correlation range: {min(correlations):.4f} to {max(correlations):.4f}")
+        print(f"Width variation (std dev): {width_variation:.6f}")
+        print(f"Width consistency calculation completed in {time.time() - width_start:.4f}s")
+        
         width_consistency = min(100, max(0, 100 - (width_variation * 1000)))
+        print(f"Width consistency score: {width_consistency:.2f}/100")
+        
+        # Generate analysis text
+        analysis = get_3d_spatial_analysis(height_score, depth_score, width_consistency)
+        print("Generated analysis:")
+        for item in analysis:
+            print(f"  - {item}")
+        
+        total_time = time.time() - start_time
+        print(f"3D spatial analysis completed in {total_time:.2f} seconds")
+        print(f"{'-'*30}\n")
 
         return {
             "height_score": float(height_score),
             "depth_score": float(depth_score),
             "width_consistency": float(width_consistency),
-            "analysis": get_3d_spatial_analysis(height_score, depth_score, width_consistency)
+            "analysis": analysis
         }
     except Exception as e:
         print(f"Error in 3D spatial analysis: {str(e)}")
+        print(f"Traceback: {traceback.format_exc()}")
         return {
             "height_score": 70.0,
             "depth_score": 70.0,
             "width_consistency": 70.0,
             "analysis": ["Unable to analyze 3D spatial imaging."]
         }
-
 
 def get_3d_spatial_analysis(height_score, depth_score, width_consistency):
     """Generate textual analysis of 3D spatial imaging"""
@@ -1345,7 +1609,6 @@ def get_3d_spatial_analysis(height_score, depth_score, width_consistency):
         analysis.append("Good 3D spatial imaging with balanced height, depth, and width.")
 
     return analysis
-
 
 def analyze_surround_compatibility(y, sr):
     """
@@ -1386,7 +1649,6 @@ def analyze_surround_compatibility(y, sr):
             "phase_score": 70.0,
             "analysis": ["Unable to analyze surround compatibility."]
         }
-
 
 def get_surround_compatibility_analysis(mono_compatibility, phase_score):
     """Generate textual analysis of surround compatibility"""
@@ -1571,7 +1833,6 @@ def analyze_headphone_speaker_optimization(y, sr):
             "speaker_score": 70.0,
             "analysis": ["Unable to analyze headphone/speaker optimization."]
         }
-
 
 def get_headphone_speaker_analysis(headphone_score, speaker_score):
     """Generate textual analysis of headphone/speaker optimization"""
