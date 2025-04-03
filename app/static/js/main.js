@@ -360,40 +360,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Display results
     function displayResults(data) {
-        // Hide progress container and show results
-        uploadContainer.style.display = 'none';
+        console.log("Displaying results:", data);
+        
+        // Show results section
         resultsSection.style.display = 'block';
         
-        // Set filename
+        // Update filename display
         document.getElementById('filename').textContent = data.filename;
         
-        // Check if the track was analyzed as instrumental
-        const isInstrumental = data.results.ai_insights && 
-                              data.results.ai_insights.summary && 
-                              data.results.ai_insights.summary.includes('Instrumental');
-        
-        // Add track type indicator if it's instrumental
-        if (isInstrumental) {
-            const filenameElement = document.getElementById('filename');
-            if (filenameElement) {
-                // Create a badge for instrumental tracks
-                const badge = document.createElement('span');
-                badge.className = 'instrumental-badge';
-                badge.textContent = 'Instrumental';
-                
-                // Insert after the filename
-                filenameElement.parentNode.insertBefore(badge, filenameElement.nextSibling);
-                console.log("Track analyzed as instrumental");
-            }
-        }
-        
-        // Set overall score
-        const overallScore = data.results.overall_score;
-        document.getElementById('overall-score').textContent = overallScore;
-        
-        // Update score circle background
-        const scoreCircle = document.querySelector('.score-circle');
-        scoreCircle.style.background = `conic-gradient(var(--primary-color) 0%, var(--primary-color) ${overallScore}%, #e9ecef ${overallScore}%)`;
+        // Update overall score
+        document.getElementById('overall-score').textContent = data.results.overall_score;
         
         // Frequency Balance
         const frequencyBalance = data.results.frequency_balance;
@@ -578,6 +554,23 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        // 3D Spatial Analysis
+        if (data.results['3d_spatial']) {
+            const spatialAnalysis = data.results['3d_spatial'];
+            document.getElementById('spatial-score').textContent = Math.round((spatialAnalysis.height_score + spatialAnalysis.depth_score + spatialAnalysis.width_consistency) / 3);
+            document.getElementById('height-score').textContent = Math.round(spatialAnalysis.height_score) + '%';
+            document.getElementById('depth-score').textContent = Math.round(spatialAnalysis.depth_score) + '%';
+            document.getElementById('width-consistency').textContent = Math.round(spatialAnalysis.width_consistency) + '%';
+            
+            const spatialAnalysisList = document.getElementById('spatial-analysis');
+            spatialAnalysisList.innerHTML = '';
+            spatialAnalysis.analysis.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                spatialAnalysisList.appendChild(li);
+            });
+        }
+        
         // Display visualizations
         if (data.results.visualizations) {
             console.log("Detailed visualization paths:");
@@ -629,6 +622,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Hiding stereo field container - No visualization available");
                 if (stereoFieldContainer) {
                     stereoFieldContainer.style.display = 'none';
+                }
+            }
+            
+            // Handle 3D spatial field visualization
+            const spatialFieldImg = document.getElementById('spatial-field-img');
+            if (data.results.visualizations.spatial_field && spatialFieldImg) {
+                console.log("Setting 3D spatial field image:", data.results.visualizations.spatial_field);
+                setImageWithFallback(spatialFieldImg, data.results.visualizations.spatial_field, '3D spatial field visualization');
+            } else {
+                console.log("3D spatial field visualization not available or element not found");
+                if (spatialFieldImg) {
+                    spatialFieldImg.src = '/static/img/error.png';
+                    spatialFieldImg.alt = '3D spatial field visualization not available';
                 }
             }
             

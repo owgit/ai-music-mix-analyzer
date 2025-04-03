@@ -1728,4 +1728,110 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     outline-offset: 2px;
 }
 
-/* Rest of CSS */ 
+/* Rest of CSS */
+.tab-pane#spatial-tab {
+    padding: 20px;
+}
+
+.tab-pane#spatial-tab .score-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+}
+
+.tab-pane#spatial-tab .metrics-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.tab-pane#spatial-tab .metric {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: var(--card-shadow);
+}
+
+.tab-pane#spatial-tab .metric h4 {
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.tab-pane#spatial-tab .metric-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.tab-pane#spatial-tab .analysis-card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.tab-pane#spatial-tab .analysis-card h3 {
+    color: var(--text-secondary);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.tab-pane#spatial-tab .analysis-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tab-pane#spatial-tab .analysis-card li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.tab-pane#spatial-tab .analysis-card li:last-child {
+    border-bottom: none;
+}
+
+.tab-pane#spatial-tab .visualization-container {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 20px;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.tab-pane#spatial-tab .visualization-container:hover {
+    transform: scale(1.02);
+}
+
+.tab-pane#spatial-tab .visualization-container img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tab-pane#spatial-tab .metrics-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .tab-pane#spatial-tab .metric {
+        margin-bottom: 15px;
+    }
+    
+    .tab-pane#spatial-tab .visualization-container {
+        margin-top: 15px;
+    }
+} 

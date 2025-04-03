@@ -12,19 +12,21 @@ A powerful Flask-based web application for audio mixing analysis, mastering assi
 
 ## 🎧 Features
 
-- **Audio Analysis**: Upload and analyze audio files (mp3, wav, flac) with professional-grade tools
+- **Audio Analysis**: Upload and analyze audio files (mp3, wav, flac, aiff, ogg) with professional-grade tools
 - **Visualization Suite**: Generate high-resolution spectrograms and waveform visualizations
 - **Stereo Field Analysis**: Comprehensive stereo imaging and phase correlation analysis
-- **AI-Powered Mix Feedback**: Get intelligent suggestions using advanced audio algorithms
-- **Frequency Response**: Analyze frequency distribution and identify problematic areas
-- **Dynamic Range**: Measure compression levels and dynamic range in your mixes
+- **AI-Powered Mix Feedback**: Get intelligent suggestions using OpenAI's GPT models or alternative AI providers
+- **Frequency Response**: Analyze frequency distribution across 7 distinct bands and identify problematic areas
+- **Dynamic Range**: Measure compression levels and dynamic range in your mixes with multiple metrics
+- **Harmonic Content**: Analyze key detection and harmonic complexity
+- **Transient Analysis**: Evaluate percussion energy and attack characteristics
 - **Security**: Enterprise-grade file handling with robust security measures
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Python 3.7+
+- Python 3.8+
 - Virtual environment (recommended)
 - Basic understanding of audio engineering concepts
 
@@ -114,40 +116,43 @@ POST /upload
 ```
 
 Parameters:
-- `file`: Audio file (mp3, wav, flac)
-- `isInstrumental`: Boolean indicating if the track is instrumental
+- `file`: Audio file (mp3, wav, flac, aiff, ogg)
+- `is_instrumental`: Boolean indicating if the track is instrumental
 
 ### Regenerate Visualizations
 
 ```
-GET /regenerate_visualizations/<file_id>
+POST /regenerate_visualizations/<file_id>
 ```
 
 Parameters:
-- `file_id`: UUID of the uploaded file
+- `file_id`: ID of the uploaded file
 
-### Regenerate Stereo Field
+### Analyze File (API)
 
 ```
-GET /regenerate_stereo_field/<file_id>
+GET /api/analyze/<file_id>
 ```
 
 Parameters:
-- `file_id`: UUID of the uploaded file
+- `file_id`: ID of the uploaded file
+- `api_key`: Your API key (via X-API-Key header or query parameter)
 
 ## 🔒 Security Features
 
-- Rate limiting with Flask-Limiter
+- Rate limiting with Flask-Limiter (200 requests per day, 50 per hour)
 - Content Security Policy (CSP) headers
 - Secure file uploads with:
   - File extension validation
   - MIME type validation
-  - UUID-based filenames
-  - Maximum file size limit (100MB)
+  - Secure filenames
+  - Maximum file size limit (50MB)
 - Input validation for all endpoints
 - Directory traversal protection
 - X-Content-Type-Options, X-Frame-Options, X-XSS-Protection headers
 - Strict-Transport-Security in production
+- Docker deployment with non-root user and secure permissions
+- API key authentication for API endpoints
 
 ## 💡 Development
 
@@ -160,6 +165,8 @@ music/
 │   ├── routes.py         # Main route definitions
 │   ├── api/              # API endpoints
 │   ├── core/             # Core audio processing logic
+│   │   ├── audio_analyzer.py  # Audio analysis engine
+│   │   └── openai_analyzer.py # AI integration
 │   ├── static/           # Static files
 │   │   ├── css/          # CSS files
 │   │   ├── js/           # JavaScript files
@@ -168,21 +175,18 @@ music/
 ├── config/               # Configuration files
 │   ├── .env.example      # Example environment variables
 │   └── docker/           # Docker configuration files
-│       ├── Dockerfile    # Container definition
-│       └── docker-compose.yml # Multi-container setup
 ├── docs/                 # Documentation
-│   ├── CONTRIBUTING.md   # Contribution guidelines
-│   └── TROUBLESHOOTING.md # Common issues and solutions
 ├── scripts/              # Utility scripts
 │   ├── security_check.py # Security audit script
 │   ├── generate_secret_key.py # Key generation
-│   ├── run.sh            # Start the application
-│   └── stop.sh           # Stop the application
+│   └── sanitize_env.py   # Environment sanitizer
 ├── tests/                # Test suite
 ├── uploads/              # Audio file uploads
 ├── logs/                 # Application logs
 ├── .env.example          # Example environment variables
 ├── requirements.txt      # Python dependencies
+├── docker-compose.yml    # Docker Compose configuration
+├── Dockerfile            # Docker container definition
 ├── wsgi.py               # WSGI entry point
 └── LICENSE               # License information
 ```
@@ -193,9 +197,12 @@ The Docker setup includes:
 
 - Base image: `python:3.9-slim`
 - Required system dependencies (libsndfile1, ffmpeg)
-- Volume mapping for persistent storage of uploads
+- Volume mapping for persistent storage of uploads and cache
 - Port mapping: 5001 (host) -> 5000 (container)
-- Environment variable support, including OpenAI API key
+- Resource limits: 4GB max memory, 1GB reservation
+- Non-root user for security (UID:GID 1007:1008)
+- Health monitoring with regular checks
+- Log rotation with 20MB max file size and 5 file limit
 
 ### Security Audit
 
@@ -231,20 +238,37 @@ The project uses a structured approach to environment variables:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| **API Keys** |  |  |
-| `OPENAI_API_KEY` | Your OpenAI API key | None (required) |
-| `OPENROUTER_API_KEY` | Your OpenRouter API key (optional) | None |
-| **Model Configuration** |  |  |
+| **AI Integration** |  |  |
 | `AI_PROVIDER` | Which AI provider to use ("openai" or "openrouter") | "openai" |
+| `OPENAI_API_KEY` | Your OpenAI API key | None (required if using OpenAI) |
 | `OPENAI_MODEL` | OpenAI model to use | "gpt-4o-mini" |
+| `OPENROUTER_API_KEY` | Your OpenRouter API key | None (required if using OpenRouter) |
 | `OPENROUTER_MODEL` | OpenRouter model to use | "anthropic/claude-3-haiku-20240307" |
 | **Security** |  |  |
 | `API_KEY` | Internal API authentication key | Generated |
 | `SECRET_KEY` | Flask secret key | Generated |
+| `FORCE_HTTPS` | Force HTTPS redirects | "false" (true in production) |
 | **Analytics** |  |  |
 | `ENABLE_ANALYTICS` | Whether to enable analytics | "false" |
 | `MATOMO_URL` | Analytics platform URL | None |
 | `MATOMO_SITE_ID` | Analytics site ID | None |
+
+### Available AI Models
+
+#### OpenAI Models (Default provider)
+- `gpt-4o-2024-11-20` (Latest version with enhanced creative writing)
+- `gpt-4o-2024-08-06` (Previous GPT-4o version)
+- `gpt-4o-mini` (Fast, cost-effective model, default)
+- `gpt-4-turbo-2024-04-09` (With vision capabilities)
+- `gpt-3.5-turbo` (Cost-effective for simpler tasks)
+
+#### OpenRouter Models (Alternative provider)
+- `anthropic/claude-3-opus-20240229` (Anthropic's most powerful model)
+- `anthropic/claude-3-sonnet-20240229` (Good balance of performance and speed)
+- `anthropic/claude-3-haiku-20240307` (Fast, cost-effective)
+- `google/gemini-1.5-pro-latest` (Google's advanced model)
+- `meta-llama/llama-3-70b-instruct` (Meta's powerful open model)
+- Many other models accessible through OpenRouter
 
 ### Sanitizing Environment Files
 
@@ -279,92 +303,23 @@ The project includes a unified management script (`manage.py`) that provides a s
 ./manage.py security --sanitize [--dry-run] | --check
 ```
 
-### Script Directory Structure
-
-Scripts are organized in a modular structure for better maintainability:
-
-```
-scripts/
-├── __init__.py          # Makes scripts a Python package
-├── run_checks.py        # Comprehensive check runner
-├── utils/               # Utility scripts
-│   ├── __init__.py
-│   ├── env_loader.py    # Environment variable loader
-│   ├── sanitize_env.py  # Environment file sanitizer
-│   └── migrate_uploads.py # Uploads directory migration
-├── setup/               # Setup scripts
-│   ├── __init__.py
-│   ├── generate_secret_key.py # Secret key generator
-│   └── setup_apple_silicon.sh # Apple Silicon setup
-├── checks/              # Validation scripts
-│   ├── __init__.py
-│   ├── check_app_structure.py # App structure validation
-│   ├── check_env_consistency.py # Environment validation
-│   ├── security_check.py # Security audit
-│   └── ... (other check scripts)
-└── docker/              # Docker-related scripts
-    ├── __init__.py
-    ├── run.sh           # Start Docker containers
-    ├── stop.sh          # Stop Docker containers
-    └── update.sh        # Update Docker containers
-```
-
-### Common Script Tasks
-
-**Environment Setup**:
-```bash
-# Generate a new secure secret key
-python -m scripts.setup.generate_secret_key --update-env
-
-# Check environment configuration
-python -m scripts.checks.check_env_consistency
-```
-
-**Security**:
-```bash
-# Sanitize environment files (remove API keys)
-python -m scripts.utils.sanitize_env
-
-# Run security check
-python -m scripts.checks.security_check
-```
-
-**Docker Management**:
-```bash
-# Start Docker containers
-./scripts/docker/run.sh
-
-# Stop Docker containers
-./scripts/docker/stop.sh
-```
-
-**Project Validation**:
-```bash
-# Run all project checks
-python scripts/run_checks.py
-```
-
-## 🖥️ User Interface
-
 ## 🔍 How It Works
 
 The application combines advanced DSP (Digital Signal Processing) algorithms with modern web technologies to provide deep insights into your mix:
-
-- **Frequency Balance**: Evaluates if your mix has proper distribution across the frequency spectrum (20Hz-20kHz)
-- **Dynamic Range**: Measures the difference between the loudest and quietest parts using industry-standard metrics
-- **Stereo Field**: Analyzes the stereo image, panning, and phase correlation between channels
-- **Clarity**: Detects potential masking issues or muddiness that could affect mix translation
-
-Additionally, the application can leverage OpenAI's GPT-4o to provide AI-powered insights and professional suggestions for improving your mix quality.
-
-## 📊 Technical Details
 
 ### Audio Analysis
 
 The application performs these professional-grade analyses:
 
 1. **Frequency Balance Analysis**:
-   - Divides the frequency spectrum into critical bands (sub-bass, bass, low-mids, mids, high-mids, highs, air)
+   - Divides the frequency spectrum into 7 critical bands:
+     - Sub-bass (20-60Hz)
+     - Bass (60-250Hz)
+     - Low-mids (250-500Hz)
+     - Mids (500-2kHz)
+     - High-mids (2-4kHz)
+     - Highs (4-10kHz)
+     - Air (10-20kHz)
    - Measures energy distribution using FFT analysis
    - Compares to industry-standard reference curves
    - Identifies potential issues like muddy bass (200-300Hz buildup) or harsh highs (2-5kHz peaks)
@@ -372,7 +327,7 @@ The application performs these professional-grade analyses:
 2. **Dynamic Range Analysis**:
    - Calculates dynamic range in dB
    - Measures crest factor
-   - Evaluates peak-to-loudness ratio
+   - Evaluates peak-to-loudness ratio (PLR)
    - Detects over-compression
 
 3. **Stereo Field Analysis**:
@@ -387,7 +342,32 @@ The application performs these professional-grade analyses:
    - Evaluates spectral centroid
    - Identifies potential masking issues
 
-### Visualizations
+5. **Harmonic Content Analysis**:
+   - Key detection
+   - Harmonic complexity measurement
+   - Key consistency evaluation
+
+6. **Transient Analysis**:
+   - Attack time measurement
+   - Transient density evaluation
+   - Percussion energy analysis
+
+### AI-Powered Mix Feedback
+
+When an AI API key is provided, the application can:
+
+- Provide a summary of the mix quality with genre context
+- Identify strengths of the mix
+- Point out areas for improvement
+- Offer specific suggestions for enhancing the mix
+- Recommend reference tracks for comparison
+- Suggest specific processing techniques
+
+The AI analysis is performed using either:
+- OpenAI's GPT models (default)
+- Alternative providers through OpenRouter (Claude, Gemini, Llama, etc.)
+
+## 📊 Visualizations
 
 The application generates several visualizations to help you understand your mix:
 
@@ -398,25 +378,9 @@ The application generates several visualizations to help you understand your mix
 
 All visualizations are interactive:
 - Click on any visualization to open it in a larger view
-- Use the zoom controls (+ and -) to zoom in and out
+- Use the zoom controls to zoom in and out
 - Drag to pan around when zoomed in
 - Press the Reset button to return to the original view
-- Keyboard shortcuts: + to zoom in, - to zoom out, 0 to reset, Esc to close
-
-### AI Insights
-
-When an OpenAI API key is provided, the application uses GPT-4o to:
-
-- Provide a summary of the mix quality
-- Identify strengths of the mix
-- Point out areas for improvement
-- Offer specific suggestions for enhancing the mix
-
-## 🔧 Requirements
-
-- Python 3.8+
-- Dependencies listed in requirements.txt
-- OpenAI API key (optional, for AI-powered mix recommendations)
 
 ## 🤝 Contributing
 
@@ -435,12 +399,14 @@ Visit [mixanalytic.com](https://mixanalytic.com) for the latest version, documen
 Developed by Uygar Duzgun
 - Website: [uygarduzgun.com](https://uygarduzgun.com)
 - Project: [mixanalytic.com](https://mixanalytic.com)
+- GitHub: [owgit](https://github.com/owgit)
+- Support: [Buy Me a Coffee](https://buymeacoffee.com/uygarduzgun)
 
 ## 🔑 Keywords
 
-audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing, mix analytics, mixanalytic
+audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing, mix analytics, mixanalytic, AI mix feedback, GPT-4o
 
 ---
 
-© 2023 Uygar Duzgun. All rights reserved. | [mixanalytic.com](https://mixanalytic.com)
+© 2024 Uygar Duzgun. All rights reserved. | [mixanalytic.com](https://mixanalytic.com)
 

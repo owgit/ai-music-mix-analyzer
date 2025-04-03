@@ -130,6 +130,22 @@ def analyze_mix(file_path):
                 "percussion_energy": 20.0,
                 "analysis": ["Unable to analyze transients."],
                 "transient_data": []
+            },
+            "3d_spatial": {
+                "height_score": 70.0,
+                "depth_score": 70.0,
+                "width_consistency": 70.0,
+                "analysis": ["Unable to analyze 3D spatial imaging."]
+            },
+            "surround_compatibility": {
+                "mono_compatibility": 70.0,
+                "phase_score": 70.0,
+                "analysis": ["Unable to analyze surround compatibility."]
+            },
+            "headphone_speaker_optimization": {
+                "headphone_score": 70.0,
+                "speaker_score": 70.0,
+                "analysis": ["Unable to analyze headphone/speaker optimization."]
             }
         }
         
@@ -171,6 +187,24 @@ def analyze_mix(file_path):
         except Exception as e:
             print(f"Error in transients analysis: {str(e)}")
             results["transients"] = default_results["transients"]
+            
+        try:
+            results["3d_spatial"] = analyze_3d_spatial(y, sr)
+        except Exception as e:
+            print(f"Error in 3D spatial analysis: {str(e)}")
+            results["3d_spatial"] = default_results["3d_spatial"]
+            
+        try:
+            results["surround_compatibility"] = analyze_surround_compatibility(y, sr)
+        except Exception as e:
+            print(f"Error in surround compatibility analysis: {str(e)}")
+            results["surround_compatibility"] = default_results["surround_compatibility"]
+            
+        try:
+            results["headphone_speaker_optimization"] = analyze_headphone_speaker_optimization(y, sr)
+        except Exception as e:
+            print(f"Error in headphone/speaker optimization analysis: {str(e)}")
+            results["headphone_speaker_optimization"] = default_results["headphone_speaker_optimization"]
         
         # Generate visualizations with the same audio data
         try:
@@ -652,7 +686,7 @@ def analyze_harmonic_content(y, sr):
     Args:
         y: Audio time series
         sr: Sample rate
-        
+    
     Returns:
         Dictionary containing harmonic analysis results
     """
@@ -820,6 +854,69 @@ def analyze_harmonic_content(y, sr):
             "top_key_candidates": []
         }
 
+def generate_3d_spatial_visualization(y, sr, vis_dir):
+    """Generate 3D spatial visualization."""
+    try:
+        plt.figure(figsize=(10, 4))
+        
+        # Ensure stereo audio
+        if y.ndim == 1:
+            y = np.vstack((y, y))
+        
+        # Calculate spatial characteristics
+        # Height perception (frequency-based)
+        freqs = librosa.fft_frequencies(sr=sr)
+        D = np.abs(librosa.stft(np.mean(y, axis=0)))
+        high_freq_energy = np.mean(D[freqs > 5000])
+        low_freq_energy = np.mean(D[freqs < 500])
+        height_ratio = high_freq_energy / (low_freq_energy + 1e-6)
+        
+        # Depth perception (phase-based)
+        phase_diff = np.angle(np.correlate(y[0], y[1]))[0]
+        depth = np.abs(phase_diff)
+        
+        # Width (stereo spread)
+        width = np.mean(np.abs(y[0] - y[1]))
+        
+        # Create 3D scatter plot
+        fig = plt.figure(figsize=(10, 6))
+        ax = fig.add_subplot(111, projection='3d')
+        
+        # Sample points for visualization
+        num_points = 1000
+        sample_indices = np.linspace(0, y.shape[1]-1, num_points, dtype=int)
+        
+        # Calculate point positions
+        x = y[0, sample_indices]  # Left channel
+        y_coords = y[1, sample_indices]  # Right channel
+        z = np.abs(librosa.stft(np.mean(y, axis=0)))[:, sample_indices[::10]]  # Height based on frequency content
+        
+        # Plot points with color gradient based on energy
+        scatter = ax.scatter(x, y_coords, z[0], 
+                           c=np.abs(x - y_coords),  # Color based on stereo difference
+                           cmap='viridis',
+                           alpha=0.6,
+                           s=10)
+        
+        # Add colorbar
+        plt.colorbar(scatter, label='Stereo Spread')
+        
+        # Labels
+        ax.set_xlabel('Left Channel')
+        ax.set_ylabel('Right Channel')
+        ax.set_zlabel('Frequency Energy')
+        plt.title('3D Spatial Visualization')
+        
+        # Save the plot
+        spatial_path = os.path.join(vis_dir, 'spatial_field.png')
+        plt.savefig(spatial_path, dpi=100, bbox_inches='tight')
+        plt.close()
+        
+        return spatial_path
+    except Exception as e:
+        print(f"Error generating 3D spatial visualization: {str(e)}")
+        return None
+
 def generate_visualizations(file_path, y=None, sr=None, file_id=None):
     """Generate visualizations for the audio file and return their paths."""
     import matplotlib.pyplot as plt
@@ -981,6 +1078,14 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
         plt.close()
         print(f"Saved stereo field visualization to: {stereo_path}")
         
+        # 5. 3D Spatial Field
+        print(f"Generating 3D spatial field visualization...")
+        spatial_path = generate_3d_spatial_visualization(y, sr, vis_dir)
+        if spatial_path:
+            print(f"Saved 3D spatial field visualization to: {spatial_path}")
+        else:
+            print("Failed to generate 3D spatial field visualization")
+        
         # Return paths
         static_prefix = '/static'
         return {
@@ -988,7 +1093,8 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
             "spectrogram": f"{static_prefix}/uploads/{file_id}/spectrogram.png",
             "spectrum": f"{static_prefix}/uploads/{file_id}/spectrum.png",
             "chromagram": f"{static_prefix}/uploads/{file_id}/chromagram.png",
-            "stereo_field": f"{static_prefix}/uploads/{file_id}/stereo_field.png"
+            "stereo_field": f"{static_prefix}/uploads/{file_id}/stereo_field.png",
+            "spatial_field": f"{static_prefix}/uploads/{file_id}/spatial_field.png" if spatial_path else f"{static_prefix}/img/error.png"
         }
     except Exception as e:
         print(f"Error in generate_visualizations: {str(e)}")
@@ -1017,7 +1123,10 @@ def calculate_overall_score(results):
             "stereo_field": 70.0,
             "clarity": 70.0,
             "harmonic_content": 70.0,
-            "transients": 70.0
+            "transients": 70.0,
+            "3d_spatial": 70.0,
+            "surround_compatibility": 70.0,
+            "headphone_speaker_optimization": 70.0
         }
 
         # Weight each component
@@ -1027,7 +1136,10 @@ def calculate_overall_score(results):
             "stereo_field": 0.15,
             "clarity": 0.20,
             "harmonic_content": 0.15,
-            "transients": 0.10
+            "transients": 0.10,
+            "3d_spatial": 0.05,
+            "surround_compatibility": 0.05,
+            "headphone_speaker_optimization": 0.05
         }
         
         # Calculate weighted score
@@ -1090,6 +1202,46 @@ def calculate_overall_score(results):
                 score += weights["transients"] * default_scores["transients"]
         except (TypeError, ValueError):
             score += weights["transients"] * default_scores["transients"]
+        
+        # Add 3D spatial score
+        try:
+            if "3d_spatial" in results and isinstance(results["3d_spatial"], dict):
+                spatial_score = 0.0
+                height_score = float(results["3d_spatial"].get("height_score", default_scores["3d_spatial"]))
+                depth_score = float(results["3d_spatial"].get("depth_score", default_scores["3d_spatial"]))
+                width_score = float(results["3d_spatial"].get("width_consistency", default_scores["3d_spatial"]))
+                spatial_score = (height_score + depth_score + width_score) / 3
+                score += weights["3d_spatial"] * spatial_score
+            else:
+                score += weights["3d_spatial"] * default_scores["3d_spatial"]
+        except (TypeError, ValueError):
+            score += weights["3d_spatial"] * default_scores["3d_spatial"]
+        
+        # Add surround compatibility score
+        try:
+            if "surround_compatibility" in results and isinstance(results["surround_compatibility"], dict):
+                compatibility_score = 0.0
+                mono_score = float(results["surround_compatibility"].get("mono_compatibility", default_scores["surround_compatibility"]))
+                phase_score = float(results["surround_compatibility"].get("phase_score", default_scores["surround_compatibility"]))
+                compatibility_score = (mono_score + phase_score) / 2
+                score += weights["surround_compatibility"] * compatibility_score
+            else:
+                score += weights["surround_compatibility"] * default_scores["surround_compatibility"]
+        except (TypeError, ValueError):
+            score += weights["surround_compatibility"] * default_scores["surround_compatibility"]
+        
+        # Add headphone/speaker optimization score
+        try:
+            if "headphone_speaker_optimization" in results and isinstance(results["headphone_speaker_optimization"], dict):
+                optimization_score = 0.0
+                headphone_score = float(results["headphone_speaker_optimization"].get("headphone_score", default_scores["headphone_speaker_optimization"]))
+                speaker_score = float(results["headphone_speaker_optimization"].get("speaker_score", default_scores["headphone_speaker_optimization"]))
+                optimization_score = (headphone_score + speaker_score) / 2
+                score += weights["headphone_speaker_optimization"] * optimization_score
+            else:
+                score += weights["headphone_speaker_optimization"] * default_scores["headphone_speaker_optimization"]
+        except (TypeError, ValueError):
+            score += weights["headphone_speaker_optimization"] * default_scores["headphone_speaker_optimization"]
 
         # Ensure score is between 0 and 100
         score = max(0, min(100, score))
@@ -1098,6 +1250,136 @@ def calculate_overall_score(results):
     except Exception as e:
         print(f"Error calculating overall score: {str(e)}")
         return 70.0  # Return a reasonable default score if calculation fails
+
+def analyze_3d_spatial(y, sr):
+    """
+    Analyze 3D spatial imaging characteristics
+    
+    Args:
+        y: Audio time series
+        sr: Sample rate
+    
+    Returns:
+        Dictionary containing 3D spatial analysis results
+    """
+    try:
+        print("Analyzing 3D spatial imaging...")
+        
+        # Ensure stereo audio
+        if y.ndim == 1:
+            y = np.vstack((y, y))
+
+        # Calculate interaural level differences (ILD) for height perception
+        ild = np.mean(np.abs(y[0] - y[1]))
+        height_score = min(100, max(0, ild * 100))
+
+        # Calculate interaural time differences (ITD) for depth perception
+        correlation = np.corrcoef(y[0], y[1])[0, 1]
+        depth_score = min(100, max(0, (1 - abs(correlation)) * 100))
+
+        # Calculate width consistency
+        window_size = 2048
+        hop_length = 512
+        width_variation = np.std([
+            np.corrcoef(y[0][i:i+window_size], y[1][i:i+window_size])[0, 1]
+            for i in range(0, len(y[0]) - window_size, hop_length)
+        ])
+        width_consistency = min(100, max(0, 100 - (width_variation * 1000)))
+
+        return {
+            "height_score": float(height_score),
+            "depth_score": float(depth_score),
+            "width_consistency": float(width_consistency),
+            "analysis": get_3d_spatial_analysis(height_score, depth_score, width_consistency)
+        }
+    except Exception as e:
+        print(f"Error in 3D spatial analysis: {str(e)}")
+        return {
+            "height_score": 70.0,
+            "depth_score": 70.0,
+            "width_consistency": 70.0,
+            "analysis": ["Unable to analyze 3D spatial imaging."]
+        }
+
+
+def get_3d_spatial_analysis(height_score, depth_score, width_consistency):
+    """Generate textual analysis of 3D spatial imaging"""
+    analysis = []
+    
+    if height_score < 40:
+        analysis.append("Limited height perception. Mix may sound flat.")
+    elif height_score > 90:
+        analysis.append("Excessive height perception. May cause listening fatigue.")
+
+    if depth_score < 40:
+        analysis.append("Limited depth perception. Mix may sound two-dimensional.")
+    elif depth_score > 90:
+        analysis.append("Excessive depth perception. May cause imaging instability.")
+
+    if width_consistency < 40:
+        analysis.append("Inconsistent width perception. Stereo image may sound unstable.")
+
+    if not analysis:
+        analysis.append("Good 3D spatial imaging with balanced height, depth, and width.")
+
+    return analysis
+
+
+def analyze_surround_compatibility(y, sr):
+    """
+    Analyze surround sound compatibility
+    
+    Args:
+        y: Audio time series
+        sr: Sample rate
+    
+    Returns:
+        Dictionary containing surround compatibility analysis results
+    """
+    try:
+        print("Analyzing surround sound compatibility...")
+        
+        # Ensure stereo audio
+        if y.ndim == 1:
+            y = np.vstack((y, y))
+
+        # Calculate mono compatibility
+        mono = np.mean(y, axis=0)
+        mono_correlation = np.corrcoef(mono, y[0])[0, 1]
+        mono_compatibility = min(100, max(0, mono_correlation * 100))
+
+        # Calculate phase relationships
+        phase_diff = np.angle(np.correlate(y[0], y[1]))[0]
+        phase_score = min(100, max(0, 100 - (abs(phase_diff) * 100)))
+
+        return {
+            "mono_compatibility": float(mono_compatibility),
+            "phase_score": float(phase_score),
+            "analysis": get_surround_compatibility_analysis(mono_compatibility, phase_score)
+        }
+    except Exception as e:
+        print(f"Error in surround compatibility analysis: {str(e)}")
+        return {
+            "mono_compatibility": 70.0,
+            "phase_score": 70.0,
+            "analysis": ["Unable to analyze surround compatibility."]
+        }
+
+
+def get_surround_compatibility_analysis(mono_compatibility, phase_score):
+    """Generate textual analysis of surround compatibility"""
+    analysis = []
+    
+    if mono_compatibility < 40:
+        analysis.append("Poor mono compatibility. May cause phase cancellation in mono playback.")
+
+    if phase_score < 40:
+        analysis.append("Potential phase issues. May cause imaging problems in surround systems.")
+
+    if not analysis:
+        analysis.append("Good surround sound compatibility with minimal phase issues.")
+
+    return analysis
 
 def analyze_transients(y, sr):
     """
@@ -1227,3 +1509,63 @@ def analyze_transients(y, sr):
         "analysis": analysis,
         "transient_data": transient_data.tolist()
     } 
+
+def analyze_headphone_speaker_optimization(y, sr):
+    """
+    Analyze headphone and speaker optimization
+    
+    Args:
+        y: Audio time series
+        sr: Sample rate
+    
+    Returns:
+        Dictionary containing headphone/speaker optimization results
+    """
+    try:
+        print("Analyzing headphone/speaker optimization...")
+        
+        # Ensure stereo audio
+        if y.ndim == 1:
+            y = np.vstack((y, y))
+
+        # Calculate crossfeed simulation
+        crossfeed_factor = 0.6
+        crossfed = y[0] * crossfeed_factor + y[1] * (1 - crossfeed_factor)
+        crossfeed_score = min(100, max(0, np.corrcoef(crossfed, y[0])[0, 1] * 100))
+
+        # Calculate bass management
+        bass_energy = np.sum(np.abs(y[0][:sr//10] + y[1][:sr//10]))
+        bass_score = min(100, max(0, bass_energy * 100))
+
+        return {
+            "headphone_score": float(crossfeed_score),
+            "speaker_score": float(bass_score),
+            "analysis": get_headphone_speaker_analysis(crossfeed_score, bass_score)
+        }
+    except Exception as e:
+        print(f"Error in headphone/speaker optimization analysis: {str(e)}")
+        return {
+            "headphone_score": 70.0,
+            "speaker_score": 70.0,
+            "analysis": ["Unable to analyze headphone/speaker optimization."]
+        }
+
+
+def get_headphone_speaker_analysis(headphone_score, speaker_score):
+    """Generate textual analysis of headphone/speaker optimization"""
+    analysis = []
+    
+    if headphone_score < 40:
+        analysis.append("Poor headphone optimization. May cause listening fatigue.")
+    elif headphone_score > 90:
+        analysis.append("Excessive headphone optimization. May reduce stereo width.")
+
+    if speaker_score < 40:
+        analysis.append("Poor speaker optimization. Bass may sound weak.")
+    elif speaker_score > 90:
+        analysis.append("Excessive speaker optimization. Bass may overpower the mix.")
+
+    if not analysis:
+        analysis.append("Good optimization for both headphones and speakers.")
+
+    return analysis

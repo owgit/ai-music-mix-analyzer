@@ -425,6 +425,7 @@
                     <button class="tab-button" data-tab="clarity" role="tab" aria-label="Clarity" aria-selected="false">Clarity</button>
                     <button class="tab-button" data-tab="harmonic" role="tab" aria-label="Harmonic" aria-selected="false">Harmonic</button>
                     <button class="tab-button" data-tab="transients" role="tab" aria-label="Transients" aria-selected="false">Transients</button>
+                    <button class="tab-button" data-tab="spatial" role="tab" aria-label="3D Spatial" aria-selected="false">3D Spatial</button>
                     <button class="tab-button" data-tab="visualizations" role="tab" aria-label="Visualizations" aria-selected="false">Visualizations</button>
                     <button class="tab-button" data-tab="ai-insights" role="tab" aria-label="AI Insights" aria-selected="false">AI Insights</button>
                 </div>
@@ -582,6 +583,35 @@
                         <div class="chart-container">
                             <h3>Transient Detection</h3>
                             <canvas id="transients-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 3D Spatial Analysis Tab -->
+                    <div class="tab-pane" id="spatial-tab">
+                        <div class="score-card">
+                            <h3>3D Spatial Score</h3>
+                            <div class="score-value" id="spatial-score">0</div>
+                        </div>
+                        <div class="metrics-container">
+                            <div class="metric">
+                                <h4>Height Perception</h4>
+                                <div class="metric-value" id="height-score">0%</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Depth Perception</h4>
+                                <div class="metric-value" id="depth-score">0%</div>
+                            </div>
+                            <div class="metric">
+                                <h4>Width Consistency</h4>
+                                <div class="metric-value" id="width-consistency">0%</div>
+                            </div>
+                        </div>
+                        <div class="analysis-card">
+                            <h3>Analysis</h3>
+                            <ul id="spatial-analysis"></ul>
+                        </div>
+                        <div class="visualization-container" title="Click to enlarge">
+                            <img id="spatial-field-img" src="" alt="3D spatial field visualization showing height, depth, and width characteristics">
                         </div>
                     </div>
 
