@@ -857,64 +857,86 @@ def analyze_harmonic_content(y, sr):
 def generate_3d_spatial_visualization(y, sr, vis_dir):
     """Generate 3D spatial visualization."""
     try:
-        plt.figure(figsize=(10, 4))
+        print("Generating 3D spatial visualization...")
         
         # Ensure stereo audio
         if y.ndim == 1:
             y = np.vstack((y, y))
         
+        # Create figure with larger size and specific 3D projection
+        plt.figure(figsize=(12, 8))
+        ax = plt.axes(projection='3d')
+        
         # Calculate spatial characteristics
-        # Height perception (frequency-based)
-        freqs = librosa.fft_frequencies(sr=sr)
-        D = np.abs(librosa.stft(np.mean(y, axis=0)))
-        high_freq_energy = np.mean(D[freqs > 5000])
-        low_freq_energy = np.mean(D[freqs < 500])
-        height_ratio = high_freq_energy / (low_freq_energy + 1e-6)
+        # Sample points for visualization (use fewer points for better performance)
+        num_points = min(1000, y.shape[1])
+        step = max(1, y.shape[1] // num_points)
         
-        # Depth perception (phase-based)
-        phase_diff = np.angle(np.correlate(y[0], y[1]))[0]
-        depth = np.abs(phase_diff)
+        # Get samples
+        left_channel = y[0, ::step]
+        right_channel = y[1, ::step]
         
-        # Width (stereo spread)
-        width = np.mean(np.abs(y[0] - y[1]))
+        # Calculate frequency content for height
+        D = np.abs(librosa.stft(np.mean(y, axis=0), n_fft=2048, hop_length=512))
+        freqs = librosa.fft_frequencies(sr=sr, n_fft=2048)
         
-        # Create 3D scatter plot
-        fig = plt.figure(figsize=(10, 6))
-        ax = fig.add_subplot(111, projection='3d')
+        # Get average frequency energy in high frequency range for height
+        high_freq_mask = freqs > 5000
+        height_profile = np.mean(D[high_freq_mask], axis=0)
+        height_profile = height_profile[:len(left_channel)]  # Match length with channels
         
-        # Sample points for visualization
-        num_points = 1000
-        sample_indices = np.linspace(0, y.shape[1]-1, num_points, dtype=int)
+        # Normalize all dimensions to [-1, 1]
+        left_channel = 2 * (left_channel - np.min(left_channel)) / (np.max(left_channel) - np.min(left_channel)) - 1
+        right_channel = 2 * (right_channel - np.min(right_channel)) / (np.max(right_channel) - np.min(right_channel)) - 1
+        height_profile = 2 * (height_profile - np.min(height_profile)) / (np.max(height_profile) - np.min(height_profile)) - 1
         
-        # Calculate point positions
-        x = y[0, sample_indices]  # Left channel
-        y_coords = y[1, sample_indices]  # Right channel
-        z = np.abs(librosa.stft(np.mean(y, axis=0)))[:, sample_indices[::10]]  # Height based on frequency content
+        # Calculate stereo width for color mapping
+        stereo_width = np.abs(left_channel - right_channel)
         
-        # Plot points with color gradient based on energy
-        scatter = ax.scatter(x, y_coords, z[0], 
-                           c=np.abs(x - y_coords),  # Color based on stereo difference
+        # Create scatter plot
+        scatter = ax.scatter(left_channel, right_channel, height_profile,
+                           c=stereo_width,
                            cmap='viridis',
                            alpha=0.6,
-                           s=10)
+                           s=20)
         
-        # Add colorbar
-        plt.colorbar(scatter, label='Stereo Spread')
+        # Add color bar
+        plt.colorbar(scatter, label='Stereo Width')
         
-        # Labels
+        # Set labels and title
         ax.set_xlabel('Left Channel')
         ax.set_ylabel('Right Channel')
         ax.set_zlabel('Frequency Energy')
-        plt.title('3D Spatial Visualization')
+        plt.title('3D Spatial Audio Visualization')
         
-        # Save the plot
+        # Adjust the view angle for better visualization
+        ax.view_init(elev=20, azim=45)
+        
+        # Add grid
+        ax.grid(True)
+        
+        # Enhance the appearance
+        ax.xaxis.pane.fill = False
+        ax.yaxis.pane.fill = False
+        ax.zaxis.pane.fill = False
+        
+        # Make the background transparent
+        ax.w_xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        
+        # Save with high DPI and tight layout
         spatial_path = os.path.join(vis_dir, 'spatial_field.png')
-        plt.savefig(spatial_path, dpi=100, bbox_inches='tight')
+        plt.savefig(spatial_path, dpi=150, bbox_inches='tight', transparent=True)
         plt.close()
         
+        print(f"Successfully generated 3D spatial visualization at: {spatial_path}")
         return spatial_path
+        
     except Exception as e:
         print(f"Error generating 3D spatial visualization: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return None
 
 def generate_visualizations(file_path, y=None, sr=None, file_id=None):

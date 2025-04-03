@@ -1834,4 +1834,116 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     .tab-pane#spatial-tab .visualization-container {
         margin-top: 15px;
     }
+}
+
+.score-description {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 0.5em;
+    text-align: center;
+}
+
+.metric-description {
+    font-size: 0.85em;
+    color: #666;
+    margin-top: 0.25em;
+    text-align: center;
+}
+
+.analysis-description {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.analysis-description p {
+    margin: 0;
+    color: #444;
+    line-height: 1.5;
+}
+
+.visualization-help {
+    font-size: 0.95em;
+    color: #444;
+    margin: 1em 0;
+}
+
+.visualization-legend {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5em 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5em;
+}
+
+.visualization-legend li {
+    background-color: #f5f5f5;
+    padding: 0.5em 1em;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+.visualization-legend li strong {
+    color: #333;
+    margin-right: 0.5em;
+}
+
+#spatial-tab .visualization-container {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.5em;
+    margin-top: 2em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+#spatial-tab .visualization-container h3 {
+    margin-top: 0;
+    color: #333;
+    font-size: 1.2em;
+}
+
+#regenerate-spatial-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 1em auto 0;
+    padding: 0.5em 1em;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #444;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#regenerate-spatial-btn:hover {
+    background-color: #e5e5e5;
+    border-color: #ccc;
+}
+
+#regenerate-spatial-btn svg {
+    transition: transform 0.3s ease;
+}
+
+#regenerate-spatial-btn:hover svg {
+    transform: rotate(180deg);
+}
+
+@media (max-width: 768px) {
+    .visualization-legend {
+        grid-template-columns: 1fr;
+    }
+    
+    #spatial-tab .visualization-container {
+        padding: 1em;
+    }
+    
+    .metric-description {
+        font-size: 0.8em;
+    }
 } 

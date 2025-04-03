@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Mix Analyzer - Free AI Audio Analysis Tool for Music Production</title>
+    <title>  AI Audio Analysis Tool for Music Production</title>
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Free audio analysis tool for musicians. Get frequency analysis, dynamic range measurement, and mix suggestions to improve your music tracks.">
@@ -17,14 +17,14 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ secure_url(request.url) }}">
-    <meta property="og:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
+    <meta property="og:title" content="  AI-Powered Audio Analysis & Mastering Assistant Tool">
     <meta property="og:description" content="Upload tracks for FREE to analyze frequency spectrum, dynamic range, stereo imaging, and get AI-powered suggestions for better audio production.">
     <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ secure_url(request.url) }}">
-    <meta property="twitter:title" content="Mix Analyzer - Free AI-Powered Audio Analysis & Mastering Assistant Tool">
+    <meta property="twitter:title" content="  AI-Powered Audio Analysis & Mastering Assistant Tool">
     <meta property="twitter:description" content="Upload tracks for FREE to analyze frequency spectrum, dynamic range, stereo imaging, and get AI-powered suggestions for better audio production.">
     <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
@@ -314,7 +314,7 @@
             <div class="app-brand">
                 <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true">
                 <div class="app-title">
-                    <h1>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h1>
+                    <h1>  AI-Powered Audio Analysis Tool</h1>
                     <p>Upload an audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to analyze frequency balance, dynamic range, stereo imaging, and get professional AI-powered mix improvement suggestions for musicians, producers & sound engineers at no cost</p>
                 </div>
             </div>
@@ -591,27 +591,48 @@
                         <div class="score-card">
                             <h3>3D Spatial Score</h3>
                             <div class="score-value" id="spatial-score">0</div>
+                            <p class="score-description">Overall rating of your mix's three-dimensional spatial characteristics</p>
                         </div>
                         <div class="metrics-container">
-                            <div class="metric">
+                            <div class="metric" title="Measures how well your mix utilizes the vertical space through frequency distribution and harmonic content">
                                 <h4>Height Perception</h4>
                                 <div class="metric-value" id="height-score">0%</div>
+                                <p class="metric-description">High-frequency presence and vertical space utilization</p>
                             </div>
-                            <div class="metric">
+                            <div class="metric" title="Evaluates the perceived front-to-back dimension of your mix through phase relationships and reverb">
                                 <h4>Depth Perception</h4>
                                 <div class="metric-value" id="depth-score">0%</div>
+                                <p class="metric-description">Front-to-back layering and spatial positioning</p>
                             </div>
-                            <div class="metric">
+                            <div class="metric" title="Analyzes the stability and consistency of the stereo field across frequencies">
                                 <h4>Width Consistency</h4>
                                 <div class="metric-value" id="width-consistency">0%</div>
+                                <p class="metric-description">Stereo field stability and balance</p>
                             </div>
                         </div>
                         <div class="analysis-card">
-                            <h3>Analysis</h3>
+                            <h3>Spatial Analysis</h3>
+                            <div class="analysis-description">
+                                <p>This analysis evaluates how your mix utilizes three-dimensional space, crucial for creating an immersive listening experience.</p>
+                            </div>
                             <ul id="spatial-analysis"></ul>
                         </div>
-                        <div class="visualization-container" title="Click to enlarge">
+                        <div class="visualization-container" title="Interactive 3D visualization of your mix's spatial characteristics">
+                            <h3>3D Spatial Field</h3>
+                            <p class="visualization-help">This visualization shows how your mix utilizes the three-dimensional space:</p>
+                            <ul class="visualization-legend">
+                                <li><strong>X-axis:</strong> Left-right stereo positioning</li>
+                                <li><strong>Y-axis:</strong> Front-back depth perception</li>
+                                <li><strong>Z-axis:</strong> Vertical frequency distribution</li>
+                                <li><strong>Color intensity:</strong> Energy distribution in the stereo field</li>
+                            </ul>
                             <img id="spatial-field-img" src="" alt="3D spatial field visualization showing height, depth, and width characteristics">
+                            <button id="regenerate-spatial-btn" class="regenerate-btn" title="Regenerate with enhanced detection" onclick="regenerateSpatialField(document.getElementById('filename').textContent.trim())">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                                    <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                                </svg>
+                                Regenerate Visualization
+                            </button>
                         </div>
                     </div>
 
@@ -724,7 +745,7 @@
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Mix Analyzer - Free AI-Powered Audio Analysis Tool</h3>
+                    <h3>  AI-Powered Audio Analysis Tool</h3>
                     <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
                 </div>
                 
