@@ -192,4 +192,71 @@ def initialize_database():
     Initialize the database with necessary tables
     Should be called during application startup
     """
-    return create_tables_if_not_exist() 
+    return create_tables_if_not_exist()
+
+def delete_song_by_filename(filename):
+    """
+    Delete a song from the database by its filename
+    
+    Args:
+        filename: Unique filename in the system
+        
+    Returns:
+        Boolean indicating success or failure
+    """
+    connection = get_db_connection()
+    if not connection:
+        return False
+    
+    cursor = connection.cursor()
+    try:
+        # First, try to find by filename
+        print(f"Attempting to delete song with filename: {filename}")
+        cursor.execute("SELECT file_path FROM songs WHERE filename = %s", (filename,))
+        result = cursor.fetchone()
+        
+        if result:
+            print(f"Found song with file path: {result[0]}")
+            # Delete the song from the database
+            cursor.execute("DELETE FROM songs WHERE filename = %s", (filename,))
+            connection.commit()
+            deleted_rows = cursor.rowcount
+            print(f"Deleted {deleted_rows} rows from songs table using filename")
+            return deleted_rows > 0
+        else:
+            print(f"No song found with filename: {filename}, trying title field...")
+            # Try alternative column name (title) that might exist in database schema
+            cursor.execute("SELECT file_path FROM songs WHERE title = %s", (filename,))
+            result = cursor.fetchone()
+            
+            if result:
+                print(f"Found song with title, file path: {result[0]}")
+                # Delete using title field
+                cursor.execute("DELETE FROM songs WHERE title = %s", (filename,))
+                connection.commit()
+                deleted_rows = cursor.rowcount
+                print(f"Deleted {deleted_rows} rows from songs table using title")
+                return deleted_rows > 0
+            else:
+                # Try with original_name field
+                print(f"No song found with title: {filename}, trying original_name field...")
+                cursor.execute("SELECT file_path FROM songs WHERE original_name LIKE %s", (f"%{filename}%",))
+                result = cursor.fetchone()
+                
+                if result:
+                    print(f"Found song with original_name, file path: {result[0]}")
+                    cursor.execute("DELETE FROM songs WHERE original_name LIKE %s", (f"%{filename}%",))
+                    connection.commit()
+                    deleted_rows = cursor.rowcount
+                    print(f"Deleted {deleted_rows} rows from songs table using original_name")
+                    return deleted_rows > 0
+                else:
+                    print(f"No song found with any matching fields for: {filename}")
+                    return False
+    except Error as e:
+        print(f"Error deleting song: {e}")
+        connection.rollback()
+        return False
+    finally:
+        cursor.close()
+        connection.close() 

@@ -4050,3 +4050,202 @@ main {
         opacity: 0;
     }
 }
+
+/* Interactive 3D Visualization */
+.visualization-3d-container {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.interactive-visualization iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.toggle-view-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0,0,0,0.7);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+}
+
+.toggle-view-btn:hover {
+    background-color: rgba(0,0,0,0.9);
+}
+
+.interactive-controls {
+    display: none;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: #555;
+    font-size: 12px;
+    background-color: rgba(255,255,255,0.8);
+    padding: 5px 8px;
+    border-radius: 4px;
+    z-index: 5;
+}
+
+.interactive-visualization .interactive-controls {
+    display: block;
+}
+
+.interactive-tip {
+    margin: 0;
+    font-style: italic;
+}
+
+.delete-button {
+    background-color: #f44336;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+.delete-button svg {
+    margin-right: 8px;
+}
+
+/* Confirmation modal for delete action */
+.delete-confirmation-modal.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.delete-confirmation-modal .modal-content {
+    max-width: 400px;
+    width: 90%;
+    background-color: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modal-appear 0.3s ease-out;
+}
+
+@keyframes modal-appear {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.delete-confirmation-modal .modal-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.delete-confirmation-modal p {
+    margin-bottom: 20px;
+    line-height: 1.5;
+    color: #555;
+}
+
+.delete-confirmation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.delete-confirmation-buttons button {
+    padding: 10px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    min-width: 120px;
+}
+
+.cancel-delete-btn {
+    background-color: #e0e0e0;
+    color: #333;
+}
+
+.cancel-delete-btn:hover {
+    background-color: #d0d0d0;
+}
+
+.confirm-delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.confirm-delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+.delete-confirmation-modal .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #777;
+}
+
+/* Notification styles */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+    z-index: 9999;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: 350px;
+}
+
+.notification.success {
+    background-color: #4caf50;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
+
+.notification.info {
+    background-color: #2196f3;
+}
+
+.notification.warning {
+    background-color: #ff9800;
+}

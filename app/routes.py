@@ -11,9 +11,9 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types
+from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types, generate_3d_spatial_visualization
 from app.core.openai_analyzer import analyze_with_gpt
-from app.core.database import calculate_file_hash, find_song_by_hash, save_song
+from app.core.database import calculate_file_hash, find_song_by_hash, save_song, delete_song_by_filename
 
 # Create a Blueprint for the main routes
 main_bp = Blueprint('main', __name__)
@@ -424,4 +424,129 @@ def submit_feedback():
     except Exception as e:
         print(f"Error submitting feedback: {str(e)}")
         traceback.print_exc()
-        return jsonify({'error': str(e)}), 500 
+        return jsonify({'error': str(e)}), 500
+
+@main_bp.route('/api/regenerate_spatial_field/<file_id>', methods=['GET', 'POST'])
+def regenerate_spatial_field_api(file_id):
+    """Regenerate the 3D spatial field visualization for the specified file_id"""
+    try:
+        # Construct the path to the uploaded file
+        file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id, f"{file_id}.mp3")
+        
+        if not os.path.exists(file_path):
+            return jsonify({'error': 'File not found', 'success': False}), 404
+        
+        # Import necessary libraries here to avoid circular imports
+        import librosa
+        from app.core.audio_analyzer import generate_3d_spatial_visualization
+        
+        # Load the audio file with librosa
+        y, sr = librosa.load(file_path, sr=None, mono=False)
+        
+        # Create visualization directory
+        vis_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id)
+        os.makedirs(vis_dir, exist_ok=True)
+        
+        # Generate the 3D spatial visualization
+        spatial_result = generate_3d_spatial_visualization(y, sr, vis_dir)
+        
+        # Check the result format
+        if isinstance(spatial_result, dict) and 'html' in spatial_result and 'image' in spatial_result:
+            return jsonify({
+                'success': True,
+                'image_path': spatial_result['image'],
+                'interactive_path': spatial_result['html']
+            })
+        elif spatial_result:
+            # It's just a string path to the image
+            return jsonify({
+                'success': True,
+                'image_path': spatial_result,
+                'interactive_path': None
+            })
+        else:
+            raise ValueError("Failed to generate 3D visualization")
+            
+    except Exception as e:
+        print(f"Error regenerating 3D spatial field: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e), 'success': False}), 500
+
+@main_bp.route('/api/delete-track', methods=['POST'])
+def delete_track():
+    """Delete a track from the database and file system"""
+    try:
+        # Get the file ID from the request
+        data = request.get_json()
+        if not data or 'fileId' not in data:
+            print("No file ID provided in request")
+            return jsonify({'success': False, 'message': 'No file ID provided'}), 400
+        
+        file_id = data['fileId']
+        print(f"Received delete request for file ID: {file_id}")
+        
+        # Delete from database
+        db_result = delete_song_by_filename(file_id)
+        print(f"Database deletion result: {db_result}")
+        
+        if db_result:
+            # If database deletion successful, also delete files
+            try:
+                # Get the upload directory for this file
+                upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id)
+                print(f"Checking upload directory: {upload_dir}")
+                
+                if not os.path.exists(upload_dir):
+                    print(f"Upload directory does not exist: {upload_dir}")
+                    return jsonify({
+                        'success': True, 
+                        'message': 'Track deleted from database, but no files found to delete'
+                    })
+                
+                # Delete the audio file
+                audio_file = os.path.join(upload_dir, f"{file_id}.mp3")
+                deleted_files = []
+                
+                if os.path.exists(audio_file):
+                    os.remove(audio_file)
+                    deleted_files.append(audio_file)
+                    print(f"Deleted audio file: {audio_file}")
+                
+                # Delete all visualization files (common extensions)
+                for ext in ['.png', '.jpg', '.jpeg', '.html']:
+                    for f in Path(upload_dir).glob(f"*{ext}"):
+                        os.remove(f)
+                        deleted_files.append(str(f))
+                        print(f"Deleted file: {f}")
+                
+                # Try to remove the directory
+                try:
+                    os.rmdir(upload_dir)
+                    print(f"Removed directory: {upload_dir}")
+                except OSError as e:
+                    print(f"Could not remove directory: {e}")
+                    # Directory might not be empty, that's okay
+                    pass
+                
+                return jsonify({
+                    'success': True, 
+                    'message': f'Track deleted successfully. Removed {len(deleted_files)} files'
+                })
+            except Exception as e:
+                # Database deletion succeeded but file deletion failed
+                print(f"Error deleting files for {file_id}: {str(e)}")
+                return jsonify({
+                    'success': True, 
+                    'message': 'Track deleted from database but some files may remain',
+                    'error': str(e)
+                })
+        
+        # Database deletion failed
+        print(f"Database deletion failed for file ID: {file_id}")
+        return jsonify({'success': False, 'message': 'Failed to delete track from database'})
+        
+    except Exception as e:
+        print(f"Error deleting track: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500 

@@ -496,6 +496,12 @@
                         </svg>
                         Analyze New Track
                     </button>
+                    <button id="delete-track-btn" class="action-button delete-button">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                        </svg>
+                        Delete Track
+                    </button>
                 </div>
                 
                 <h2>Analysis Results for <span id="filename"></span></h2>
@@ -767,16 +773,24 @@
                             </div>
                             <ul id="spatial-analysis"></ul>
                         </div>
-                        <div class="visualization-container" title="Interactive 3D visualization of your mix's spatial characteristics">
-                            <h3>3D Spatial Field</h3>
+                        <h3>3D Spatial Field</h3>
                             <p class="visualization-help">This advanced visualization shows how your mix utilizes the full three-dimensional space:</p>
-                            <ul class="visualization-legend">
+
+                        <div class="visualization-container" title="Interactive 3D visualization of your mix's spatial characteristics">
+                                                        <ul class="visualization-legend">
                                 <li><strong>X-axis:</strong> Left-right stereo positioning</li>
                                 <li><strong>Y-axis:</strong> Front-back depth perception</li>
                                 <li><strong>Z-axis:</strong> Vertical frequency distribution</li>
                                 <li><strong>Color intensity:</strong> Energy distribution in the stereo field</li>
                             </ul>
-                            <img id="spatial-field-img" src="" alt="3D spatial field visualization showing height, depth, and width characteristics">
+                            <div id="spatial-field-container" class="visualization-3d-container">
+                                <img id="spatial-field-img" src="" alt="3D spatial field visualization showing height, depth, and width characteristics" style="display: none;">
+                                <!-- Direct iframe to interactive 3D visualization -->
+                                <iframe id="spatial-field-iframe" src="/static/uploads/115_cmin__vox/spatial_field.html" style="width: 100%; height: 700px; border: none; display: block;" title="Interactive 3D spatial audio visualization"></iframe>
+                                <div class="interactive-controls">
+                                    <p class="interactive-tip">Tip: Use your mouse to rotate and zoom the 3D visualization</p>
+                                </div>
+                            </div>
                             <button id="regenerate-spatial-btn" class="regenerate-btn" title="Regenerate with enhanced detection" onclick="regenerateSpatialField(document.getElementById('filename').textContent.trim())">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                                     <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
@@ -1011,6 +1025,20 @@
                     </div>
                     <span class="checkmark-text">Thank you for your feedback!</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-confirmation-modal" class="modal-overlay delete-confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-title">Confirm Deletion</div>
+            <button class="close-button" id="close-delete-modal">&times;</button>
+            
+            <p>Are you sure you want to delete this track from the database? This action cannot be undone.</p>
+            <div class="delete-confirmation-buttons">
+                <button id="cancel-delete-btn" class="cancel-delete-btn">Cancel</button>
+                <button id="confirm-delete-btn" class="confirm-delete-btn">Delete Permanently</button>
             </div>
         </div>
     </div>

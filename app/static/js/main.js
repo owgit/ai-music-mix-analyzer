@@ -1004,7 +1004,49 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Handle 3D spatial field visualization
             const spatialFieldImg = document.getElementById('spatial-field-img');
-            if (data.results.visualizations.spatial_field && spatialFieldImg) {
+            const spatialFieldContainer = document.getElementById('spatial-field-container');
+            
+            // Check if we have an interactive visualization
+            if (data.results.visualizations.spatial_field_interactive && spatialFieldContainer) {
+                console.log("Setting interactive 3D spatial field:", data.results.visualizations.spatial_field_interactive);
+                
+                // Get existing iframe - already in HTML
+                let iframe = document.getElementById('spatial-field-iframe');
+                if (iframe) {
+                    // Update iframe source to regenerated file
+                    iframe.src = data.interactive_path;
+                    iframe.style.display = 'block';
+                    
+                    // Hide the static image
+                    if (spatialFieldImg) {
+                        spatialFieldImg.style.display = 'none';
+                    }
+                }
+                
+                // Note: We don't need to create a new iframe
+                
+                // Add class to indicate interactive visualization
+                spatialFieldContainer.classList.add('interactive-visualization');
+                
+                // Add a button to toggle between 3D and static view
+                const toggleButton = document.createElement('button');
+                toggleButton.textContent = 'Toggle 2D/3D View';
+                toggleButton.className = 'toggle-view-btn';
+                toggleButton.onclick = function() {
+                    const iframe = document.getElementById('spatial-field-iframe');
+                    if (iframe.style.display === 'none') {
+                        iframe.style.display = 'block';
+                        spatialFieldImg.style.display = 'none';
+                        toggleButton.textContent = 'Switch to 2D View';
+                    } else {
+                        iframe.style.display = 'none';
+                        spatialFieldImg.style.display = 'block';
+                        toggleButton.textContent = 'Switch to 3D View';
+                    }
+                };
+                spatialFieldContainer.appendChild(toggleButton);
+            } else if (data.results.visualizations.spatial_field && spatialFieldImg) {
+                // Fall back to static image
                 console.log("Setting 3D spatial field image:", data.results.visualizations.spatial_field);
                 setImageWithFallback(spatialFieldImg, data.results.visualizations.spatial_field, '3D spatial field visualization');
             } else {
@@ -1682,7 +1724,354 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // Regenerate 3D spatial field visualization
+    function regenerateSpatialField(fileId) {
+        if (!fileId) {
+            console.error("No file ID provided for regeneration");
+            return;
+        }
+        
+        const regenerateBtn = document.getElementById('regenerate-spatial-btn');
+        if (regenerateBtn) {
+            regenerateBtn.disabled = true;
+            regenerateBtn.innerHTML = `
+                <svg class="spinner" viewBox="0 0 50 50">
+                    <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+                </svg>
+                Regenerating...
+            `;
+        }
+        
+        fetch(`/api/regenerate_spatial_field/${fileId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Regenerated 3D spatial field:", data);
+                
+                const spatialFieldImg = document.getElementById('spatial-field-img');
+                const spatialFieldContainer = document.getElementById('spatial-field-container');
+                
+                if (data.success) {
+                    // Check if we have an interactive visualization
+                    if (data.interactive_path && spatialFieldContainer) {
+                        console.log("Setting interactive 3D spatial field:", data.interactive_path);
+                        
+                        // Get existing iframe - already in HTML
+                        let iframe = document.getElementById('spatial-field-iframe');
+                        if (iframe) {
+                            // Update iframe source to regenerated file
+                            iframe.src = data.interactive_path;
+                            iframe.style.display = 'block';
+                            
+                            // Hide the static image
+                            if (spatialFieldImg) {
+                                spatialFieldImg.style.display = 'none';
+                            }
+                        }
+                        
+                        // Note: We don't need to create a new iframe
+                        
+                        // Add class to indicate interactive visualization
+                        spatialFieldContainer.classList.add('interactive-visualization');
+                        
+                        // Add a button to toggle between 3D and static view
+                        const toggleButton = document.createElement('button');
+                        toggleButton.textContent = 'Toggle 2D/3D View';
+                        toggleButton.className = 'toggle-view-btn';
+                        toggleButton.onclick = function() {
+                            const iframe = document.getElementById('spatial-field-iframe');
+                            if (iframe.style.display === 'none') {
+                                iframe.style.display = 'block';
+                                spatialFieldImg.style.display = 'none';
+                                toggleButton.textContent = 'Switch to 2D View';
+                            } else {
+                                iframe.style.display = 'none';
+                                spatialFieldImg.style.display = 'block';
+                                toggleButton.textContent = 'Switch to 3D View';
+                            }
+                        };
+                        spatialFieldContainer.appendChild(toggleButton);
+                    }
+                    
+                    // Also update the static image
+                    if (spatialFieldImg && data.image_path) {
+                        setImageWithFallback(spatialFieldImg, data.image_path, '3D spatial field visualization');
+                    }
+                } else {
+                    // If regeneration failed, show error
+                    if (spatialFieldImg) {
+                        spatialFieldImg.src = '/static/img/error.png';
+                        spatialFieldImg.alt = 'Error regenerating 3D spatial field visualization';
+                    }
+                    console.error("Failed to regenerate 3D spatial field:", data.error);
+                }
+                
+                // Re-enable button
+                if (regenerateBtn) {
+                    regenerateBtn.disabled = false;
+                    regenerateBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                        </svg>
+                        Regenerate Visualization
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error("Error regenerating 3D spatial field:", error);
+                
+                // Re-enable button
+                if (regenerateBtn) {
+                    regenerateBtn.disabled = false;
+                    regenerateBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
+                            <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                        </svg>
+                        Regenerate Visualization
+                    `;
+                }
+            });
+    }
+
+    // Add event listener for the delete button
+    const deleteTrackBtn = document.getElementById('delete-track-btn');
+    if (deleteTrackBtn) {
+        console.log("Delete button found, adding event listener");
+        deleteTrackBtn.addEventListener('click', showDeleteConfirmation);
+    } else {
+        console.log("Delete button not found in the DOM");
+    }
+    
+    // Event listeners for delete confirmation modal
+    const closeDeleteModal = document.getElementById('close-delete-modal');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    
+    if (closeDeleteModal) {
+        closeDeleteModal.addEventListener('click', hideDeleteConfirmation);
+    } else {
+        console.log("Close delete modal button not found");
+    }
+    
+    if (cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', hideDeleteConfirmation);
+    } else {
+        console.log("Cancel delete button not found");
+    }
+    
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.addEventListener('click', deleteTrack);
+    } else {
+        console.log("Confirm delete button not found");
+    }
 });
+
+/**
+ * Shows the delete confirmation modal
+ */
+function showDeleteConfirmation() {
+    console.log("showDeleteConfirmation called");
+    const deleteModal = document.getElementById('delete-confirmation-modal');
+    if (deleteModal) {
+        console.log("Delete modal found, displaying it");
+        
+        // Prevent conflicts with other modals - check for ImageModal
+        if (window.imageModal && typeof window.imageModal.closeModal === 'function') {
+            console.log("Closing any open ImageModal before showing delete confirmation");
+            try {
+                window.imageModal.closeModal();
+            } catch (err) {
+                console.warn("Error closing ImageModal:", err);
+            }
+        }
+        
+        // Force the modal to be visible with inline styles
+        deleteModal.style.display = 'flex';
+        deleteModal.style.opacity = '1';
+        deleteModal.style.visibility = 'visible';
+        deleteModal.style.zIndex = '9999';
+        
+        // Create a backdrop if it doesn't exist
+        let backdrop = document.getElementById('delete-modal-backdrop');
+        if (!backdrop) {
+            backdrop = document.createElement('div');
+            backdrop.id = 'delete-modal-backdrop';
+            backdrop.style.position = 'fixed';
+            backdrop.style.top = '0';
+            backdrop.style.left = '0';
+            backdrop.style.width = '100%';
+            backdrop.style.height = '100%';
+            backdrop.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+            backdrop.style.zIndex = '9998';
+            document.body.appendChild(backdrop);
+            
+            // Add click event to backdrop to close modal
+            backdrop.addEventListener('click', hideDeleteConfirmation);
+        } else {
+            backdrop.style.display = 'block';
+        }
+        
+        // Prevent scrolling of the background
+        document.body.style.overflow = 'hidden';
+        
+        console.log("Modal styles applied:", 
+            "display:", deleteModal.style.display, 
+            "opacity:", deleteModal.style.opacity,
+            "visibility:", deleteModal.style.visibility,
+            "zIndex:", deleteModal.style.zIndex
+        );
+    } else {
+        console.error("Delete confirmation modal not found in the DOM");
+        alert("Could not open delete confirmation modal. Please try again.");
+    }
+}
+
+/**
+ * Hides the delete confirmation modal
+ */
+function hideDeleteConfirmation() {
+    console.log("hideDeleteConfirmation called");
+    const deleteModal = document.getElementById('delete-confirmation-modal');
+    if (deleteModal) {
+        deleteModal.style.display = 'none';
+        
+        // Also hide backdrop
+        const backdrop = document.getElementById('delete-modal-backdrop');
+        if (backdrop) {
+            backdrop.style.display = 'none';
+        }
+        
+        document.body.style.overflow = ''; // Restore scrolling
+        console.log("Modal hidden");
+    } else {
+        console.error("Delete confirmation modal not found in the DOM");
+    }
+}
+
+/**
+ * Deletes the current track from the database
+ */
+function deleteTrack() {
+    console.log("deleteTrack function called");
+    const fileId = document.getElementById('filename').textContent.trim();
+    console.log("File ID to delete:", fileId);
+    
+    // Show loading state
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.textContent = 'Deleting...';
+        confirmDeleteBtn.disabled = true;
+        console.log("Delete button set to loading state");
+    } else {
+        console.error("Confirm delete button not found");
+    }
+    
+    // Debug modal state before API call
+    const modal = document.getElementById('delete-confirmation-modal');
+    if (modal) {
+        console.log("Modal state before API call:", 
+            "display:", modal.style.display, 
+            "visibility:", modal.style.visibility,
+            "opacity:", modal.style.opacity
+        );
+    }
+    
+    // Make API call to delete the track
+    console.log("Making API request to /api/delete-track with fileId:", fileId);
+    fetch('/api/delete-track', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fileId: fileId })
+    })
+    .then(response => {
+        console.log("API response status:", response.status);
+        if (!response.ok) {
+            throw new Error('Delete request failed with status ' + response.status);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("API response data:", data);
+        hideDeleteConfirmation();
+        
+        if (data.success) {
+            // Show success message
+            showNotification('Track deleted successfully', 'success');
+            console.log("Track deleted successfully, resetting UI");
+            
+            // Reset the UI to the upload screen
+            const uploadSection = document.querySelector('.upload-section');
+            const resultsSection = document.getElementById('results-section');
+            
+            if (uploadSection) {
+                uploadSection.style.display = 'block';
+                console.log("Upload section displayed");
+            } else {
+                console.error("Upload section not found");
+            }
+            
+            if (resultsSection) {
+                resultsSection.style.display = 'none';
+                console.log("Results section hidden");
+            } else {
+                console.error("Results section not found");
+            }
+        } else {
+            console.error("API returned failure:", data.message);
+            showNotification('Failed to delete track: ' + (data.message || 'Unknown error'), 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting track:', error);
+        showNotification('Failed to delete track: ' + error.message, 'error');
+        
+        // Reset button state
+        if (confirmDeleteBtn) {
+            confirmDeleteBtn.textContent = 'Delete Permanently';
+            confirmDeleteBtn.disabled = false;
+            console.log("Delete button reset to normal state");
+        }
+    });
+}
+
+/**
+ * Shows a notification message
+ * @param {string} message - The message to display
+ * @param {string} type - The type of notification ('success', 'error', etc.)
+ */
+function showNotification(message, type = 'info') {
+    // Create notification element if it doesn't exist
+    let notification = document.getElementById('notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'notification';
+        notification.className = 'notification';
+        document.body.appendChild(notification);
+    }
+    
+    // Set notification content and style
+    notification.textContent = message;
+    notification.className = 'notification ' + type;
+    
+    // Show notification
+    notification.style.display = 'block';
+    notification.style.opacity = '1';
+    
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 300);
+    }, 3000);
+}
 
 // Function to setup musical theory modals
 function setupMusicTheoryModals() {

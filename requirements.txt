@@ -18,6 +18,8 @@ requests==2.31.0
 
 # Visualization
 matplotlib==3.7.3
+plotly==5.24.0
+kaleido==0.2.1
 
 # API
 openai==1.6.1

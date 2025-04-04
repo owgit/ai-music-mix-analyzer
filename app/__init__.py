@@ -156,14 +156,14 @@ def create_app(test_config=None):
         # Content Security Policy
         csp = [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://seo.optagonen.se https://*.cloudflareinsights.com",
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com",
+            "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://seo.optagonen.se https://*.cloudflareinsights.com https://cdn.plot.ly",
+            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com https://unpkg.com",
             "img-src 'self' data: https://seo.optagonen.se https://img.buymeacoffee.com",
             "font-src 'self' https://cdn.jsdelivr.net https://fonts.gstatic.com",
             "connect-src 'self' https://seo.optagonen.se https://*.cloudflareinsights.com",
             "media-src 'self'",
             "object-src 'none'",
-            "frame-ancestors 'none'",
+            "frame-ancestors 'self'",
             "form-action 'self'",
             "base-uri 'self'"
         ]
@@ -172,7 +172,7 @@ def create_app(test_config=None):
         
         # Other security headers
         response.headers['X-Content-Type-Options'] = 'nosniff'
-        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['X-XSS-Protection'] = '1; mode=block'
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         

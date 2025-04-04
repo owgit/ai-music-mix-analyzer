@@ -11,6 +11,8 @@ import time  # Add time module for tracking performance
 import traceback  # Add traceback for detailed error logging
 matplotlib.use('Agg')  # Use non-interactive backend
 from .music_theory_data.key_relationships import get_key_relationship_info
+import threading
+import concurrent.futures
 
 def convert_numpy_types(obj):
     """
@@ -1260,11 +1262,16 @@ def generate_3d_spatial_visualization(y, sr, vis_dir):
         if y.ndim == 1:
             y = np.vstack((y, y))
         
-        # Create figure with larger size and specific 3D projection
-        plt.figure(figsize=(12, 8))
-        ax = plt.axes(projection='3d')
-        
-        # Calculate spatial characteristics
+        # Check if plotly is installed, if not, fall back to matplotlib
+        try:
+            import plotly.graph_objects as go
+            import plotly.io as pio
+            use_plotly = True
+            print("Using Plotly for interactive 3D visualization")
+        except ImportError:
+            use_plotly = False
+            print("Plotly not installed, falling back to static matplotlib visualization")
+            
         # Sample points for visualization (use fewer points for better performance)
         num_points = min(1000, y.shape[1])
         step = max(1, y.shape[1] // num_points)
@@ -1290,45 +1297,103 @@ def generate_3d_spatial_visualization(y, sr, vis_dir):
         # Calculate stereo width for color mapping
         stereo_width = np.abs(left_channel - right_channel)
         
-        # Create scatter plot
-        scatter = ax.scatter(left_channel, right_channel, height_profile,
-                           c=stereo_width,
-                           cmap='viridis',
-                           alpha=0.6,
-                           s=20)
-        
-        # Add color bar
-        plt.colorbar(scatter, label='Stereo Width')
-        
-        # Set labels and title
-        ax.set_xlabel('Left Channel')
-        ax.set_ylabel('Right Channel')
-        ax.set_zlabel('Frequency Energy')
-        plt.title('3D Spatial Audio Visualization')
-        
-        # Adjust the view angle for better visualization
-        ax.view_init(elev=20, azim=45)
-        
-        # Add grid
-        ax.grid(True)
-        
-        # Enhance the appearance
-        ax.xaxis.pane.fill = False
-        ax.yaxis.pane.fill = False
-        ax.zaxis.pane.fill = False
-        
-        # Make the background transparent
-        ax.w_xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-        ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-        ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
-        
-        # Save with high DPI and tight layout
-        spatial_path = os.path.join(vis_dir, 'spatial_field.png')
-        plt.savefig(spatial_path, dpi=150, bbox_inches='tight', transparent=True)
-        plt.close()
-        
-        print(f"Successfully generated 3D spatial visualization at: {spatial_path}")
-        return spatial_path
+        if use_plotly:
+            # Create interactive Plotly figure
+            fig = go.Figure(data=[go.Scatter3d(
+                x=left_channel,
+                y=right_channel,
+                z=height_profile,
+                mode='markers',
+                marker=dict(
+                    size=5,
+                    color=stereo_width,
+                    colorscale='Viridis',
+                    opacity=0.7,
+                    colorbar=dict(title='Stereo Width')
+                ),
+                hovertemplate='Left: %{x:.2f}<br>Right: %{y:.2f}<br>Frequency: %{z:.2f}<br>Width: %{marker.color:.2f}'
+            )])
+            
+            # Customize layout
+            fig.update_layout(
+                title='3D Spatial Audio Visualization (Interactive)',
+                scene=dict(
+                    xaxis_title='Left Channel',
+                    yaxis_title='Right Channel',
+                    zaxis_title='Frequency Energy',
+                    aspectmode='cube',
+                    camera=dict(
+                        eye=dict(x=1.5, y=1.5, z=1.2),
+                        up=dict(x=0, y=0, z=1)
+                    )
+                ),
+                width=900,
+                height=700,
+                margin=dict(l=0, r=0, b=0, t=40),
+                template='plotly_white'
+            )
+            
+            # Save as an HTML file
+            spatial_path_html = os.path.join(vis_dir, 'spatial_field.html')
+            pio.write_html(fig, file=spatial_path_html, auto_open=False, include_plotlyjs=True, config={"responsive": True})
+            
+            # Also generate a static image for fallback
+            spatial_path = os.path.join(vis_dir, 'spatial_field.png')
+            pio.write_image(fig, spatial_path, format='png', width=900, height=700)
+            
+            print(f"Successfully generated interactive 3D visualization at: {spatial_path_html}")
+            print(f"Also generated static fallback at: {spatial_path}")
+            
+            # Return both paths in a dict
+            return {
+                'html': f"/static/uploads/{os.path.basename(vis_dir)}/spatial_field.html",
+                'image': f"/static/uploads/{os.path.basename(vis_dir)}/spatial_field.png"
+            }
+            
+        else:
+            # Fall back to matplotlib for static visualization
+            plt.figure(figsize=(12, 8))
+            ax = plt.axes(projection='3d')
+            
+            # Create scatter plot
+            scatter = ax.scatter(left_channel, right_channel, height_profile,
+                               c=stereo_width,
+                               cmap='viridis',
+                               alpha=0.6,
+                               s=20)
+            
+            # Add color bar
+            plt.colorbar(scatter, label='Stereo Width')
+            
+            # Set labels and title
+            ax.set_xlabel('Left Channel')
+            ax.set_ylabel('Right Channel')
+            ax.set_zlabel('Frequency Energy')
+            plt.title('3D Spatial Audio Visualization')
+            
+            # Adjust the view angle for better visualization
+            ax.view_init(elev=20, azim=45)
+            
+            # Add grid
+            ax.grid(True)
+            
+            # Enhance the appearance
+            ax.xaxis.pane.fill = False
+            ax.yaxis.pane.fill = False
+            ax.zaxis.pane.fill = False
+            
+            # Make the background transparent
+            ax.w_xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+            ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+            ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+            
+            # Save with high DPI and tight layout
+            spatial_path = os.path.join(vis_dir, 'spatial_field.png')
+            plt.savefig(spatial_path, dpi=150, bbox_inches='tight', transparent=True)
+            plt.close()
+            
+            print(f"Successfully generated static 3D visualization at: {spatial_path}")
+            return f"/static/uploads/{os.path.basename(vis_dir)}/spatial_field.png"
         
     except Exception as e:
         print(f"Error generating 3D spatial visualization: {str(e)}")
@@ -1546,32 +1611,41 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
                 print(f"Generated spatial_field placeholder: /static/uploads/{file_id}/spatial_field.png")
             else:
                 # Only attempt 3D visualization if not skipped
-                # We'll set a timeout for this operation to prevent hanging
-                import signal
+                # Use threading.Timer instead of signal for thread-safe timeout
+                import threading
+                import concurrent.futures
                 
-                # Define timeout handler
-                def timeout_handler(signum, frame):
-                    raise TimeoutError("3D visualization timed out")
-                
-                # Set 30 second timeout
-                old_handler = signal.signal(signal.SIGALRM, timeout_handler)
-                signal.alarm(30)
+                # Function to generate visualization with timeout
+                def generate_with_timeout(y, sr, vis_dir, timeout=30):
+                    with concurrent.futures.ThreadPoolExecutor() as executor:
+                        future = executor.submit(generate_3d_spatial_visualization, y, sr, vis_dir)
+                        try:
+                            result = future.result(timeout=timeout)
+                            return result
+                        except concurrent.futures.TimeoutError:
+                            print("3D visualization timed out after 30 seconds")
+                            raise TimeoutError("3D visualization timed out")
                 
                 try:
-                    spatial_path = generate_3d_spatial_visualization(y, sr, vis_dir)
+                    spatial_result = generate_with_timeout(y, sr, vis_dir)
                     
-                    # Turn off alarm
-                    signal.alarm(0)
-                    
-                    if spatial_path:
-                        print(f"Generated spatial_field: /static/uploads/{file_id}/spatial_field.png")
-                        visualizations['spatial_field'] = f"/static/uploads/{file_id}/spatial_field.png"
+                    if spatial_result:
+                        # Check if the result is a dictionary with both HTML and image paths
+                        if isinstance(spatial_result, dict) and 'html' in spatial_result and 'image' in spatial_result:
+                            print(f"Generated interactive spatial_field: {spatial_result['html']}")
+                            print(f"Generated static spatial_field: {spatial_result['image']}")
+                            visualizations['spatial_field'] = spatial_result['image']
+                            visualizations['spatial_field_interactive'] = spatial_result['html']
+                        # Otherwise, it's just a regular string path
+                        else:
+                            print(f"Generated spatial_field: {spatial_result}")
+                            visualizations['spatial_field'] = spatial_result
                     else:
                         raise ValueError("Failed to generate 3D visualization")
-                finally:
-                    # Restore previous signal handler
-                    signal.signal(signal.SIGALRM, old_handler)
-                    signal.alarm(0)
+                
+                except TimeoutError:
+                    print("3D visualization timed out")
+                    raise
                 
         except Exception as e:
             print(f"Error generating 3D spatial field: {str(e)}")
