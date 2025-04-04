@@ -17,6 +17,9 @@ matplotlib==3.7.3
 openai==1.6.1
 httpx==0.25.2
 
+# Database
+mysql-connector-python==8.1.0
+
 # Utilities
 python-dotenv==1.0.0
 requests==2.31.0

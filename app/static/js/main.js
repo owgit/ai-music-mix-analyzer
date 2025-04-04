@@ -694,6 +694,43 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show results section
         resultsSection.style.display = 'block';
         
+        // Check if the result is from cache and show notification
+        if (data.from_cache) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'cache-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                        </svg>
+                    </div>
+                    <div class="notification-text">
+                        <p>This song was previously analyzed and loaded from our database.</p>
+                    </div>
+                    <button class="notification-close">×</button>
+                </div>
+            `;
+            
+            // Add the notification to the page
+            document.body.appendChild(notification);
+            
+            // Add event listener to close button
+            notification.querySelector('.notification-close').addEventListener('click', function() {
+                notification.remove();
+            });
+            
+            // Auto-remove after 10 seconds
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    notification.remove();
+                }
+            }, 10000);
+            
+            console.log("Results loaded from cache");
+        }
+        
         // Update filename display
         document.getElementById('filename').textContent = data.filename;
         

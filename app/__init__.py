@@ -81,6 +81,14 @@ def create_app(test_config=None):
     app.json_provider_class = NumpyJSONProvider
     app.json = app.json_provider_class(app)
     
+    # Initialize database
+    with app.app_context():
+        from app.core.database import initialize_database
+        if initialize_database():
+            app.logger.info("Database initialized successfully")
+        else:
+            app.logger.warning("Failed to initialize database")
+    
     # Configure rate limiting
     limiter = Limiter(
         get_remote_address,

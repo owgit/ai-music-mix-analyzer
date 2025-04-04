@@ -13,6 +13,7 @@ from pathlib import Path
 
 from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types
 from app.core.openai_analyzer import analyze_with_gpt
+from app.core.database import calculate_file_hash, find_song_by_hash, save_song
 
 # Create a Blueprint for the main routes
 main_bp = Blueprint('main', __name__)
@@ -125,6 +126,39 @@ def upload_file():
         file.save(file_path)
         
         try:
+            # Calculate file hash
+            file_hash = calculate_file_hash(file_path)
+            print(f"File hash: {file_hash}")
+            
+            # Check if the file already exists in the database
+            existing_song = find_song_by_hash(file_hash)
+            
+            if existing_song:
+                print(f"Found existing song: {existing_song['original_name']}")
+                
+                # Return the existing analysis results
+                try:
+                    # Parse the saved analysis JSON
+                    results = json.loads(existing_song['analysis_json']) if existing_song['analysis_json'] else None
+                    
+                    if results:
+                        print("Using existing analysis results from database")
+                        
+                        # Return the cached results
+                        response_data = {
+                            'filename': file.filename,
+                            'results': results,
+                            'from_cache': True
+                        }
+                        
+                        return jsonify(response_data)
+                    else:
+                        print("Existing record found but no analysis data, performing new analysis")
+                except Exception as e:
+                    print(f"Error parsing existing analysis: {str(e)}")
+                    print("Performing new analysis instead")
+            
+            # If we reach here, we need to analyze the file
             # Analyze the mix with instrumental flag
             results = analyze_mix(file_path, is_instrumental)
             
@@ -168,10 +202,26 @@ def upload_file():
             results = convert_numpy_types(results)
             print("NumPy types converted successfully")
             
+            # Save the analysis results to the database
+            try:
+                save_song(
+                    filename=file_id,
+                    original_name=file.filename,
+                    file_path=file_path,
+                    file_hash=file_hash,
+                    is_instrumental=is_instrumental,
+                    analysis_json=results
+                )
+                print("Song analysis saved to database")
+            except Exception as e:
+                print(f"Error saving song to database: {str(e)}")
+                traceback.print_exc()
+            
             # Return the results
             response_data = {
                 'filename': file.filename,
-                'results': results
+                'results': results,
+                'from_cache': False
             }
             
             print("Response data successfully serialized to JSON")
