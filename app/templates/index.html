@@ -426,6 +426,17 @@
                 
                 <div class="overall-score">
                     <div class="score-circle">
+                        <!-- Animated arcs -->
+                        <div class="score-arc"></div>
+                        <div class="score-arc"></div>
+                        <div class="score-arc"></div>
+                        
+                        <!-- Progress marks that will be populated by JS -->
+                        <div class="score-circle-marks"></div>
+                        
+                        <!-- Particles container for score animations -->
+                        <div class="score-particles"></div>
+                        
                         <span id="overall-score">0</span>
                     </div>
                     <p>Overall Mix Score</p>
@@ -447,8 +458,14 @@
                     <!-- Frequency Balance Tab -->
                     <div class="tab-pane active" id="frequency-tab" role="tabpanel">
                         <div class="score-card">
+                            <!-- Frequency meter element -->
+                            <div class="frequency-meter"></div>
+                            
+                            <!-- Particle container for animated effects -->
+                            <div class="frequency-particles"></div>
+                            
                             <h3>Frequency Balance Score</h3>
-                            <div class="score-value" id="frequency-score">0</div>
+                            <div class="score-value" id="frequency-score" data-label="/100">0</div>
                         </div>
                         <div class="analysis-card">
                             <h3>Analysis</h3>
@@ -483,8 +500,17 @@
                     <!-- Dynamics Tab -->
                     <div class="tab-pane" id="dynamics-tab">
                         <div class="score-card">
+                            <!-- Dynamic range meter element -->
+                            <div class="dynamics-meter"></div>
+                            
+                            <!-- Particle container for animated effects -->
+                            <div class="dynamics-particles"></div>
+                            
+                            <!-- Sound wave visualization -->
+                            <div class="dynamics-wave"></div>
+                            
                             <h3>Dynamic Range Score</h3>
-                            <div class="score-value" id="dynamics-score">0</div>
+                            <div class="score-value" id="dynamics-score" data-label="/100">0</div>
                         </div>
                         <div class="metrics-container">
                             <div class="metric">
@@ -510,12 +536,27 @@
                     <div class="tab-pane" id="stereo-tab">
                         <div class="score-container">
                             <div class="score-card">
+                                <!-- Width meter element -->
+                                <div class="stereo-width-meter"></div>
+                                
+                                <!-- Particle container for animated effects -->
+                                <div class="stereo-width-particles"></div>
+                                
                                 <h3>Width Score</h3>
-                                <div class="score-value" id="width-score">0</div>
+                                <div class="score-value" id="width-score" data-label="/100">0</div>
                             </div>
                             <div class="score-card">
+                                <!-- Phase meter element -->
+                                <div class="stereo-phase-meter"></div>
+                                
+                                <!-- Particle container for animated effects -->
+                                <div class="stereo-phase-particles"></div>
+                                
+                                <!-- Phase wave visualization -->
+                                <div class="stereo-phase-wave"></div>
+                                
                                 <h3>Phase Score</h3>
-                                <div class="score-value" id="phase-score">0</div>
+                                <div class="score-value" id="phase-score" data-label="/100">0</div>
                             </div>
                         </div>
                         <div class="metrics-container">
@@ -895,6 +936,8 @@
     <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
     <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
     <script src="{{ url_for('static', filename='js/faq-data.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/score-animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/score-effects.js') }}"></script>
     
     <!-- Add style for the animated blur effect -->
     <style>

@@ -606,8 +606,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update filename display
         document.getElementById('filename').textContent = data.filename;
         
-        // Update overall score
-        document.getElementById('overall-score').textContent = data.results.overall_score;
+        // Update overall score with animation if available
+        const overallScore = data.results.overall_score;
+        if (window.updateScoreWithAnimation) {
+            window.updateScoreWithAnimation(overallScore);
+        } else {
+            document.getElementById('overall-score').textContent = overallScore;
+        }
         
         // Frequency Balance
         const frequencyBalance = data.results.frequency_balance;
@@ -1803,17 +1808,21 @@ function showModal(title, htmlContent) {
     if (typeof openModal === 'function') {
         openModal(title, htmlContent);
     } else {
-        // Create a simple modal if the modal function doesn't exist
+        // Create a modern modal if the modal function doesn't exist
         const modalContainer = document.createElement('div');
-        modalContainer.className = 'simple-modal-container';
+        modalContainer.className = 'modern-modal-container';
         
         modalContainer.innerHTML = `
-            <div class="simple-modal">
-                <div class="simple-modal-header">
+            <div class="modern-modal">
+                <div class="modern-modal-header">
                     <h2>${title}</h2>
-                    <button class="simple-modal-close">&times;</button>
+                    <button class="modern-modal-close" aria-label="Close modal">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
                 </div>
-                <div class="simple-modal-content">
+                <div class="modern-modal-content">
                     ${htmlContent}
                 </div>
             </div>
@@ -1824,67 +1833,208 @@ function showModal(title, htmlContent) {
         // Add styles
         const style = document.createElement('style');
         style.innerHTML = `
-            .simple-modal-container {
+            .modern-modal-container {
                 position: fixed;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
                 background-color: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(5px);
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 z-index: 9999;
+                opacity: 0;
+                transition: opacity 0.3s ease;
             }
-            .simple-modal {
-                background-color: white;
-                border-radius: 8px;
-                width: 80%;
+            .modern-modal {
+                background-color: var(--card-bg, white);
+                border-radius: 16px;
+                width: 90%;
                 max-width: 800px;
-                max-height: 80vh;
+                max-height: 85vh;
                 overflow-y: auto;
-                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 1px 5px rgba(0, 0, 0, 0.1);
+                transform: translateY(20px);
+                opacity: 0;
+                transition: transform 0.4s ease, opacity 0.4s ease;
+                border: 1px solid rgba(255, 255, 255, 0.1);
             }
-            .simple-modal-header {
+            .modern-modal-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 15px 20px;
-                border-bottom: 1px solid #eee;
+                padding: 20px 24px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             }
-            .simple-modal-close {
+            .modern-modal-header h2 {
+                margin: 0;
+                font-size: 1.5rem;
+                color: var(--text-color, #333);
+                font-weight: 600;
+            }
+            .modern-modal-close {
                 background: none;
                 border: none;
-                font-size: 24px;
+                padding: 8px;
                 cursor: pointer;
-                color: #666;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-color, #666);
+                transition: background-color 0.2s ease, color 0.2s ease;
             }
-            .simple-modal-content {
-                padding: 20px;
+            .modern-modal-close:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+                color: var(--primary-color, #4361ee);
+            }
+            .modern-modal-content {
+                padding: 24px;
+                color: var(--text-color, #333);
+                line-height: 1.6;
+            }
+            .modern-modal-content h3 {
+                margin-top: 0;
+                font-weight: 600;
+                color: var(--text-color, #222);
+            }
+            .modern-modal-content h4 {
+                margin: 24px 0 12px;
+                color: var(--primary-color, #4361ee);
+                font-weight: 500;
+            }
+            .modern-modal-content p {
+                margin-bottom: 16px;
+            }
+            .modern-modal-content ul {
+                padding-left: 24px;
+                margin-bottom: 16px;
+            }
+            .modern-modal-content li {
+                margin-bottom: 8px;
             }
             .faq-item {
-                margin-bottom: 20px;
+                margin-bottom: 28px;
+                padding-bottom: 24px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            }
+            .faq-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
             }
             .faq-item h4 {
-                margin-bottom: 5px;
-                color: #333;
+                margin-bottom: 12px;
+                color: var(--text-color, #333);
+                font-weight: 600;
+            }
+            
+            /* Scrollbar styling */
+            .modern-modal-content::-webkit-scrollbar {
+                width: 6px;
+            }
+            .modern-modal-content::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.05);
+                border-radius: 10px;
+            }
+            .modern-modal-content::-webkit-scrollbar-thumb {
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 10px;
+            }
+            
+            /* Dark mode support */
+            @media (prefers-color-scheme: dark) {
+                .modern-modal {
+                    background-color: var(--card-bg, #1a1a1a);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                .modern-modal-header {
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                }
+                .modern-modal-close:hover {
+                    background-color: rgba(255, 255, 255, 0.1);
+                }
+            }
+            
+            /* Animation classes */
+            .modern-modal-container.visible {
+                opacity: 1;
+            }
+            .modern-modal.visible {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .modern-modal {
+                    width: 95%;
+                    max-height: 80vh;
+                }
+                .modern-modal-header {
+                    padding: 16px 20px;
+                }
+                .modern-modal-content {
+                    padding: 20px;
+                }
+                .modern-modal-header h2 {
+                    font-size: 1.3rem;
+                }
             }
         `;
         document.head.appendChild(style);
         
+        // Animate modal entrance
+        setTimeout(() => {
+            modalContainer.classList.add('visible');
+            const modalElement = modalContainer.querySelector('.modern-modal');
+            if (modalElement) {
+                modalElement.classList.add('visible');
+            }
+        }, 10);
+        
         // Add close button functionality
-        const closeButton = modalContainer.querySelector('.simple-modal-close');
+        const closeButton = modalContainer.querySelector('.modern-modal-close');
         closeButton.addEventListener('click', function() {
-            document.body.removeChild(modalContainer);
-            document.head.removeChild(style);
+            closeModalWithAnimation(modalContainer, style);
         });
         
         // Close on click outside
         modalContainer.addEventListener('click', function(e) {
             if (e.target === modalContainer) {
-                document.body.removeChild(modalContainer);
-                document.head.removeChild(style);
+                closeModalWithAnimation(modalContainer, style);
+            }
+        });
+        
+        // Close on ESC key
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape') {
+                closeModalWithAnimation(modalContainer, style);
+                document.removeEventListener('keydown', escHandler);
             }
         });
     }
+}
+
+// Helper function to close modal with animation
+function closeModalWithAnimation(modalContainer, styleElement) {
+    const modalElement = modalContainer.querySelector('.modern-modal');
+    
+    // Remove the visible class to trigger the exit animation
+    if (modalElement) {
+        modalElement.classList.remove('visible');
+    }
+    modalContainer.classList.remove('visible');
+    
+    // Remove elements after animation completes
+    setTimeout(() => {
+        if (document.body.contains(modalContainer)) {
+            document.body.removeChild(modalContainer);
+        }
+        if (document.head.contains(styleElement)) {
+            document.head.removeChild(styleElement);
+        }
+    }, 300);
 } 

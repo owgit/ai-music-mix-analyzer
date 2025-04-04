@@ -785,6 +785,7 @@ header.scrolled .app-logo {
     flex-direction: column;
     align-items: center;
     margin-bottom: 40px;
+    position: relative;
 }
 
 .score-circle {
@@ -798,6 +799,9 @@ header.scrolled .app-logo {
     margin-bottom: 15px;
     position: relative;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
 }
 
 .score-circle::before {
@@ -807,6 +811,22 @@ header.scrolled .app-logo {
     height: 130px;
     border-radius: 50%;
     background-color: white;
+    transition: transform 0.3s ease;
+    z-index: 1;
+}
+
+/* Glow pulse animation */
+.score-circle::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(67, 97, 238, 0.7) 0%, rgba(67, 97, 238, 0) 70%);
+    opacity: 0.5;
+    z-index: 0;
+    animation: pulse 3s infinite ease-in-out;
+    pointer-events: none;
 }
 
 .score-circle span {
@@ -814,12 +834,138 @@ header.scrolled .app-logo {
     font-size: 3rem;
     font-weight: bold;
     color: var(--primary-color);
+    z-index: 2;
+    transition: color 0.5s ease;
 }
 
 .overall-score p {
     font-size: 1.2rem;
     color: var(--secondary-color);
     font-weight: 500;
+}
+
+/* Circular progress marks */
+.score-circle-marks {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.score-circle-marks::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 10px;
+    background-color: rgba(67, 97, 238, 0.3);
+    transform-origin: bottom center;
+    transform: translateX(-50%);
+}
+
+/* Particles container */
+.score-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.particle {
+    position: absolute;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+}
+
+/* Interactive hover effects */
+.score-circle:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(67, 97, 238, 0.25), 0 0 20px rgba(67, 97, 238, 0.2);
+}
+
+.score-circle:hover::before {
+    transform: scale(0.95);
+}
+
+.score-circle:hover span {
+    color: #3a0ca3;
+}
+
+/* Arc animations */
+.score-arc {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--primary-color);
+    animation: spin 4s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.score-arc:nth-child(2) {
+    border-top-color: transparent;
+    border-right-color: var(--primary-color);
+    animation: spin 5s linear infinite;
+}
+
+.score-arc:nth-child(3) {
+    border-top-color: transparent;
+    border-bottom-color: var(--primary-color);
+    animation: spin 6s linear infinite reverse;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes particleFade {
+    0% { transform: translate(0, 0); opacity: 1; }
+    100% { transform: translate(var(--tx), var(--ty)); opacity: 0; }
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: scale(0.9); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Score achieved animations */
+.score-achieved {
+    animation: scoreAchieved 0.8s ease-out;
+}
+
+@keyframes scoreAchieved {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    70% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+/* When score changes to a new value */
+.score-updated {
+    animation: fadeIn 0.5s ease-out;
 }
 
 /* Tabs */
@@ -877,13 +1023,218 @@ header.scrolled .app-logo {
     margin-bottom: 30px;
     text-align: center;
     box-shadow: var(--box-shadow);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.4s ease;
+    z-index: 1;
+}
+
+.score-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        rgba(255,255,255,0) 0%, 
+        rgba(255,255,255,0.4) 50%, 
+        rgba(255,255,255,0) 100%);
+    z-index: 0;
+    animation: shine 8s infinite;
+}
+
+.score-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+}
+
+.score-card h3 {
+    position: relative;
+    margin-bottom: 5px;
+    color: var(--dark-color);
+    font-weight: 600;
+    z-index: 2;
+}
+
+.score-card h3::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), #3a0ca3);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.score-card:hover h3::after {
+    width: 80px;
 }
 
 .score-value {
     font-size: 2.5rem;
     font-weight: bold;
     color: var(--primary-color);
-    margin: 10px 0;
+    margin: 20px 0 10px;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 2px 10px rgba(67, 97, 238, 0.1);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.score-value::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(67, 97, 238, 0.08) 0%, rgba(67, 97, 238, 0) 70%);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.score-value::after {
+    content: attr(data-label);
+    position: absolute;
+    bottom: -5px;
+    right: -15px;
+    font-size: 14px;
+    color: var(--secondary-color);
+    font-weight: normal;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.score-card:hover .score-value::before {
+    opacity: 1;
+    animation: pulse-glow 2s infinite;
+}
+
+.score-card:hover .score-value {
+    transform: scale(1.1);
+    text-shadow: 0 0 15px rgba(67, 97, 238, 0.3);
+}
+
+.score-card:hover .score-value::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Frequency score special styling */
+#frequency-score {
+    background: linear-gradient(45deg, #4361ee, #3a0ca3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    z-index: 2;
+}
+
+#frequency-score::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(67, 97, 238, 0.2) 0%, rgba(58, 12, 163, 0) 70%);
+    filter: blur(8px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.score-card:hover #frequency-score::before {
+    opacity: 1;
+    animation: pulse-gradient 3s infinite alternate;
+}
+
+/* Animated particles for frequency score */
+.frequency-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.frequency-particle {
+    position: absolute;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+/* Circular progress indicator for frequency score */
+.frequency-meter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--primary-color) 0%, 
+        var(--primary-color) var(--score-percentage), 
+        #e9ecef var(--score-percentage), 
+        #e9ecef 100%
+    );
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.05);
+}
+
+.frequency-meter::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+
+.score-card:hover .frequency-meter {
+    opacity: 1;
+}
+
+/* Animations */
+@keyframes shine {
+    0% { left: -100%; }
+    20% { left: 100%; }
+    100% { left: 100%; }
+}
+
+@keyframes pulse-glow {
+    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.5; }
+}
+
+@keyframes pulse-gradient {
+    0% { opacity: 0.4; filter: blur(8px); }
+    100% { opacity: 0.9; filter: blur(12px); }
+}
+
+@keyframes float-particle {
+    0% { transform: translate(0, 0); opacity: 1; }
+    100% { transform: translate(var(--x), var(--y)); opacity: 0; }
 }
 
 .score-container {
@@ -2337,4 +2688,525 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     text-align: center;
     border: none;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Dynamic Range score special styling */
+#dynamics-score {
+    background: linear-gradient(45deg, #5e60ce, #48bfe3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    z-index: 2;
+}
+
+#dynamics-score::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, rgba(94, 96, 206, 0.2) 0%, rgba(72, 191, 227, 0) 70%);
+    filter: blur(8px);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.score-card:hover #dynamics-score::before {
+    opacity: 1;
+    animation: pulse-gradient 3s infinite alternate;
+}
+
+/* Animated particles for dynamics score */
+.dynamics-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.dynamics-particle {
+    position: absolute;
+    background-color: #5e60ce;
+    border-radius: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+/* Circular progress indicator for dynamics score */
+.dynamics-meter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #5e60ce 0%, 
+        #5e60ce var(--dynamics-percentage), 
+        #e9ecef var(--dynamics-percentage), 
+        #e9ecef 100%
+    );
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    box-shadow: 0 0 0 5px rgba(94, 96, 206, 0.05);
+}
+
+.dynamics-meter::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    z-index: 1;
+}
+
+.score-card:hover .dynamics-meter {
+    opacity: 1;
+}
+
+/* Sound wave animation for dynamics score */
+.dynamics-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    opacity: 0.15;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.dynamics-wave::before,
+.dynamics-wave::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-repeat: repeat-x;
+    height: 10px;
+    opacity: 0.4;
+    animation: wave 8s infinite linear;
+}
+
+.dynamics-wave::before {
+    background-image: url("data:image/svg+xml,%3Csvg width='80' height='10' viewBox='0 0 80 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 C 15 0, 35 0, 40 10 C 45 0, 65 0, 80 10' stroke='%235e60ce' fill='none'/%3E%3C/svg%3E");
+    animation-duration: 13s;
+}
+
+.dynamics-wave::after {
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='10' viewBox='0 0 120 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 C 30 0, 60 0, 70 10 C 80 0, 90 0, 120 10' stroke='%2348bfe3' fill='none'/%3E%3C/svg%3E");
+    animation-duration: 7s;
+}
+
+@keyframes wave {
+    0% { background-position: 0 0; }
+    100% { background-position: 100% 0; }
+}
+
+/* Different color schemes for dynamics meter */
+.dynamics-meter.excellent {
+    background: conic-gradient(
+        #4CAF50 0%, 
+        #4CAF50 var(--dynamics-percentage), 
+        #e9ecef var(--dynamics-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.dynamics-meter.good {
+    background: conic-gradient(
+        #5e60ce 0%, 
+        #5e60ce var(--dynamics-percentage), 
+        #e9ecef var(--dynamics-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.dynamics-meter.average {
+    background: conic-gradient(
+        #48bfe3 0%, 
+        #48bfe3 var(--dynamics-percentage), 
+        #e9ecef var(--dynamics-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.dynamics-meter.poor {
+    background: conic-gradient(
+        #F44336 0%, 
+        #F44336 var(--dynamics-percentage), 
+        #e9ecef var(--dynamics-percentage), 
+        #e9ecef 100%
+    );
+}
+
+/* Stereo Width Score */
+#width-score {
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    background: radial-gradient(circle, rgba(78, 99, 220, 0.8) 0%, rgba(49, 64, 160, 0.9) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2.8rem;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#width-score::after {
+    content: attr(data-label);
+    font-size: 1rem;
+    position: absolute;
+    right: -1.5rem;
+    top: 0.5rem;
+    opacity: 0.7;
+}
+
+/* Stereo Phase Score */
+#phase-score {
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    background: radial-gradient(circle, rgba(72, 191, 227, 0.8) 0%, rgba(94, 96, 206, 0.9) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-size: 2.8rem;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#phase-score::after {
+    content: attr(data-label);
+    font-size: 1rem;
+    position: absolute;
+    right: -1.5rem;
+    top: 0.5rem;
+    opacity: 0.7;
+}
+
+/* Stereo Width Meter */
+.stereo-width-meter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: #e9ecef;
+    z-index: 0;
+    opacity: 0.1;
+    transition: all 0.3s ease;
+}
+
+.stereo-width-meter::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    z-index: 1;
+}
+
+/* Stereo Width Score Card Hover Effects */
+.score-card:has(#width-score):hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.score-card:has(#width-score):hover .stereo-width-meter {
+    opacity: 0.3;
+}
+
+.score-card:has(#width-score):hover #width-score {
+    text-shadow: 0 0 15px rgba(78, 99, 220, 0.8);
+}
+
+/* Stereo Width Particles Container */
+.stereo-width-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+/* Stereo Width Particle Animation */
+@keyframes stereo-width-particle-float {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Stereo Phase Meter */
+.stereo-phase-meter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #5e60ce 0%, 
+        #5e60ce var(--phase-percentage, 0deg), 
+        #e9ecef var(--phase-percentage, 0deg), 
+        #e9ecef 100%
+    );
+    z-index: 0;
+    opacity: 0.1;
+    transition: all 0.3s ease;
+}
+
+.stereo-phase-meter::before {
+    content: '';
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    right: 15px;
+    bottom: 15px;
+    border-radius: 50%;
+    background: var(--card-bg);
+    z-index: 1;
+}
+
+/* Stereo Phase Score Card Hover Effects */
+.score-card:has(#phase-score):hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.score-card:has(#phase-score):hover .stereo-phase-meter {
+    opacity: 0.3;
+}
+
+.score-card:has(#phase-score):hover #phase-score {
+    text-shadow: 0 0 15px rgba(72, 191, 227, 0.8);
+}
+
+/* Phase Wave Animation */
+.stereo-phase-wave {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.stereo-phase-wave::before,
+.stereo-phase-wave::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 200%;
+    height: 100%;
+    background-repeat: repeat-x;
+    opacity: 0.15;
+    animation: phaseWaveAnimation var(--before-duration, 13s) linear infinite;
+}
+
+.stereo-phase-wave::before {
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%235e60ce' opacity='.25'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.stereo-phase-wave::after {
+    bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z' fill='%2348bfe3' opacity='.25'%3E%3C/path%3E%3C/svg%3E");
+    animation-duration: var(--after-duration, 7s);
+    animation-direction: reverse;
+}
+
+@keyframes phaseWaveAnimation {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Stereo Phase Particles Container */
+.stereo-phase-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+/* Stereo Phase Particle Animation */
+@keyframes stereo-phase-particle-float {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Score Card Meter Color Classes for Width */
+.stereo-width-meter.excellent {
+    background: conic-gradient(
+        #4CAF50 0%, 
+        #4CAF50 var(--width-percentage), 
+        #e9ecef var(--width-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.stereo-width-meter.good {
+    background: conic-gradient(
+        #2196F3 0%, 
+        #2196F3 var(--width-percentage), 
+        #e9ecef var(--width-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.stereo-width-meter.average {
+    background: conic-gradient(
+        #FF9800 0%, 
+        #FF9800 var(--width-percentage), 
+        #e9ecef var(--width-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.stereo-width-meter.poor {
+    background: conic-gradient(
+        #F44336 0%, 
+        #F44336 var(--width-percentage), 
+        #e9ecef var(--width-percentage), 
+        #e9ecef 100%
+    );
+}
+
+/* Score Card Meter Color Classes for Phase */
+.stereo-phase-meter.excellent {
+    background: conic-gradient(
+        #4CAF50 0%, 
+        #4CAF50 var(--phase-percentage), 
+        #e9ecef var(--phase-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.stereo-phase-meter.good {
+    background: conic-gradient(
+        #2196F3 0%, 
+        #2196F3 var(--phase-percentage), 
+        #e9ecef var(--phase-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.stereo-phase-meter.average {
+    background: conic-gradient(
+        #FF9800 0%, 
+        #FF9800 var(--phase-percentage), 
+        #e9ecef var(--phase-percentage), 
+        #e9ecef 100%
+    );
+}
+
+.stereo-phase-meter.poor {
+    background: conic-gradient(
+        #F44336 0%, 
+        #F44336 var(--phase-percentage), 
+        #e9ecef var(--phase-percentage), 
+        #e9ecef 100%
+    );
+}
+
+/* Stereo Width Particle */
+.stereo-width-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: rgba(78, 99, 220, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    animation: stereo-width-particle-float 1s ease-out forwards;
+}
+
+@keyframes stereo-width-particle-float {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Stereo Phase Particle */
+.stereo-phase-particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: rgba(72, 191, 227, 0.8);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2;
+    animation: stereo-phase-particle-float 1s ease-out forwards;
+}
+
+@keyframes stereo-phase-particle-float {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: translate(var(--x), var(--y)) scale(0);
+        opacity: 0;
+    }
+}
+
+.dynamics-particles,
+.stereo-width-particles,
+.stereo-phase-particles {
+    display: none; /* Hide particle containers */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
 }
