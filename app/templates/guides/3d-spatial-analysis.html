@@ -1,0 +1,192 @@
+{% extends "about.html" %}
+
+{% block title %}3D Spatial Analysis Guide - Music Mix Analyzer{% endblock %}
+
+{% block meta_description %}Learn how to use 3D spatial analysis to improve your music mixes and masters. Understand height, depth, and width in spatial audio processing.{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-lg-10 offset-lg-1">
+            <h1 class="display-4 mb-4">3D Spatial Analysis for Music Production</h1>
+            
+            <div class="alert alert-info">
+                <strong>Pro Tip:</strong> Use our <a href="/" class="alert-link">Mix Analyzer</a> tool to get real-time 3D spatial analysis of your music.
+            </div>
+            
+            <p class="lead">
+                Modern music production increasingly relies on three-dimensional sound staging. Understanding how to analyze and manipulate the spatial characteristics of your mix can dramatically improve its overall quality and impact.
+            </p>
+            
+            <h2 class="mt-5 mb-3">What is 3D Spatial Audio?</h2>
+            <p>
+                3D spatial audio refers to sound that appears to originate from any point in three-dimensional space, including above, below, behind, and in front of the listener. Unlike traditional stereo, which is primarily concerned with the horizontal (left-right) placement of sounds, 3D spatial audio adds vertical (height) and depth dimensions.
+            </p>
+            
+            <div class="card mb-4 mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">The Three Dimensions of Spatial Audio</h5>
+                    <ul>
+                        <li><strong>Width:</strong> The traditional stereo field from left to right</li>
+                        <li><strong>Height:</strong> The perceived elevation of sounds from low to high</li>
+                        <li><strong>Depth:</strong> The front-to-back positioning of elements in a mix</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <h2 class="mt-5 mb-3">How Our 3D Spatial Analysis Works</h2>
+            <p>
+                Our analyzer examines your audio file across multiple dimensions:
+            </p>
+            
+            <div class="row mt-4">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Height Perception</h5>
+                            <p class="card-text">
+                                We analyze frequency distribution across the vertical spectrum to determine how effectively your mix utilizes the height dimension. High frequencies are perceived as "higher" while lower frequencies appear to come from below.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Depth Perception</h5>
+                            <p class="card-text">
+                                We measure early reflections, reverb characteristics, and frequency attenuation patterns to determine front-to-back positioning in your mix, providing insight into depth staging.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">Width Consistency</h5>
+                            <p class="card-text">
+                                We evaluate stereo width across multiple frequency bands to determine how consistently your mix utilizes the stereo field, identifying potential imbalances.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="mt-5 mb-3">Key Metrics in 3D Spatial Analysis</h2>
+            
+            <table class="table table-bordered mt-4">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Description</th>
+                        <th>Target Range</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Height Distribution</td>
+                        <td>Measures how well height is utilized across frequency spectrum</td>
+                        <td>7.0-9.0 (balanced)</td>
+                    </tr>
+                    <tr>
+                        <td>Depth Field Score</td>
+                        <td>Indicates effective use of front-to-back positioning</td>
+                        <td>6.5-8.5 (good depth)</td>
+                    </tr>
+                    <tr>
+                        <td>Width Consistency</td>
+                        <td>Measures stereo field consistency across frequency bands</td>
+                        <td>7.5-9.5 (consistent)</td>
+                    </tr>
+                    <tr>
+                        <td>Spatial Clarity</td>
+                        <td>Evaluates separation between elements in 3D space</td>
+                        <td>8.0-10.0 (clear separation)</td>
+                    </tr>
+                    <tr>
+                        <td>Immersion Factor</td>
+                        <td>Overall rating of how immersive the spatial field feels</td>
+                        <td>7.0-10.0 (highly immersive)</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h2 class="mt-5 mb-3">Common Issues in Spatial Audio</h2>
+            
+            <div class="accordion mt-4 mb-5" id="spatialIssuesAccordion">
+                <div class="card">
+                    <div class="card-header" id="issue1Header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#issue1Collapse" aria-expanded="true" aria-controls="issue1Collapse">
+                                Poor Height Distribution
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="issue1Collapse" class="collapse show" aria-labelledby="issue1Header" data-parent="#spatialIssuesAccordion">
+                        <div class="card-body">
+                            <p>When all elements in a mix occupy the same perceived height, the result feels flat and two-dimensional.</p>
+                            <p><strong>Solution:</strong> Use EQ to enhance height perception by boosting high frequencies on elements that should appear higher and low frequencies on elements that should appear lower. Use specialized binaural processing or spatial plugins to enhance height positioning.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header" id="issue2Header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#issue2Collapse" aria-expanded="false" aria-controls="issue2Collapse">
+                                Lack of Depth
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="issue2Collapse" class="collapse" aria-labelledby="issue2Header" data-parent="#spatialIssuesAccordion">
+                        <div class="card-body">
+                            <p>When all sounds appear to originate from the same front-to-back position, the mix lacks a sense of space and realism.</p>
+                            <p><strong>Solution:</strong> Use different reverb lengths and pre-delay settings to create the impression of distance. Apply more reverb to elements that should appear further away, and less to elements that should be in the foreground.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header" id="issue3Header">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#issue3Collapse" aria-expanded="false" aria-controls="issue3Collapse">
+                                Inconsistent Width
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="issue3Collapse" class="collapse" aria-labelledby="issue3Header" data-parent="#spatialIssuesAccordion">
+                        <div class="card-body">
+                            <p>When stereo width varies dramatically across frequency bands, the spatial image can feel disjointed and unnatural.</p>
+                            <p><strong>Solution:</strong> Use multiband stereo imaging to control width consistently across different frequency ranges. Be careful not to make low frequencies too wide, which can cause phase issues.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="mt-5 mb-3">Analyzing Your Mix with Our Tool</h2>
+            <p>
+                When you upload your audio to our analyzer, you'll receive a comprehensive 3D spatial analysis including:
+            </p>
+            
+            <ul class="mt-3 mb-4">
+                <li>Interactive 3D visualization of your mix's spatial characteristics</li>
+                <li>Detailed metrics for height, depth, and width dimensions</li>
+                <li>Specific recommendations for improving spatial balance</li>
+                <li>Comparison with genre-specific spatial benchmarks</li>
+                <li>AI-powered analysis of your mix's spatial strengths and weaknesses</li>
+            </ul>
+            
+            <div class="text-center mt-5 mb-5">
+                <a href="/" class="btn btn-primary btn-lg">Analyze Your Mix Now</a>
+            </div>
+            
+            <h2 class="mt-5 mb-3">Further Resources</h2>
+            <div class="list-group mb-5">
+                <a href="/dolby-atmos-mixing" class="list-group-item list-group-item-action">Dolby Atmos Mixing Guide</a>
+                <a href="/immersive-audio-guide" class="list-group-item list-group-item-action">Complete Immersive Audio Guide</a>
+                <a href="/spatial-audio-tips" class="list-group-item list-group-item-action">Spatial Audio Mixing Tips</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
