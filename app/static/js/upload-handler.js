@@ -37,7 +37,14 @@ function handleFileUpload(file) {
     
     // Create the upload request
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', '/upload', true);
+    
+    // Make sure to use the same protocol as the current page to avoid mixed content issues
+    // Use relative URLs when possible, full URLs when necessary
+    const uploadUrl = (window.location.protocol === 'https:' && window.location.host !== 'localhost:5001') 
+        ? `${window.location.protocol}//${window.location.host}/upload` 
+        : '/upload';
+    
+    xhr.open('POST', uploadUrl, true);
     
     // Set up progress tracking
     xhr.upload.onprogress = function(e) {

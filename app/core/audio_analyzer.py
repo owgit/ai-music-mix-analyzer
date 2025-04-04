@@ -1341,6 +1341,9 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
     import matplotlib.pyplot as plt
     import os
     
+    # Dictionary to store visualization paths
+    visualizations = {}
+    
     try:
         # Use provided audio data if available, otherwise load from file
         if y is None or sr is None:
@@ -1361,43 +1364,58 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
         y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
         
         # 1. Waveform
-        plt.figure(figsize=(10, 4))
-        # Use explicit color instead of relying on prop_cycler
-        librosa.display.waveshow(y_mono, sr=sr, color='#1f77b4')
-        plt.title('Waveform')
-        plt.tight_layout()
-        waveform_path = os.path.join(vis_dir, 'waveform.png')
-        plt.savefig(waveform_path)
-        plt.close()
-        print(f"Saved waveform to: {waveform_path}")
+        try:
+            plt.figure(figsize=(10, 4))
+            # Use explicit color instead of relying on prop_cycler
+            librosa.display.waveshow(y_mono, sr=sr, color='#1f77b4')
+            plt.title('Waveform')
+            plt.tight_layout()
+            waveform_path = os.path.join(vis_dir, 'waveform.png')
+            plt.savefig(waveform_path)
+            plt.close()
+            print(f"Generated waveform: /static/uploads/{file_id}/waveform.png")
+            visualizations['waveform'] = f"/static/uploads/{file_id}/waveform.png"
+        except Exception as e:
+            print(f"Error generating waveform: {str(e)}")
+            visualizations['waveform'] = "/static/img/error.png"
         
         # 2. Spectrogram
-        plt.figure(figsize=(10, 4))
-        D = librosa.amplitude_to_db(np.abs(librosa.stft(y_mono)), ref=np.max)
-        librosa.display.specshow(D, sr=sr, x_axis='time', y_axis='log')
-        plt.colorbar(format='%+2.0f dB')
-        plt.title('Spectrogram')
-        plt.tight_layout()
-        spectrogram_path = os.path.join(vis_dir, 'spectrogram.png')
-        plt.savefig(spectrogram_path)
-        plt.close()
-        print(f"Saved spectrogram to: {spectrogram_path}")
+        try:
+            plt.figure(figsize=(10, 4))
+            D = librosa.amplitude_to_db(np.abs(librosa.stft(y_mono)), ref=np.max)
+            librosa.display.specshow(D, sr=sr, x_axis='time', y_axis='log')
+            plt.colorbar(format='%+2.0f dB')
+            plt.title('Spectrogram')
+            plt.tight_layout()
+            spectrogram_path = os.path.join(vis_dir, 'spectrogram.png')
+            plt.savefig(spectrogram_path)
+            plt.close()
+            print(f"Generated spectrogram: /static/uploads/{file_id}/spectrogram.png")
+            visualizations['spectrogram'] = f"/static/uploads/{file_id}/spectrogram.png"
+        except Exception as e:
+            print(f"Error generating spectrogram: {str(e)}")
+            visualizations['spectrogram'] = "/static/img/error.png"
         
         # 3. Frequency Spectrum
-        plt.figure(figsize=(10, 4))
-        S = np.abs(librosa.stft(y_mono))
-        fft_freqs = librosa.fft_frequencies(sr=sr)
-        spectrum = np.mean(S, axis=1)
-        plt.semilogx(fft_freqs, librosa.amplitude_to_db(spectrum, ref=np.max), color='#1f77b4')
-        plt.xlabel('Frequency (Hz)')
-        plt.ylabel('Amplitude (dB)')
-        plt.title('Frequency Spectrum')
-        plt.grid(True, which="both", ls="-", alpha=0.5)
-        plt.tight_layout()
-        spectrum_path = os.path.join(vis_dir, 'spectrum.png')
-        plt.savefig(spectrum_path)
-        plt.close()
-        print(f"Saved spectrum to: {spectrum_path}")
+        try:
+            plt.figure(figsize=(10, 4))
+            S = np.abs(librosa.stft(y_mono))
+            fft_freqs = librosa.fft_frequencies(sr=sr)
+            spectrum = np.mean(S, axis=1)
+            plt.semilogx(fft_freqs, librosa.amplitude_to_db(spectrum, ref=np.max), color='#1f77b4')
+            plt.xlabel('Frequency (Hz)')
+            plt.ylabel('Amplitude (dB)')
+            plt.title('Frequency Spectrum')
+            plt.grid(True, which="both", ls="-", alpha=0.5)
+            plt.tight_layout()
+            spectrum_path = os.path.join(vis_dir, 'spectrum.png')
+            plt.savefig(spectrum_path)
+            plt.close()
+            print(f"Generated spectrum: /static/uploads/{file_id}/spectrum.png")
+            visualizations['spectrum'] = f"/static/uploads/{file_id}/spectrum.png"
+        except Exception as e:
+            print(f"Error generating spectrum: {str(e)}")
+            visualizations['spectrum'] = "/static/img/error.png"
         
         # 4. Chromagram (Harmonic Content)
         try:
@@ -1430,96 +1448,174 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
             chroma_path = os.path.join(vis_dir, 'chromagram.png')
             plt.savefig(chroma_path)
             plt.close()
-            print(f"Saved chromagram to: {chroma_path}")
+            print(f"Generated chromagram: /static/uploads/{file_id}/chromagram.png")
+            visualizations['chromagram'] = f"/static/uploads/{file_id}/chromagram.png"
         except Exception as e:
             print(f"Error generating chromagram: {str(e)}")
-            import traceback
-            traceback.print_exc()
             
             # Create a placeholder image for chromagram
-            plt.figure(figsize=(10, 4))
-            plt.text(0.5, 0.5, f'Chromagram Error: {str(e)}', 
-                    horizontalalignment='center', verticalalignment='center',
-                    transform=plt.gca().transAxes, fontsize=12)
-            plt.axis('off')
-            chroma_path = os.path.join(vis_dir, 'chromagram.png')
-            plt.savefig(chroma_path)
-            plt.close()
-            print(f"Saved chromagram error placeholder to: {chroma_path}")
+            try:
+                plt.figure(figsize=(10, 4))
+                plt.text(0.5, 0.5, f'Chromagram Error: {str(e)}', 
+                        horizontalalignment='center', verticalalignment='center',
+                        transform=plt.gca().transAxes, fontsize=12)
+                plt.axis('off')
+                chroma_path = os.path.join(vis_dir, 'chromagram.png')
+                plt.savefig(chroma_path)
+                plt.close()
+                print(f"Generated chromagram placeholder: /static/uploads/{file_id}/chromagram.png")
+            except:
+                print("Failed to generate chromagram placeholder")
+            
+            visualizations['chromagram'] = f"/static/uploads/{file_id}/chromagram.png"
         
         # 5. Stereo Field
-        print(f"Generating stereo field visualization...")
-        print(f"Audio shape: {y.shape}, dimensions: {y.ndim}")
-        
-        # Enhanced stereo detection
-        is_stereo = y.ndim > 1 and y.shape[0] >= 2
-        channels_identical = False
-        
-        if is_stereo:
-            # Compare more samples for better detection
-            sample_size = min(10000, y.shape[1])
-            left_samples = y[0, :sample_size]
-            right_samples = y[1, :sample_size]
+        try:
+            print(f"Generating stereo field visualization...")
+            print(f"Audio shape: {y.shape}, dimensions: {y.ndim}")
             
-            # Use correlation for comparison
-            correlation = np.corrcoef(left_samples, right_samples)[0, 1]
-            channels_identical = correlation > 0.999  # Allow for tiny differences
+            # Enhanced stereo detection
+            is_stereo = y.ndim > 1 and y.shape[0] >= 2
+            channels_identical = False
             
-            print(f"Stereo detection results:")
-            print(f"- Is stereo format: {is_stereo}")
-            print(f"- Channels identical: {channels_identical}")
-            print(f"- Channel correlation: {correlation:.4f}")
+            if is_stereo:
+                # Compare more samples for better detection
+                sample_size = min(10000, y.shape[1])
+                left_samples = y[0, :sample_size]
+                right_samples = y[1, :sample_size]
+                
+                # Use correlation for comparison
+                correlation = np.corrcoef(left_samples, right_samples)[0, 1]
+                channels_identical = correlation > 0.999  # Allow for tiny differences
+                
+                print(f"Stereo detection results:")
+                print(f"- Is stereo format: {is_stereo}")
+                print(f"- Channels identical: {channels_identical}")
+                print(f"- Channel correlation: {correlation:.4f}")
+            
+            plt.figure(figsize=(10, 4))
+            
+            if is_stereo and not channels_identical:
+                print("Generating stereo field plot")
+                # Plot more points with higher opacity for better visibility
+                plt.plot(y[0, :sr], y[1, :sr], '.', alpha=0.3, markersize=2, color='#1f77b4')
+                plt.xlabel('Left Channel')
+                plt.ylabel('Right Channel')
+                plt.title('Stereo Field (First Second)')
+                plt.axis('equal')
+                plt.grid(True)
+            else:
+                print(f"Generating mono/identical channels placeholder")
+                message = 'Identical Channels - Effectively Mono' if (is_stereo and channels_identical) else 'Mono Audio - No Stereo Field'
+                plt.text(0.5, 0.5, message,
+                        horizontalalignment='center',
+                        verticalalignment='center',
+                        transform=plt.gca().transAxes,
+                        fontsize=14)
+                plt.axis('off')
+            
+            plt.tight_layout()
+            stereo_path = os.path.join(vis_dir, 'stereo_field.png')
+            plt.savefig(stereo_path, dpi=100, bbox_inches='tight')
+            plt.close()
+            print(f"Generated stereo_field: /static/uploads/{file_id}/stereo_field.png")
+            visualizations['stereo_field'] = f"/static/uploads/{file_id}/stereo_field.png"
+        except Exception as e:
+            print(f"Error generating stereo field: {str(e)}")
+            visualizations['stereo_field'] = "/static/img/error.png"
         
-        plt.figure(figsize=(10, 4))
+        # 6. 3D Spatial Field - This is the problematic visualization
+        # Make this the last visualization and wrap it in its own try/except
+        try:
+            print("Generating 3D spatial field visualization...")
+            # Use an environment variable to control whether to generate this visualization
+            skip_3d = os.environ.get('SKIP_3D_VISUALIZATION', 'false').lower() == 'true'
+            
+            if skip_3d:
+                print("Skipping 3D visualization as configured")
+                # Instead of raising an error, create the placeholder directly
+                plt.figure(figsize=(10, 4))
+                plt.text(0.5, 0.5, '3D Spatial Visualization Disabled', 
+                        horizontalalignment='center', verticalalignment='center',
+                        transform=plt.gca().transAxes, fontsize=14)
+                plt.axis('off')
+                spatial_path = os.path.join(vis_dir, 'spatial_field.png')
+                plt.savefig(spatial_path)
+                plt.close()
+                visualizations['spatial_field'] = f"/static/uploads/{file_id}/spatial_field.png"
+                print(f"Generated spatial_field placeholder: /static/uploads/{file_id}/spatial_field.png")
+            else:
+                # Only attempt 3D visualization if not skipped
+                # We'll set a timeout for this operation to prevent hanging
+                import signal
+                
+                # Define timeout handler
+                def timeout_handler(signum, frame):
+                    raise TimeoutError("3D visualization timed out")
+                
+                # Set 30 second timeout
+                old_handler = signal.signal(signal.SIGALRM, timeout_handler)
+                signal.alarm(30)
+                
+                try:
+                    spatial_path = generate_3d_spatial_visualization(y, sr, vis_dir)
+                    
+                    # Turn off alarm
+                    signal.alarm(0)
+                    
+                    if spatial_path:
+                        print(f"Generated spatial_field: /static/uploads/{file_id}/spatial_field.png")
+                        visualizations['spatial_field'] = f"/static/uploads/{file_id}/spatial_field.png"
+                    else:
+                        raise ValueError("Failed to generate 3D visualization")
+                finally:
+                    # Restore previous signal handler
+                    signal.signal(signal.SIGALRM, old_handler)
+                    signal.alarm(0)
+                
+        except Exception as e:
+            print(f"Error generating 3D spatial field: {str(e)}")
+            
+            # Create a simple placeholder image
+            try:
+                plt.figure(figsize=(10, 4))
+                plt.text(0.5, 0.5, '3D Spatial Visualization Not Available', 
+                        horizontalalignment='center', verticalalignment='center',
+                        transform=plt.gca().transAxes, fontsize=14)
+                plt.axis('off')
+                spatial_path = os.path.join(vis_dir, 'spatial_field.png')
+                plt.savefig(spatial_path)
+                plt.close()
+                visualizations['spatial_field'] = f"/static/uploads/{file_id}/spatial_field.png"
+                print(f"Generated spatial_field placeholder: /static/uploads/{file_id}/spatial_field.png")
+            except Exception as placeholder_error:
+                print(f"Failed to generate placeholder for 3D visualization: {str(placeholder_error)}")
+                visualizations['spatial_field'] = "/static/img/error.png"
         
-        if is_stereo and not channels_identical:
-            print("Generating stereo field plot")
-            # Plot more points with higher opacity for better visibility
-            plt.plot(y[0, :sr], y[1, :sr], '.', alpha=0.3, markersize=2, color='#1f77b4')
-            plt.xlabel('Left Channel')
-            plt.ylabel('Right Channel')
-            plt.title('Stereo Field (First Second)')
-            plt.axis('equal')
-            plt.grid(True)
-        else:
-            print(f"Generating mono/identical channels placeholder")
-            message = 'Identical Channels - Effectively Mono' if (is_stereo and channels_identical) else 'Mono Audio - No Stereo Field'
-            plt.text(0.5, 0.5, message,
-                    horizontalalignment='center',
-                    verticalalignment='center',
-                    transform=plt.gca().transAxes,
-                    fontsize=14)
-            plt.axis('off')
+        # Return all visualization paths
+        start_time = time.time()
+        visualizations_generated_in = time.time() - start_time
+        print(f"Visualizations generated in {visualizations_generated_in:.2f} seconds")
         
-        plt.tight_layout()
-        stereo_path = os.path.join(vis_dir, 'stereo_field.png')
-        plt.savefig(stereo_path, dpi=100, bbox_inches='tight')
-        plt.close()
-        print(f"Saved stereo field visualization to: {stereo_path}")
+        return visualizations
         
-        # 5. 3D Spatial Field
-        print(f"Generating 3D spatial field visualization...")
-        spatial_path = generate_3d_spatial_visualization(y, sr, vis_dir)
-        if spatial_path:
-            print(f"Saved 3D spatial field visualization to: {spatial_path}")
-        else:
-            print("Failed to generate 3D spatial field visualization")
-        
-        # Return paths
-        static_prefix = '/static'
-        return {
-            "waveform": f"{static_prefix}/uploads/{file_id}/waveform.png",
-            "spectrogram": f"{static_prefix}/uploads/{file_id}/spectrogram.png",
-            "spectrum": f"{static_prefix}/uploads/{file_id}/spectrum.png",
-            "chromagram": f"{static_prefix}/uploads/{file_id}/chromagram.png",
-            "stereo_field": f"{static_prefix}/uploads/{file_id}/stereo_field.png",
-            "spatial_field": f"{static_prefix}/uploads/{file_id}/spatial_field.png" if spatial_path else f"{static_prefix}/img/error.png"
-        }
     except Exception as e:
-        print(f"Error in generate_visualizations: {str(e)}")
+        print(f"Error in visualizations: {str(e)}")
         import traceback
         traceback.print_exc()
-        return generate_error_visualizations(file_id)
+        
+        # Return whatever we managed to generate, or placeholders
+        if not visualizations:
+            visualizations = {
+                'waveform': "/static/img/error.png",
+                'spectrogram': "/static/img/error.png",
+                'spectrum': "/static/img/error.png",
+                'chromagram': "/static/img/error.png",
+                'stereo_field': "/static/img/error.png",
+                'spatial_field': "/static/img/error.png"
+            }
+        
+        return visualizations
 
 def generate_error_visualizations(file_id=None):
     """Generate error placeholder images."""

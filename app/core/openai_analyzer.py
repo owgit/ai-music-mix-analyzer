@@ -11,16 +11,16 @@ logger = logging.getLogger(__name__)
 def get_openai_api_key():
     """
     Get the OpenAI API key from environment variables.
-    Raises a ValueError if the key is not set.
+    Returns None if the key is not set.
     
     Returns:
-        str: The OpenAI API key
+        str: The OpenAI API key or None
     """
     api_key = os.environ.get("OPENAI_API_KEY")
     
     if not api_key:
-        logger.error("OpenAI API key is not set in the environment")
-        raise ValueError("OpenAI API key is not set. Please set the OPENAI_API_KEY environment variable.")
+        logger.warning("OpenAI API key is not set in the environment")
+        return None
     
     # Log the first few characters of the key to verify it's loaded (not the entire key)
     if api_key:
@@ -31,16 +31,16 @@ def get_openai_api_key():
 def get_openrouter_api_key():
     """
     Get the OpenRouter API key from environment variables.
-    Raises a ValueError if the key is not set.
+    Returns None if the key is not set.
     
     Returns:
-        str: The OpenRouter API key
+        str: The OpenRouter API key or None
     """
     api_key = os.environ.get("OPENROUTER_API_KEY")
     
     if not api_key:
-        logger.error("OpenRouter API key is not set in the environment")
-        raise ValueError("OpenRouter API key is not set. Please set the OPENROUTER_API_KEY environment variable.")
+        logger.warning("OpenRouter API key is not set in the environment")
+        return None
     
     # Log the first few characters of the key to verify it's loaded (not the entire key)
     if api_key:
@@ -79,6 +79,7 @@ def strip_markdown(text):
 def analyze_with_gpt(analysis_results, is_instrumental=None):
     """
     Use AI models (OpenAI or OpenRouter) to provide additional insights on the mix analysis.
+    If API keys are not available, returns a default response.
     
     Args:
         analysis_results: Dictionary containing the analysis results from our audio analyzer
@@ -92,29 +93,39 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
         ai_provider = os.environ.get("AI_PROVIDER", "openai").lower()
         logger.info(f"Using AI provider: {ai_provider}")
         
+        # Check if we should skip AI analysis
+        skip_ai = os.environ.get("SKIP_AI_ANALYSIS", "false").lower() == "true"
+        
+        if skip_ai:
+            logger.info("Skipping AI analysis as per configuration")
+            return get_default_ai_response("AI analysis skipped as per configuration")
+        
         # Create the prompt with separate system and user messages
         system_prompt, user_message = create_prompt(analysis_results, is_instrumental)
         
         # Call the appropriate API based on the provider
         if ai_provider == "openrouter":
+            # Check if OpenRouter API key is available
+            api_key = get_openrouter_api_key()
+            if not api_key:
+                logger.warning("OpenRouter API key not available, skipping AI analysis")
+                return get_default_ai_response("OpenRouter API key not available")
+            
             sections = analyze_with_openrouter(system_prompt, user_message)
         else:  # Default to OpenAI
+            # Check if OpenAI API key is available
+            api_key = get_openai_api_key()
+            if not api_key:
+                logger.warning("OpenAI API key not available, skipping AI analysis")
+                return get_default_ai_response("OpenAI API key not available")
+                
             sections = analyze_with_openai(system_prompt, user_message)
         
         return sections
         
     except Exception as e:
         logger.error(f"Error generating AI insights: {str(e)}")
-        return {
-            "error": str(e),
-            "summary": "Unable to generate AI analysis at this time.",
-            "strengths": ["N/A"],
-            "weaknesses": ["N/A"],
-            "suggestions": ["N/A"],
-            "reference_tracks": ["N/A"],
-            "processing_recommendations": ["N/A"],
-            "translation_recommendations": ["N/A"]
-        }
+        return get_default_ai_response(f"Error: {str(e)}")
 
 def analyze_with_openai(system_prompt, user_message):
     """
@@ -754,3 +765,24 @@ def parse_response(response):
                 result[key] = ["No specific " + key + " identified."]
     
     return result 
+
+def get_default_ai_response(reason):
+    """
+    Returns a default AI response when AI analysis cannot be performed
+    
+    Args:
+        reason: The reason why AI analysis was skipped
+        
+    Returns:
+        Dictionary with default values
+    """
+    return {
+        "info": reason,
+        "summary": "AI analysis was not performed. Your audio has been analyzed technically, but AI-powered insights are not available.",
+        "strengths": ["Technical analysis complete without AI enhancement"],
+        "weaknesses": ["N/A"],
+        "suggestions": ["Consider setting up API keys for AI-powered insights"],
+        "reference_tracks": ["N/A"],
+        "processing_recommendations": ["See technical analysis for details"],
+        "translation_recommendations": ["N/A"]
+    } 

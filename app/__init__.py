@@ -56,7 +56,11 @@ def create_app(test_config=None):
         MAX_CONTENT_LENGTH=100 * 1024 * 1024,  # 100MB max upload
         VERSION=datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
         LAST_UPDATED=datetime.now().strftime("%Y-%m-%d"),  # Current date for Schema.org dateModified
-        FORCE_HTTPS=os.environ.get('FORCE_HTTPS', 'false').lower() == 'true'
+        FORCE_HTTPS=os.environ.get('FORCE_HTTPS', 'false').lower() == 'true',
+        # URL configuration
+        BASE_URL=os.environ.get('BASE_URL', ''),  # Base URL for the application (e.g., http://localhost:5001)
+        CANONICAL_DOMAIN=os.environ.get('CANONICAL_DOMAIN', ''),  # Canonical domain for the application
+        USE_RELATIVE_URLS=os.environ.get('USE_RELATIVE_URLS', 'true').lower() == 'true'  # Use relative URLs for forms and links
     )
     
     # Load configuration based on environment
@@ -202,25 +206,110 @@ def create_app(test_config=None):
     # Add template context processor to force HTTPS URLs
     @app.context_processor
     def utility_processor():
+        """Add utility functions to template context"""
+        
         def secure_url(url):
-            """Ensure URL is using HTTPS protocol when needed"""
+            """Make URL secure (https) if FORCE_HTTPS is enabled"""
+            if not url or url.startswith(('mailto:', '#', 'tel:', '//')):
+                return url
+                
+            # If we use relative URLs, always return relative URLs
+            if app.config.get('USE_RELATIVE_URLS', True) and url.startswith('/'):
+                return url
+                
+            # If it's already HTTPS, or it's not a URL, return as is
+            if not url.startswith('http:'):
+                return url
+                
+            # If FORCE_HTTPS is enabled, convert http:// to https://
             if app.config['FORCE_HTTPS'] and url and url.startswith('http:'):
                 return url.replace('http:', 'https:', 1)
+            
+            # If BASE_URL is configured, use it for absolute URLs
+            base_url = app.config.get('BASE_URL')
+            if base_url and url.startswith('/'):
+                # Remove trailing slash from base_url if present
+                if base_url.endswith('/'):
+                    base_url = base_url[:-1]
+                return f"{base_url}{url}"
+                
             return url
-        
+            
+        # Return the function to make it available in templates
         return dict(secure_url=secure_url)
-    
-    # Add cache-busting version parameter for static files
+        
     @app.context_processor
     def asset_processor():
+        """Add asset versioning to template context"""
+        
         def versioned_asset(filename):
-            """Add a version parameter to static file URLs to prevent caching"""
+            """Add version to asset filename for cache busting"""
             version = app.config.get('VERSION', datetime.now().strftime("%Y%m%d%H%M%S"))
+            
+            # Add query string with version
             if '?' in filename:
                 return f"{filename}&v={version}"
             else:
                 return f"{filename}?v={version}"
+                
+        # Include base_url function to generate proper URLs for assets
+        def base_url(path=None):
+            """Generate a URL with the correct base and protocol"""
+            # Get configured base URL or construct from request
+            configured_base = app.config.get('BASE_URL')
+            if configured_base:
+                # Remove trailing slash
+                if configured_base.endswith('/'):
+                    configured_base = configured_base[:-1]
+                    
+                # Add path if provided
+                if path:
+                    # Ensure path starts with a slash
+                    if not path.startswith('/'):
+                        path = f"/{path}"
+                    return f"{configured_base}{path}"
+                return configured_base
+                
+            # Construct from current request
+            protocol = 'https' if app.config.get('FORCE_HTTPS') else request.scheme
+            host = app.config.get('CANONICAL_DOMAIN') or request.host
+            
+            if path:
+                # Ensure path starts with a slash
+                if not path.startswith('/'):
+                    path = f"/{path}"
+                return f"{protocol}://{host}{path}"
+            
+            return f"{protocol}://{host}"
+            
+        return dict(versioned_asset=versioned_asset, base_url=base_url)
         
-        return dict(versioned_asset=versioned_asset)
+    # Add template global for building properly formatted URLs
+    @app.template_global()
+    def url_for_with_base(endpoint, **values):
+        """Override url_for to include BASE_URL when needed"""
+        from flask import url_for
+        
+        # Get the URL using Flask's url_for
+        url = url_for(endpoint, **values)
+        
+        # If using relative URLs and the URL is relative, return as is
+        if app.config.get('USE_RELATIVE_URLS', True) and url.startswith('/'):
+            return url
+            
+        # Get the base URL from configuration
+        base_url = app.config.get('BASE_URL')
+        if base_url and not url.startswith(('http://', 'https://')):
+            # Remove trailing slash from base_url if present
+            if base_url.endswith('/'):
+                base_url = base_url[:-1]
+                
+            # Make sure URL starts with a slash
+            if not url.startswith('/'):
+                url = f"/{url}"
+                
+            return f"{base_url}{url}"
+            
+        return url
     
     return app 

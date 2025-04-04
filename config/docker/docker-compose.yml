@@ -23,12 +23,26 @@ services:
       # Security settings
       - FORCE_HTTPS=false
       - DOCKER_HAS_HTTPS=false
+      # URL and domain settings
+      - BASE_URL=http://localhost:5001
+      - CANONICAL_DOMAIN=localhost:5001
+      - USE_RELATIVE_URLS=true
       # Database connection for Docker
       - MYSQL_HOST=db
       - MYSQL_PORT=3306
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
       - MYSQL_DATABASE=music_analyzer
+      # OpenAI API settings - Pass these from .env file
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - AI_PROVIDER=${AI_PROVIDER:-openrouter}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-deepseek/deepseek-chat-v3-0324:free}
+      - SITE_URL=${SITE_URL:-https://uygarduzgun.com}
+      - SITE_TITLE=${SITE_TITLE:-Mix Analyzer}
+      # Visualization settings
+      - SKIP_3D_VISUALIZATION=true
     volumes:
       - .:/app
       - ./uploads:/app/uploads

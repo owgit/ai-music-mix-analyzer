@@ -143,18 +143,43 @@ def save_song(filename, original_name, file_path, file_hash, is_instrumental, an
     
     cursor = connection.cursor()
     try:
-        sql = """
-        INSERT INTO songs (
-            filename, original_name, file_path, file_hash, is_instrumental, analysis_json
-        ) VALUES (%s, %s, %s, %s, %s, %s)
-        """
-        analysis_json_str = json.dumps(analysis_json) if analysis_json else None
-        values = (filename, original_name, file_path, file_hash, is_instrumental, analysis_json_str)
-        
-        cursor.execute(sql, values)
-        connection.commit()
-        
-        return cursor.lastrowid
+        # Try primary insertion method first
+        try:
+            sql = """
+            INSERT INTO songs (
+                filename, original_name, file_path, file_hash, is_instrumental, analysis_json
+            ) VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            analysis_json_str = json.dumps(analysis_json) if analysis_json else None
+            values = (filename, original_name, file_path, file_hash, is_instrumental, analysis_json_str)
+            
+            cursor.execute(sql, values)
+            connection.commit()
+            
+            return cursor.lastrowid
+        except Error as e:
+            # If the first method fails, try alternative approach using analysis_data
+            print(f"Primary insert failed: {e}, trying alternative method...")
+            
+            # Check if error is about missing filename column
+            if "Unknown column 'filename'" in str(e):
+                # Try using column names from the schema defined in init_db.py
+                alt_sql = """
+                INSERT INTO songs (
+                    title, file_path, file_hash, analysis_data
+                ) VALUES (%s, %s, %s, %s)
+                """
+                # Use original_name as title
+                alt_values = (original_name, file_path, file_hash, json.dumps(analysis_json) if analysis_json else None)
+                
+                cursor.execute(alt_sql, alt_values)
+                connection.commit()
+                
+                print("Song saved using alternative schema")
+                return cursor.lastrowid
+            else:
+                # Re-raise if it's not the expected error
+                raise
     except Error as e:
         print(f"Error saving song: {e}")
         return None
