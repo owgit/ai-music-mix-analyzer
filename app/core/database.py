@@ -119,6 +119,9 @@ def find_song_by_hash(file_hash):
         print(f"Error finding song by hash: {e}")
         return None
     finally:
+        # Make sure all results are consumed before closing
+        if cursor.with_rows:
+            cursor.fetchall()
         cursor.close()
         connection.close()
 
