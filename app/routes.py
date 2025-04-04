@@ -134,7 +134,7 @@ def upload_file():
             existing_song = find_song_by_hash(file_hash)
             
             if existing_song:
-                print(f"Found existing song: {existing_song['original_name']}")
+                print(f"Found existing song: {existing_song['title']}")
                 
                 # Return the existing analysis results
                 try:
