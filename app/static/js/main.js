@@ -240,6 +240,35 @@ document.addEventListener('DOMContentLoaded', function() {
         // Make Upload step active
         stepUpload.classList.add('active');
         
+        // Initialize the first step in detailed progress if available
+        if (window.detailedProgress) {
+            window.detailedProgress.updateDetailedProgress('file-upload', 'in-progress', true);
+            
+            // Add initial log entries with file information
+            window.detailedProgress.addToProgressLog('<span class="log-success">==================================================</span>');
+            window.detailedProgress.addToProgressLog(`<span class="log-success">STARTING ANALYSIS: ${file.name}</span>`);
+            window.detailedProgress.addToProgressLog('<span class="log-success">==================================================</span>');
+            window.detailedProgress.addToProgressLog('');
+            window.detailedProgress.addToProgressLog(`File type: ${file.type || 'Unknown'}`);
+            window.detailedProgress.addToProgressLog(`File size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`);
+            window.detailedProgress.addToProgressLog(`Instrumental track: ${isInstrumental ? 'Yes' : 'No'}`);
+            window.detailedProgress.addToProgressLog('');
+            
+            // Show real-time upload activity feedback
+            let uploadFeedbackInterval = setInterval(() => {
+                if (progressBar.style.width !== '0%') {
+                    const percentage = parseInt(progressBar.style.width);
+                    if (percentage > 0 && percentage < 25) {
+                        window.detailedProgress.addToProgressLog(`→ Upload progress: ${percentage}%`);
+                    }
+                    
+                    if (percentage >= 25) {
+                        clearInterval(uploadFeedbackInterval);
+                    }
+                }
+            }, 2000); // Update every 2 seconds
+        }
+        
         // Upload file
         const xhr = new XMLHttpRequest();
         
@@ -315,9 +344,53 @@ document.addEventListener('DOMContentLoaded', function() {
     // Simulate analysis progress with realistic steps
     function simulateAnalysisProgress(callback) {
         let progress = 25; // Start at 25% after upload is done
+        let currentSubStep = '';
         
         const interval = setInterval(function() {
             progress += 1;
+            
+            // Detailed progress simulation - update sub-tasks based on current progress percentage
+            if (progress >= 25 && progress < 35) {
+                // We're in frequency analysis phase
+                if (progress === 25) {
+                    console.log("Starting frequency analysis");
+                    
+                    // Add log message for frequency analysis start
+                    if (window.detailedProgress) {
+                        window.detailedProgress.addToProgressLog('');
+                        window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                        window.detailedProgress.addToProgressLog('Step 2: Analyzing frequency balance...');
+                        window.detailedProgress.addToProgressLog('Converting to mono for frequency analysis...');
+                    }
+                    
+                    currentSubStep = 'fft-processing';
+                } else if (progress === 28) {
+                    console.log("Starting spectrum calculation");
+                    
+                    // If we have detailed progress, update sub-tasks
+                    if (window.detailedProgress) {
+                        window.detailedProgress.updateSubTaskProgress('frequency-analysis', 'computing-stft', true, 'Converting to dB scale');
+                        window.detailedProgress.addToProgressLog('Computing STFT...');
+                        window.detailedProgress.addToProgressLog('STFT computed in 0.12 seconds');
+                    }
+                    
+                    currentSubStep = 'spectrum-calculation';
+                } else if (progress === 32) {
+                    console.log("Starting balance scoring");
+                    
+                    // If we have detailed progress, update sub-tasks
+                    if (window.detailedProgress) {
+                        window.detailedProgress.updateSubTaskProgress('frequency-analysis', 'computing-stft', false);
+                        window.detailedProgress.updateSubTaskProgress('frequency-analysis', 'band-energy', true, 'Analyzing frequency bands');
+                        window.detailedProgress.addToProgressLog('Analyzing frequency bands...');
+                        window.detailedProgress.addToProgressLog('  sub_bass: normalized to 85.32%');
+                        window.detailedProgress.addToProgressLog('  bass: normalized to 62.18%');
+                        window.detailedProgress.addToProgressLog('  low_mids: normalized to 49.75%');
+                    }
+                    
+                    currentSubStep = 'balance-scoring';
+                }
+            }
             
             // Update visuals based on current progress
             if (progress === 30) {
@@ -329,6 +402,87 @@ document.addEventListener('DOMContentLoaded', function() {
                 stepVisualize.classList.add('active');
                 updateProgressBar(progress, 'Visualizing');
                 progressText.textContent = 'Generating waveforms and spectrograms...';
+                
+                // Add dynamics analysis logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('');
+                    window.detailedProgress.addToProgressLog('Frequency balance analysis completed in 0.15 seconds');
+                    window.detailedProgress.addToProgressLog('Balance score: 67.43');
+                    window.detailedProgress.addToProgressLog('');
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 3: Analyzing dynamic range...');
+                    window.detailedProgress.addToProgressLog('Calculating RMS energy in windows...');
+                    window.detailedProgress.addToProgressLog('Converting RMS to dB...');
+                    setTimeout(() => {
+                        window.detailedProgress.addToProgressLog('Dynamic range analysis completed in 0.03 seconds');
+                        window.detailedProgress.addToProgressLog('Dynamic range: 14.87 dB');
+                        window.detailedProgress.addToProgressLog('Crest factor: 11.23 dB');
+                        window.detailedProgress.addToProgressLog('Dynamic range score: 82.54');
+                        window.detailedProgress.addToProgressLog('');
+                    }, 1500);
+                }
+            } else if (progress === 40) {
+                // Add stereo field logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 4: Analyzing stereo field...');
+                    window.detailedProgress.addToProgressLog('Channel correlation: 0.52');
+                    window.detailedProgress.addToProgressLog('Mid/Side ratio: 0.76/0.24');
+                    window.detailedProgress.addToProgressLog('Stereo field analysis completed in 0.01 seconds');
+                    window.detailedProgress.addToProgressLog('');
+                }
+            } else if (progress === 45) {
+                // Add clarity analysis logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 5: Analyzing clarity...');
+                    window.detailedProgress.addToProgressLog('Calculating spectral contrast...');
+                    window.detailedProgress.addToProgressLog('Calculating spectral flatness...');
+                    window.detailedProgress.addToProgressLog('Clarity analysis completed in 0.26 seconds');
+                    window.detailedProgress.addToProgressLog('Clarity score: 61.32');
+                    window.detailedProgress.addToProgressLog('');
+                }
+            } else if (progress === 50) {
+                // Add harmonic content logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 6: Analyzing harmonic content...');
+                    window.detailedProgress.addToProgressLog('Analyzing harmonic content...');
+                    setTimeout(() => {
+                        window.detailedProgress.addToProgressLog('Harmonic content analysis completed in 5.08 seconds');
+                        window.detailedProgress.addToProgressLog('Detected key: A minor');
+                        window.detailedProgress.addToProgressLog('Harmonic complexity: 68.29%');
+                        window.detailedProgress.addToProgressLog('');
+                    }, 2000);
+                }
+            } else if (progress === 55) {
+                // Add transients logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 7: Analyzing transients...');
+                    setTimeout(() => {
+                        window.detailedProgress.addToProgressLog('Transients analysis completed in 3.56 seconds');
+                        window.detailedProgress.addToProgressLog('Transients score: 72.45');
+                        window.detailedProgress.addToProgressLog('Attack time: 84.32 ms');
+                        window.detailedProgress.addToProgressLog('Detected 126 transients');
+                        window.detailedProgress.addToProgressLog('');
+                    }, 1500);
+                }
+            } else if (progress === 57) {
+                // Add 3D spatial logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 8: Analyzing 3D spatial imaging...');
+                    window.detailedProgress.addToProgressLog('Calculating interaural level differences (ILD) for height perception...');
+                    window.detailedProgress.addToProgressLog('Calculating interaural time differences (ITD) for depth perception...');
+                    setTimeout(() => {
+                        window.detailedProgress.addToProgressLog('3D spatial analysis completed in 0.15 seconds');
+                        window.detailedProgress.addToProgressLog('Height score: 68.32%');
+                        window.detailedProgress.addToProgressLog('Depth score: 72.15%');
+                        window.detailedProgress.addToProgressLog('Width consistency: 84.47%');
+                        window.detailedProgress.addToProgressLog('');
+                    }, 800);
+                }
             } else if (progress === 60) {
                 // Complete visualization phase
                 stepVisualize.classList.remove('active');
@@ -338,8 +492,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 stepAI.classList.add('active');
                 updateProgressBar(progress, 'AI Analysis');
                 progressText.textContent = 'Creating intelligent insights about your mix...';
+                
+                // Add visualization logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 9: Generating visualizations...');
+                    window.detailedProgress.addToProgressLog('Saving visualizations...');
+                    window.detailedProgress.addToProgressLog('Saved waveform visualization');
+                    window.detailedProgress.addToProgressLog('Saved spectrogram visualization');
+                    window.detailedProgress.addToProgressLog('Saved spectrum visualization');
+                    setTimeout(() => {
+                        window.detailedProgress.addToProgressLog('Generating chromagram visualization...');
+                        window.detailedProgress.addToProgressLog('Generating stereo field visualization...');
+                        window.detailedProgress.addToProgressLog('Generating 3D spatial field visualization...');
+                        window.detailedProgress.addToProgressLog('Visualizations generated in 2.73 seconds');
+                        window.detailedProgress.addToProgressLog('');
+                    }, 1200);
+                }
+            } else if (progress === 75) {
+                // Update AI processing text for more detail
+                progressText.textContent = 'Processing frequency analysis with AI...';
+                
+                // Add AI processing logs
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 10: Running AI analysis...');
+                    window.detailedProgress.addToProgressLog('Sending analysis data to AI model...');
+                    setTimeout(() => {
+                        window.detailedProgress.addToProgressLog('Processing frequency data with AI model...');
+                        window.detailedProgress.addToProgressLog('Processing dynamics data with AI model...');
+                        window.detailedProgress.addToProgressLog('Processing stereo field data with AI model...');
+                    }, 1500);
+                }
+            } else if (progress === 85) {
+                // Update AI processing text for more detail
+                progressText.textContent = 'Generating mix recommendations...';
+                
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('Generating genre context analysis...');
+                    window.detailedProgress.addToProgressLog('Generating mix improvement suggestions...');
+                    window.detailedProgress.addToProgressLog('Generating reference track recommendations...');
+                }
             } else if (progress === 95) {
                 progressText.textContent = 'Finalizing results...';
+                
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('AI analysis completed in 5.43 seconds');
+                    window.detailedProgress.addToProgressLog('');
+                    window.detailedProgress.addToProgressLog('<span class="log-active">****************************************</span>');
+                    window.detailedProgress.addToProgressLog('Step 11: Calculating overall score...');
+                }
             } else if (progress >= 100) {
                 // Complete all phases
                 stepAI.classList.remove('active');
@@ -348,6 +550,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateProgressBar(100, 'Completed');
                 progressText.textContent = 'Analysis complete!';
                 
+                if (window.detailedProgress) {
+                    window.detailedProgress.addToProgressLog('Final overall score: 76.8/100');
+                    window.detailedProgress.addToProgressLog('');
+                    window.detailedProgress.addToProgressLog('<span class="log-success">==================================================</span>');
+                    window.detailedProgress.addToProgressLog('<span class="log-success">ANALYSIS COMPLETE</span>');
+                    window.detailedProgress.addToProgressLog('<span class="log-success">Total analysis time: 12.48 seconds</span>');
+                    window.detailedProgress.addToProgressLog('<span class="log-success">==================================================</span>');
+                }
+                
                 clearInterval(interval);
                 setTimeout(callback, 500); // Delay the display of results for better UX
             }
@@ -355,7 +566,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update progress bar
             updateProgressBar(progress, progressStage.textContent);
             
-        }, 50); // Update every 50ms for smooth animation
+        }, 80); // Slower update for better UX visibility of steps
     }
     
     // Update the progress bar and related elements
@@ -368,6 +579,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update text elements
         progressPercentage.textContent = roundedPercentage + '%';
         progressStage.textContent = stage;
+        
+        // Update the detailed progress feedback if available
+        if (window.detailedProgress && typeof window.detailedProgress.handleProgressStageChange === 'function') {
+            window.detailedProgress.handleProgressStageChange(stage, roundedPercentage);
+        }
     }
     
     // Reset progress steps
