@@ -18,15 +18,14 @@ def get_db_connection():
         MySQL connection object
     """
     try:
-        # Get connection params from environment variables with defaults
+        # Get database configuration from environment variables
         host = os.environ.get('MYSQL_HOST', 'localhost')
-        port = int(os.environ.get('MYSQL_PORT', 3306))
+        port = int(os.environ.get('MYSQL_PORT', 3307))  # Default to 3307 for MAMP
         user = os.environ.get('MYSQL_USER', 'root')
         password = os.environ.get('MYSQL_PASSWORD', 'root')
         database = os.environ.get('MYSQL_DATABASE', 'music_analyzer')
         
-        # Debug connection info
-        print(f"Connecting to MySQL at {host}:{port} with user {user}, database {database}")
+        print(f"Connecting to MySQL at {host}:{port}")
         
         connection = mysql.connector.connect(
             host=host,
@@ -37,7 +36,8 @@ def get_db_connection():
         )
         
         if connection.is_connected():
-            print(f"Successfully connected to MySQL database {database}")
+            db_info = connection.get_server_info()
+            print(f"Connected to MySQL Server version {db_info}")
             return connection
         else:
             print("Failed to connect to MySQL database")

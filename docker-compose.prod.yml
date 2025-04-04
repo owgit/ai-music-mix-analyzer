@@ -1,0 +1,132 @@
+name: music-mix-analyzer
+
+services:
+  music-analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: music-analyzer
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - FLASK_APP=wsgi.py
+      - FLASK_ENV=production
+      - GUNICORN_WORKERS=4
+      - GUNICORN_THREADS=8
+      - GUNICORN_TIMEOUT=300
+      - GUNICORN_MAX_REQUESTS=1000
+      - GUNICORN_MAX_REQUESTS_JITTER=50
+      # Environment identification
+      - RUN_ENV=production
+      # Security settings
+      - FORCE_HTTPS=true
+      # Database connection for production
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=music_analyzer
+    volumes:
+      - ./uploads:/app/uploads
+      - ./config:/app/config
+    tmpfs:
+      - /tmp:exec,size=1G
+      - /dev/shm:size=2G
+    depends_on:
+      - db
+    # Expose to nginx-proxy, not directly to host
+    expose:
+      - "5000"
+    # Network for nginx-proxy
+    networks:
+      - proxy-network
+      - internal-network
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    # For nginx-proxy integration
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.virtual_host=${VIRTUAL_HOST}"
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.letsencrypt_host=${LETSENCRYPT_HOST}"
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.letsencrypt_email=${LETSENCRYPT_EMAIL}"
+
+  db:
+    image: mysql:8.0
+    container_name: music-analyzer-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=music_analyzer
+      - MYSQL_USER=music_user
+      - MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # Only expose to internal network
+    networks:
+      - internal-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE to avoid "mbind: Operation not permitted"
+
+  # Nginx proxy for handling HTTPS
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    networks:
+      - proxy-network
+    labels:
+      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
+
+  # Let's Encrypt companion for nginx-proxy
+  letsencrypt-nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: letsencrypt-companion
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - certs:/etc/nginx/certs
+      - vhost:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+    depends_on:
+      - nginx-proxy
+    networks:
+      - proxy-network
+
+volumes:
+  mysql_data:
+    driver: local
+  certs:
+  vhost:
+  html:
+
+networks:
+  proxy-network:
+  internal-network: 

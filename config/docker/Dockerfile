@@ -22,7 +22,7 @@ COPY . .
 
 # Create necessary directories and set permissions
 RUN mkdir -p /app/uploads \
-    && chown -R 1007:1008 /app \
+    && chown -R 1000:1000 /app \
     && chmod -R 755 /app \
     && chmod -R 775 /app/uploads
 
@@ -36,13 +36,14 @@ ENV PYTHONUNBUFFERED=1 \
 # Expose port
 EXPOSE 5000
 
-# Run the application with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", \
-     "--workers", "2", \
-     "--threads", "4", \
-     "--timeout", "300", \
-     "--max-requests", "1000", \
-     "--max-requests-jitter", "50", \
-     "--log-level", "info", \
-     "--capture-output", \
-     "wsgi:app"] 
+# Run the application - no entrypoint
+CMD python -c "from app.core.database import initialize_database; initialize_database()" && \
+    gunicorn --bind 0.0.0.0:5000 \
+    --workers 2 \
+    --threads 4 \
+    --timeout 300 \
+    --max-requests 1000 \
+    --max-requests-jitter 50 \
+    --log-level info \
+    --capture-output \
+    wsgi:app 

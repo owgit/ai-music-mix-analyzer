@@ -64,7 +64,9 @@ def create_app(test_config=None):
         from config.config import ProductionConfig
         app.config.from_object(ProductionConfig)
         ProductionConfig.init_app(app)
-        app.config['FORCE_HTTPS'] = True  # Always force HTTPS in production
+        # Docker environments might not have HTTPS, so respect the environment variable
+        force_https = os.environ.get('FORCE_HTTPS', 'true').lower()
+        app.config['FORCE_HTTPS'] = force_https == 'true'
     else:
         from config.config import DevelopmentConfig
         app.config.from_object(DevelopmentConfig)
@@ -115,6 +117,14 @@ def create_app(test_config=None):
     @app.before_request
     def redirect_to_https():
         """Redirect all HTTP requests to HTTPS"""
+        # Skip HTTPS redirection for development or if explicitly disabled
+        if app.debug or os.environ.get('FORCE_HTTPS', 'false').lower() == 'false':
+            return None
+            
+        # Skip for Docker environments unless they have proper HTTPS setup
+        if os.environ.get('RUN_ENV') == 'docker' and not os.environ.get('DOCKER_HAS_HTTPS'):
+            return None
+            
         # Check for proxy headers first (common when behind load balancers)
         proto = request.headers.get('X-Forwarded-Proto')
         host = request.headers.get('X-Forwarded-Host') or request.host

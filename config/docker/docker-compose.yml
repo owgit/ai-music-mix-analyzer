@@ -18,6 +18,17 @@ services:
       - GUNICORN_TIMEOUT=300
       - GUNICORN_MAX_REQUESTS=1000
       - GUNICORN_MAX_REQUESTS_JITTER=50
+      # Environment identification
+      - RUN_ENV=docker
+      # Security settings
+      - FORCE_HTTPS=false
+      - DOCKER_HAS_HTTPS=false
+      # Database connection for Docker
+      - MYSQL_HOST=db
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=music_analyzer
     volumes:
       - .:/app
       - ./uploads:/app/uploads
@@ -25,6 +36,8 @@ services:
     tmpfs:
       - /tmp:exec,size=1G
       - /dev/shm:size=2G
+    depends_on:
+      - db
     deploy:
       resources:
         limits:
@@ -43,6 +56,30 @@ services:
         max-size: "20m"
         max-file: "5"
 
+  db:
+    image: mysql:8.0
+    container_name: music-analyzer-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=music_analyzer
+      - MYSQL_USER=music_user
+      - MYSQL_PASSWORD=music_password
+    ports:
+      - "127.0.0.1:3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --default-authentication-plugin=mysql_native_password
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE to avoid "mbind: Operation not permitted"
+
 volumes:
   music_data:
+    driver: local
+  mysql_data:
     driver: local 
