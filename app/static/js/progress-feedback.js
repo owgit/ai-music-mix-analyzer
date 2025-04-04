@@ -332,19 +332,63 @@ function updateSubTaskProgress(stepId, subTaskId, active, message) {
  * Initialize the ad banner functionality
  */
 function initAdBanners() {
+    // Check if ad banners are already initialized
+    if (window.adBannersInitialized) {
+        console.log('[Ad Banners] Ad banners already initialized, skipping');
+        return;
+    }
+    
+    console.log('[Ad Banners] Initializing ad banner functionality');
+    
     // Get the ad banner elements
     const leftAdBanner = document.getElementById('left-ad-banner');
     const rightAdBanner = document.getElementById('right-ad-banner');
+    const mobileAdBanner = document.getElementById('mobile-ad-banner');
+    
+    // Log the initial state of the ad banners
+    console.log('[Ad Banners] Initial ad banner state:', {
+        'left-ad-banner': leftAdBanner ? {
+            exists: true,
+            visible: leftAdBanner.classList.contains('visible'),
+            classes: Array.from(leftAdBanner.classList)
+        } : { exists: false },
+        'right-ad-banner': rightAdBanner ? {
+            exists: true,
+            visible: rightAdBanner.classList.contains('visible'),
+            classes: Array.from(rightAdBanner.classList)
+        } : { exists: false },
+        'mobile-ad-banner': mobileAdBanner ? {
+            exists: true,
+            visible: mobileAdBanner.classList.contains('visible'),
+            classes: Array.from(mobileAdBanner.classList)
+        } : { exists: false }
+    });
+    
+    // Initialize ad visibility tracking if function exists
+    if (typeof window.setupAdVisibilityTracking === 'function') {
+        window.setupAdVisibilityTracking();
+        console.log('[Ad Banners] Ad visibility tracking initialized from initAdBanners');
+    } else {
+        console.warn('[Ad Banners] setupAdVisibilityTracking function not found');
+    }
     
     // Set up event listeners for upload and analysis process
     const fileInput = document.getElementById('file-input');
     if (fileInput) {
         fileInput.addEventListener('change', function() {
             if (this.files && this.files[0]) {
+                console.log('[Ad Banners] File selected via input, showing ad banners', {
+                    fileName: this.files[0].name,
+                    fileSize: this.files[0].size,
+                    fileType: this.files[0].type,
+                    timestamp: Date.now()
+                });
                 // Show ad banners when file is selected
                 showAdBanners();
             }
         });
+    } else {
+        console.warn('[Ad Banners] File input element not found');
     }
     
     // Add drag and drop event listeners
@@ -359,17 +403,33 @@ function initAdBanners() {
             e.preventDefault();
             e.stopPropagation();
             if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                console.log('[Ad Banners] File dropped, showing ad banners', {
+                    fileName: e.dataTransfer.files[0].name,
+                    fileSize: e.dataTransfer.files[0].size,
+                    fileType: e.dataTransfer.files[0].type,
+                    timestamp: Date.now()
+                });
                 // Show ad banners when file is dropped
                 showAdBanners();
             }
         });
+    } else {
+        console.warn('[Ad Banners] Upload area element not found');
     }
     
     // Add event listener for when analysis is complete
     document.addEventListener('analysisComplete', function() {
+        console.log('[Ad Banners] Analysis complete event received, hiding ad banners', {
+            timestamp: Date.now(),
+            timestampFormatted: new Date().toISOString()
+        });
         // Hide ad banners when analysis is complete
         hideAdBanners();
     });
+    
+    // Mark as initialized
+    window.adBannersInitialized = true;
+    console.log('[Ad Banners] Ad banner initialization complete');
 }
 
 /**
@@ -381,13 +441,78 @@ function showAdBanners() {
     const mobileAdBanner = document.getElementById('mobile-ad-banner');
     const uploadContainer = document.getElementById('upload-container');
     
-    if (leftAdBanner) leftAdBanner.classList.add('visible');
-    if (rightAdBanner) rightAdBanner.classList.add('visible');
-    if (mobileAdBanner) mobileAdBanner.classList.add('visible');
+    // Check if ads are already visible - if so, don't trigger visibility again
+    const leftAlreadyVisible = leftAdBanner && leftAdBanner.classList.contains('visible');
+    const rightAlreadyVisible = rightAdBanner && rightAdBanner.classList.contains('visible');
+    const mobileAlreadyVisible = mobileAdBanner && mobileAdBanner.classList.contains('visible');
+    
+    // If all ads are already visible, we'll still update status but won't modify DOM
+    const allAdsAlreadyVisible = leftAlreadyVisible && rightAlreadyVisible && mobileAlreadyVisible;
+    
+    const adStatus = {
+        left: leftAdBanner ? { 
+            element: 'left-ad-banner', 
+            wasVisible: leftAlreadyVisible,
+            willBeVisible: true 
+        } : null,
+        right: rightAdBanner ? { 
+            element: 'right-ad-banner', 
+            wasVisible: rightAlreadyVisible,
+            willBeVisible: true 
+        } : null,
+        mobile: mobileAdBanner ? { 
+            element: 'mobile-ad-banner', 
+            wasVisible: mobileAlreadyVisible,
+            willBeVisible: true 
+        } : null,
+        timestamp: Date.now(),
+        timestampFormatted: new Date().toISOString(),
+        allAdsAlreadyVisible: allAdsAlreadyVisible
+    };
+    
+    console.log('[Ad Banners] Showing ad banners', adStatus);
     
     // Add class to upload container when ads are showing to create space
-    if (uploadContainer) {
+    if (uploadContainer && !uploadContainer.classList.contains('with-ads')) {
         uploadContainer.classList.add('with-ads');
+    }
+    
+    // Track ad visibility in analytics if the function exists
+    if (typeof window.trackAdVisibilityStart === 'function') {
+        console.log("[Ad Banners] Calling trackAdVisibilityStart for all banners");
+        
+        if (leftAdBanner) {
+            // Ensure tracking is updated for already visible banners too
+            window.trackAdVisibilityStart('left-ad-banner');
+            
+            // Only add class if not already visible
+            if (!leftAlreadyVisible) {
+                leftAdBanner.classList.add('visible');
+            }
+        }
+        
+        if (rightAdBanner) {
+            window.trackAdVisibilityStart('right-ad-banner');
+            
+            if (!rightAlreadyVisible) {
+                rightAdBanner.classList.add('visible');
+            }
+        }
+        
+        if (mobileAdBanner) {
+            window.trackAdVisibilityStart('mobile-ad-banner');
+            
+            if (!mobileAlreadyVisible) {
+                mobileAdBanner.classList.add('visible');
+            }
+        }
+    } else {
+        console.warn("[Ad Banners] trackAdVisibilityStart function not found");
+        
+        // Still add visible class if tracking isn't available
+        if (leftAdBanner && !leftAlreadyVisible) leftAdBanner.classList.add('visible');
+        if (rightAdBanner && !rightAlreadyVisible) rightAdBanner.classList.add('visible');
+        if (mobileAdBanner && !mobileAlreadyVisible) mobileAdBanner.classList.add('visible');
     }
 }
 
@@ -400,6 +525,58 @@ function hideAdBanners() {
     const mobileAdBanner = document.getElementById('mobile-ad-banner');
     const uploadContainer = document.getElementById('upload-container');
     
+    // Check if ads are already hidden - if so, don't trigger visibility tracking again
+    const leftAlreadyHidden = leftAdBanner && !leftAdBanner.classList.contains('visible');
+    const rightAlreadyHidden = rightAdBanner && !rightAdBanner.classList.contains('visible');
+    const mobileAlreadyHidden = mobileAdBanner && !mobileAdBanner.classList.contains('visible');
+    
+    // If all ads are already hidden, we'll still log the event but won't modify DOM
+    const allAdsAlreadyHidden = leftAlreadyHidden && rightAlreadyHidden && mobileAlreadyHidden;
+    
+    const adStatus = {
+        left: leftAdBanner ? { 
+            element: 'left-ad-banner', 
+            wasVisible: !leftAlreadyHidden,
+            willBeVisible: false 
+        } : null,
+        right: rightAdBanner ? { 
+            element: 'right-ad-banner', 
+            wasVisible: !rightAlreadyHidden,
+            willBeVisible: false 
+        } : null,
+        mobile: mobileAdBanner ? { 
+            element: 'mobile-ad-banner', 
+            wasVisible: !mobileAlreadyHidden,
+            willBeVisible: false 
+        } : null,
+        timestamp: Date.now(),
+        timestampFormatted: new Date().toISOString(),
+        allAdsAlreadyHidden: allAdsAlreadyHidden
+    };
+    
+    console.log('[Ad Banners] Hiding ad banners', adStatus);
+    
+    // Track ad visibility end in analytics if the function exists
+    if (typeof window.trackAdVisibilityEnd === 'function') {
+        console.log("[Ad Banners] Calling trackAdVisibilityEnd for all banners");
+        
+        // Call tracking function for any banners that were visible
+        if (leftAdBanner && !leftAlreadyHidden) {
+            window.trackAdVisibilityEnd('left-ad-banner');
+        }
+        
+        if (rightAdBanner && !rightAlreadyHidden) {
+            window.trackAdVisibilityEnd('right-ad-banner');
+        }
+        
+        if (mobileAdBanner && !mobileAlreadyHidden) {
+            window.trackAdVisibilityEnd('mobile-ad-banner');
+        }
+    } else {
+        console.warn("[Ad Banners] trackAdVisibilityEnd function not found");
+    }
+    
+    // Remove visible class for all banners to ensure consistent state
     if (leftAdBanner) leftAdBanner.classList.remove('visible');
     if (rightAdBanner) rightAdBanner.classList.remove('visible');
     if (mobileAdBanner) mobileAdBanner.classList.remove('visible');
@@ -550,6 +727,13 @@ function stopProcessingAnimation() {
  * @param {number} percentage - The overall percentage complete
  */
 function handleProgressStageChange(stage, percentage) {
+    console.log('[Progress] Stage change detected', {
+        stage: stage,
+        percentage: percentage,
+        timestamp: Date.now(),
+        timestampFormatted: new Date().toISOString()
+    });
+    
     // Update the processing indicator based on stage
     if (stage === 'Uploading') {
         updateProcessingStatus('Uploading your audio file...');
@@ -587,8 +771,18 @@ function handleProgressStageChange(stage, percentage) {
     
     // Show/hide ad banners
     if (stage === 'Uploading' || stage === 'Analyzing' || stage === 'Visualizing') {
+        console.log('[Progress] Stage requires showing ads', {
+            stage: stage,
+            percentage: percentage,
+            action: 'show_ads'
+        });
         showAdBanners();
     } else if (stage === 'Complete') {
+        console.log('[Progress] Stage requires hiding ads', {
+            stage: stage,
+            percentage: percentage,
+            action: 'hide_ads'
+        });
         hideAdBanners();
         document.dispatchEvent(new CustomEvent('analysisComplete'));
     }
