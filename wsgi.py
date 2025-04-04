@@ -6,7 +6,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
-# Try to load environment variables only if not already loaded
+# Try to load environment variables if not already loaded
 if not os.environ.get('ENV_LOADED'):
     if os.path.exists('.env'):
         load_dotenv()
@@ -16,9 +16,6 @@ if not os.environ.get('ENV_LOADED'):
         print("Warning: No .env file found in root or config directory.")
     # Mark environment as loaded
     os.environ['ENV_LOADED'] = 'true'
-
-# Add the current directory to the Python path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # Import the app factory function
 from app import create_app
@@ -31,4 +28,4 @@ if __name__ == '__main__':
     os.makedirs('app/static/img', exist_ok=True)
     
     # In Docker, we need to listen on 0.0.0.0
-    app.run(host='0.0.0.0', port=5002, debug=False) 
+    app.run(host='0.0.0.0', port=5002, debug=False)

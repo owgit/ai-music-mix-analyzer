@@ -1444,7 +1444,7 @@ header.scrolled .app-logo {
         #e9ecef 100%
     );
     z-index: 0;
-    opacity: .3;
+    opacity: .0;
     transition: opacity 0.3s ease;
     box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.05);
 }
@@ -1463,7 +1463,7 @@ header.scrolled .app-logo {
 }
 
 .score-card:hover .frequency-meter {
-    opacity: .3;
+    opacity: 0;
 }
 
 /* Animations */

@@ -66,7 +66,7 @@ services:
       - MYSQL_USER=music_user
       - MYSQL_PASSWORD=music_password
     ports:
-      - "127.0.0.1:3307:3306"
+      - "127.0.0.1:3301:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
