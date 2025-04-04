@@ -139,7 +139,7 @@ def upload_file():
                 # Return the existing analysis results
                 try:
                     # Parse the saved analysis JSON
-                    results = json.loads(existing_song['analysis_json']) if existing_song['analysis_json'] else None
+                    results = json.loads(existing_song['analysis_data']) if existing_song['analysis_data'] else None
                     
                     if results:
                         print("Using existing analysis results from database")
