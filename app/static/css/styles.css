@@ -544,6 +544,12 @@ header.scrolled .app-logo {
     box-shadow: var(--box-shadow);
     margin-bottom: 2.5rem;
     text-align: center;
+    display: none; /* Hide by default */
+}
+
+/* Show intro section only when results section is hidden */
+.results-section[style*="display: none"] ~ .intro-section {
+    display: block;
 }
 
 .intro-content {
@@ -1438,7 +1444,7 @@ header.scrolled .app-logo {
         #e9ecef 100%
     );
     z-index: 0;
-    opacity: 0;
+    opacity: .3;
     transition: opacity 0.3s ease;
     box-shadow: 0 0 0 5px rgba(67, 97, 238, 0.05);
 }
@@ -1457,7 +1463,7 @@ header.scrolled .app-logo {
 }
 
 .score-card:hover .frequency-meter {
-    opacity: 1;
+    opacity: .3;
 }
 
 /* Animations */
@@ -3015,10 +3021,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     border-radius: 50%;
     background-color: #f8f9fa;
     z-index: 1;
-}
-
-.score-card:hover .dynamics-meter {
-    opacity: .5;
 }
 
 /* Sound wave animation for dynamics score */

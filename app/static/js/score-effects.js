@@ -25,19 +25,13 @@ function initFrequencyScoreEffects() {
     const frequencyScoreElement = document.getElementById('frequency-score');
     const frequencyCard = frequencyScoreElement?.closest('.score-card');
     const frequencyMeter = frequencyCard?.querySelector('.frequency-meter');
-    const particlesContainer = frequencyCard?.querySelector('.frequency-particles');
     
-    if (!frequencyScoreElement || !frequencyCard || !frequencyMeter || !particlesContainer) {
+    if (!frequencyScoreElement || !frequencyCard || !frequencyMeter) {
         return;
     }
     
     // Initial setup based on current score
     updateFrequencyMeter(frequencyScoreElement, frequencyMeter);
-    
-    // Add particle generation on hover
-    frequencyCard.addEventListener('mouseenter', () => {
-        generateFrequencyParticles(particlesContainer);
-    });
     
     // Add click effect
     frequencyCard.addEventListener('click', () => {
@@ -46,9 +40,6 @@ function initFrequencyScoreEffects() {
         setTimeout(() => {
             frequencyCard.style.boxShadow = '';
         }, 500);
-        
-        // Generate more particles
-        generateFrequencyParticles(particlesContainer, 15);
         
         // Pulse animation on score
         frequencyScoreElement.classList.add('score-pulse');
@@ -695,40 +686,38 @@ function observeScoreChanges() {
 }
 
 /**
- * Observe frequency score value changes to update effects
+ * Observe changes to the frequency score and update visualizations
  */
 function observeFrequencyScoreChanges() {
     const frequencyScoreElement = document.getElementById('frequency-score');
     const frequencyCard = frequencyScoreElement?.closest('.score-card');
     const frequencyMeter = frequencyCard?.querySelector('.frequency-meter');
     
-    if (!frequencyScoreElement || !frequencyMeter) return;
+    if (!frequencyScoreElement || !frequencyCard || !frequencyMeter) {
+        return;
+    }
     
-    // Use MutationObserver to detect when the score value changes
+    // Create mutation observer to watch for changes
     const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-            if (mutation.type === 'characterData' || mutation.type === 'childList') {
+        for (const mutation of mutations) {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                // Update the meter with the new score
                 updateFrequencyMeter(frequencyScoreElement, frequencyMeter);
                 
-                // Generate particles when score changes
-                const particlesContainer = frequencyCard.querySelector('.frequency-particles');
-                if (particlesContainer) {
-                    generateFrequencyParticles(particlesContainer, 12);
-                }
-                
-                // Add a temporary highlight pulse class
+                // Add the score-updated class briefly for animation
                 frequencyScoreElement.classList.add('score-updated');
                 setTimeout(() => {
                     frequencyScoreElement.classList.remove('score-updated');
                 }, 1000);
             }
-        });
+        }
     });
     
+    // Start observing changes to the score element's text content
     observer.observe(frequencyScoreElement, { 
-        characterData: true, 
-        childList: true,
-        subtree: true 
+        childList: true, 
+        characterData: true,
+        subtree: true
     });
 }
 

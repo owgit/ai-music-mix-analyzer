@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const progressStage = document.getElementById('progress-stage');
     const progressPercentage = document.getElementById('progress-percentage');
     const resultsSection = document.getElementById('results-section');
+    const introSection = document.querySelector('.intro-section');
     
     // Progress steps
     const stepUpload = document.getElementById('step-upload');
