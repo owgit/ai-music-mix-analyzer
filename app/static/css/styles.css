@@ -57,6 +57,7 @@ header {
     transition: all 0.3s ease;
     left: 0;
     right: 0;
+    border-radius: 30px;
 }
 
 .header-container {
@@ -72,9 +73,11 @@ header {
 
 /* Add scrolled class for enhanced effect when scrolling */
 header.scrolled {
-    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
     padding: 6px 0;
+    border-radius: 30px;
 }
 
 /* Minimal Logo */
@@ -3333,5 +3336,33 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     
     .heart-count::before {
         font-size: 12px;
+    }
+}
+
+/* About page title */
+.about-title {
+    margin-bottom: 30px;
+}
+
+.about-title h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.about-title p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .about-title h2 {
+        font-size: 1.5rem;
+    }
+    
+    .about-title p {
+        font-size: 0.95rem;
     }
 }

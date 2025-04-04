@@ -10,7 +10,7 @@ from dotenv import load_dotenv, find_dotenv
 from flask.json.provider import DefaultJSONProvider
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import datetime
+from datetime import datetime
 
 # Load environment variables from .env file only if not already loaded
 if not os.environ.get('ENV_LOADED'):
@@ -54,8 +54,8 @@ def create_app(test_config=None):
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
         UPLOAD_FOLDER=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'),
         MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
-        VERSION=datetime.datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
-        LAST_UPDATED=datetime.datetime.now().strftime("%Y-%m-%d"),  # Current date for Schema.org dateModified
+        VERSION=datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
+        LAST_UPDATED=datetime.now().strftime("%Y-%m-%d"),  # Current date for Schema.org dateModified
         FORCE_HTTPS=os.environ.get('FORCE_HTTPS', 'false').lower() == 'true'
     )
     
@@ -197,7 +197,7 @@ def create_app(test_config=None):
     def asset_processor():
         def versioned_asset(filename):
             """Add a version parameter to static file URLs to prevent caching"""
-            version = app.config.get('VERSION', datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+            version = app.config.get('VERSION', datetime.now().strftime("%Y%m%d%H%M%S"))
             if '?' in filename:
                 return f"{filename}&v={version}"
             else:

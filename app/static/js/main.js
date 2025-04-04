@@ -1557,247 +1557,349 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to setup musical theory modals
 function setupMusicTheoryModals() {
-    // Get modal elements (assuming modal functionality is already implemented)
     const frequencyGuideLink = document.getElementById('open-frequency-guide');
     const dynamicsGuideLink = document.getElementById('open-dynamics-guide');
     const harmonicGuideLink = document.getElementById('open-harmonic-guide');
     const stereoGuideLink = document.getElementById('open-stereo-guide');
     const transientsGuideLink = document.getElementById('open-transients-guide');
-    const aboutAppLink = document.getElementById('open-about-app');
+    const spatialGuideLink = document.getElementById('open-spatial-guide');
+    const aboutLink = document.getElementById('open-about');
     const faqLink = document.getElementById('open-faq');
-    
-    // Event listener for frequency guide
+
     if (frequencyGuideLink) {
         frequencyGuideLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('Frequency Balance Guide', `
-                <h3>Understanding Frequency Balance</h3>
-                <p>Frequency balance is the distribution of energy across the audible frequency spectrum (20Hz-20kHz). A well-balanced mix has appropriate energy in each frequency region.</p>
+            showModal('AI-Powered Frequency Spectrum Analysis Guide', `
+                <h3>Understanding Frequency Spectrum Analysis</h3>
+                <p>Frequency analysis is the foundation of audio mixing, helping you identify how energy is distributed across the frequency spectrum.</p>
                 
-                <h4>Key Frequency Bands:</h4>
+                <h4>Key Metrics:</h4>
                 <ul>
-                    <li><strong>Sub Bass (20-60Hz)</strong>: Foundational frequencies, felt more than heard. Includes lowest notes of bass instruments.</li>
-                    <li><strong>Bass (60-250Hz)</strong>: Fundamental notes of bass guitar, kick drums, and bass instruments.</li>
-                    <li><strong>Low Mids (250-500Hz)</strong>: Body of acoustic instruments, can sound muddy if overemphasized.</li>
-                    <li><strong>Mids (500-2kHz)</strong>: Vocals and most instruments' main frequencies. Crucial for clarity.</li>
-                    <li><strong>High Mids (2-4kHz)</strong>: Presence and definition. Affects how upfront elements sound.</li>
-                    <li><strong>Highs (4-10kHz)</strong>: Brightness, clarity, and articulation. Cymbals, hi-hats, and transients.</li>
-                    <li><strong>Air (10-20kHz)</strong>: Sense of space, air, and sparkle in a mix.</li>
+                    <li><strong>Frequency Range:</strong> 20Hz to 20kHz (human hearing range)</li>
+                    <li><strong>Low End:</strong> 20Hz-250Hz (bass, fundamentals)</li>
+                    <li><strong>Low-Mids:</strong> 250Hz-500Hz (warmth, body)</li>
+                    <li><strong>Mids:</strong> 500Hz-2kHz (presence, clarity)</li>
+                    <li><strong>High-Mids:</strong> 2kHz-7kHz (definition, attack)</li>
+                    <li><strong>Highs:</strong> 7kHz-20kHz (air, brilliance)</li>
                 </ul>
                 
-                <h4>Common Frequency Balance Issues:</h4>
+                <h4>Common Frequency Issues:</h4>
                 <ul>
-                    <li><strong>Muddy Mix</strong>: Too much energy in low-mids (200-500Hz).</li>
-                    <li><strong>Thin Mix</strong>: Lacking energy in bass regions.</li>
-                    <li><strong>Harsh Mix</strong>: Excessive energy in high-mids (2-5kHz).</li>
-                    <li><strong>Dull Mix</strong>: Insufficient high-frequency content.</li>
+                    <li><strong>Muddy Mix:</strong> Excessive energy between 200-500Hz</li>
+                    <li><strong>Harsh Sound:</strong> Too much energy in 2-5kHz range</li>
+                    <li><strong>Thin Sound:</strong> Lacking low-end below 250Hz</li>
+                    <li><strong>Dull Mix:</strong> Insufficient high frequencies above 7kHz</li>
+                    <li><strong>Boxy Sound:</strong> Resonances in 300-600Hz range</li>
+                </ul>
+                
+                <h4>Our AI-Powered Analysis:</h4>
+                <p>The AI analyzes your frequency spectrum by:</p>
+                <ul>
+                    <li>Comparing against reference tracks in your genre</li>
+                    <li>Identifying frequency imbalances and masking issues</li>
+                    <li>Suggesting targeted EQ adjustments for better balance</li>
+                    <li>Analyzing both static and dynamic frequency content</li>
+                    <li>Detecting problematic resonances and standing waves</li>
+                </ul>
+                
+                <h4>Tips for Great Frequency Balance:</h4>
+                <ul>
+                    <li>Use high-pass filters to remove unnecessary low frequencies</li>
+                    <li>Create space for each instrument in its own frequency range</li>
+                    <li>Control resonances with narrow EQ cuts</li>
+                    <li>Use reference tracks to compare your frequency balance</li>
+                    <li>Consider dynamic EQ for frequency problems that vary over time</li>
                 </ul>
             `);
         });
     }
-    
-    // Event listener for dynamics guide
+
     if (dynamicsGuideLink) {
         dynamicsGuideLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('Dynamic Range Explained', `
-                <h3>Dynamic Range in Audio</h3>
-                <p>Dynamic range refers to the difference between the loudest and quietest parts of an audio signal. It's measured in decibels (dB) and is crucial for creating emotional impact in music.</p>
+            showModal('Dynamic Range & Compression Explained', `
+                <h3>Understanding Dynamic Range Analysis</h3>
+                <p>Dynamic range refers to the difference between the loudest and quietest parts of your audio. Proper dynamics management is essential for creating impact and emotion in your mix.</p>
                 
-                <h4>Key Dynamics Metrics:</h4>
+                <h4>Key Metrics:</h4>
                 <ul>
-                    <li><strong>Dynamic Range</strong>: The difference between the loudest and quietest parts of a song, measured in dB.</li>
-                    <li><strong>Crest Factor</strong>: The ratio of peak values to RMS (average) values, indicating transient content.</li>
-                    <li><strong>Peak to Loudness Ratio (PLR)</strong>: The difference between peak level and integrated loudness, indicating dynamic headroom.</li>
+                    <li><strong>Peak Level:</strong> Maximum amplitude of your audio</li>
+                    <li><strong>RMS Level:</strong> Average loudness over time</li>
+                    <li><strong>Crest Factor:</strong> Difference between peak and RMS (transient impact)</li>
+                    <li><strong>PLR (Peak-to-Loudness Ratio):</strong> Difference between peak and integrated loudness</li>
+                    <li><strong>LUFS:</strong> Loudness Units relative to Full Scale (perceived loudness)</li>
                 </ul>
                 
-                <h4>Why Dynamics Matter:</h4>
+                <h4>Common Dynamic Issues:</h4>
                 <ul>
-                    <li><strong>Emotional Impact</strong>: Dynamic changes create emotional responses and maintain listener interest.</li>
-                    <li><strong>Genre Expectations</strong>: Different genres have different dynamic range standards (EDM vs. Classical).</li>
-                    <li><strong>Listening Environment</strong>: Dynamic range should be appropriate for the intended listening environment.</li>
-                    <li><strong>Fatigue</strong>: Highly compressed audio with minimal dynamics can cause listener fatigue.</li>
+                    <li><strong>Over-compression:</strong> Reduced dynamic range, lifeless sound</li>
+                    <li><strong>Under-compression:</strong> Inconsistent levels, lack of cohesion</li>
+                    <li><strong>Pumping:</strong> Audible compression artifacts</li>
+                    <li><strong>Distortion:</strong> From excessive limiting or clipping</li>
+                    <li><strong>Inconsistent Loudness:</strong> Sections with dramatically different levels</li>
                 </ul>
                 
-                <h4>Measuring Dynamics:</h4>
-                <p>Our analyzer measures various aspects of your mix's dynamics, including RMS levels, peak levels, and loudness (LUFS). These measurements help determine if your mix is overcompressed or has appropriate dynamic range for its genre.</p>
+                <h4>Our AI-Powered Analysis:</h4>
+                <p>The AI analyzes your dynamics by:</p>
+                <ul>
+                    <li>Measuring dynamic range across frequency bands</li>
+                    <li>Detecting over-compression and dynamic issues</li>
+                    <li>Comparing to genre-specific dynamic targets</li>
+                    <li>Analyzing transient response and preservation</li>
+                    <li>Suggesting compression settings for better dynamic control</li>
+                </ul>
+                
+                <h4>Tips for Great Dynamic Balance:</h4>
+                <ul>
+                    <li>Use compression for purpose, not just to make things louder</li>
+                    <li>Consider multiband compression for frequency-specific dynamic control</li>
+                    <li>Preserve transients for impact and clarity</li>
+                    <li>Use parallel compression for both punch and consistency</li>
+                    <li>Target genre-appropriate LUFS levels (-14 LUFS for streaming, louder for club music)</li>
+                </ul>
             `);
         });
     }
-    
-    // Event listener for harmonic guide
+
     if (harmonicGuideLink) {
         harmonicGuideLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('Harmonic Analysis & Key Detection', `
-                <h3>Understanding Harmonic Content</h3>
-                <p>Harmonic analysis evaluates the tonal structure of your music, including key detection, chord progressions, and harmonic relationships.</p>
+            showModal('AI Harmonic Analysis & EQ Techniques', `
+                <h3>Understanding Harmonic Analysis</h3>
+                <p>Harmonics are the building blocks of timbre and tone color in your mix. Managing harmonics properly leads to clarity, warmth, and professional sound quality.</p>
                 
-                <h4>Key Detection:</h4>
-                <p>Our system uses chroma features to analyze the pitch class distribution in your audio and determine the most likely musical key. This helps identify if elements in your mix clash harmonically.</p>
-                
-                <h4>The Circle of Fifths:</h4>
-                <p>The circle of fifths is a visualization of relationships between keys. Adjacent keys in the circle have more harmonically compatible notes. Our analysis uses these relationships to suggest potential key-related issues.</p>
-                
-                <h4>Relative and Parallel Keys:</h4>
+                <h4>Key Concepts:</h4>
                 <ul>
-                    <li><strong>Relative keys</strong>: Major and minor keys that share the same notes (C major and A minor).</li>
-                    <li><strong>Parallel keys</strong>: Major and minor keys with the same tonic (C major and C minor).</li>
+                    <li><strong>Fundamental:</strong> Base frequency of a note</li>
+                    <li><strong>Harmonic Series:</strong> Integer multiples of the fundamental</li>
+                    <li><strong>Even Harmonics:</strong> Create warmth (octaves, fifths)</li>
+                    <li><strong>Odd Harmonics:</strong> Create presence and edge (thirds, sevenths)</li>
+                    <li><strong>Inharmonicity:</strong> Non-harmonic overtones creating dissonance</li>
                 </ul>
                 
-                <h4>Harmonic Mixing:</h4>
-                <p>Understanding the key of your track helps with:
+                <h4>Common Harmonic Issues:</h4>
                 <ul>
-                    <li>Identifying if samples or instruments are harmonically compatible</li>
-                    <li>Finding complementary tracks for DJ mixes</li>
-                    <li>Creating coherent chord progressions and melodies</li>
+                    <li><strong>Harsh Distortion:</strong> Excessive odd harmonics</li>
+                    <li><strong>Lack of Clarity:</strong> Masked or conflicting harmonics</li>
+                    <li><strong>Thinness:</strong> Missing fundamental or low harmonics</li>
+                    <li><strong>Muddiness:</strong> Overlapping low-frequency harmonics</li>
+                    <li><strong>Digital Harshness:</strong> Aliasing or digital distortion artifacts</li>
                 </ul>
-                </p>
+                
+                <h4>Our AI-Powered Analysis:</h4>
+                <p>The AI analyzes your harmonics by:</p>
+                <ul>
+                    <li>Identifying fundamental frequencies and their harmonic series</li>
+                    <li>Detecting harmonic conflicts and masking</li>
+                    <li>Analyzing harmonic distortion and saturation</li>
+                    <li>Suggesting EQ and harmonic enhancement techniques</li>
+                    <li>Recommending frequency areas to address for better harmonic balance</li>
+                </ul>
+                
+                <h4>Advanced EQ Techniques:</h4>
+                <ul>
+                    <li><strong>Harmonic Balancing:</strong> Adjust related frequencies by musical intervals</li>
+                    <li><strong>Complementary EQ:</strong> Cut in one element where another needs to shine</li>
+                    <li><strong>Resonant Filtering:</strong> Enhance specific harmonics with resonant boosts</li>
+                    <li><strong>Harmonic Excitement:</strong> Add subtle saturation to enhance harmonics</li>
+                    <li><strong>Spectrum Matching:</strong> Shape harmonics to match reference tracks</li>
+                </ul>
             `);
         });
     }
-    
-    // Event listener for stereo guide
+
     if (stereoGuideLink) {
         stereoGuideLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('Understanding Stereo Field', `
-                <h3>Stereo Field Analysis</h3>
-                <p>Stereo field analysis evaluates how sound is distributed between the left and right channels, the correlation between channels, and the overall stereo width of your mix.</p>
+            showModal('Understanding Stereo Field & Imaging', `
+                <h3>Understanding Stereo Field Analysis</h3>
+                <p>The stereo field determines how your mix is perceived spatially, creating width, depth, and immersion for the listener. Proper stereo imaging is crucial for a professional mix.</p>
                 
-                <h4>Key Stereo Concepts:</h4>
+                <h4>Key Metrics:</h4>
                 <ul>
-                    <li><strong>Stereo Width</strong>: How "wide" your mix sounds, from mono (center only) to very wide.</li>
-                    <li><strong>Phase Correlation</strong>: How the left and right channels relate. Values near +1 indicate good mono compatibility, while negative values can indicate phase issues.</li>
-                    <li><strong>Stereo Balance</strong>: Whether your mix leans too much to one side.</li>
-                    <li><strong>Mono Compatibility</strong>: How your mix sounds when collapsed to mono (important for some playback systems).</li>
+                    <li><strong>Stereo Width:</strong> Overall spread of the mix from mono to wide</li>
+                    <li><strong>Phase Correlation:</strong> Compatibility between left and right channels</li>
+                    <li><strong>Mid/Side Balance:</strong> Relationship between center and sides content</li>
+                    <li><strong>Stereo Consistency:</strong> How uniform the stereo image is across frequencies</li>
+                    <li><strong>Phantom Center:</strong> Strength and focus of the central image</li>
                 </ul>
                 
-                <h4>Frequency-dependent Stereo Width:</h4>
-                <p>Best practices for stereo distribution by frequency:
+                <h4>Common Stereo Field Issues:</h4>
                 <ul>
-                    <li><strong>Sub Bass (20-60Hz)</strong>: Usually centered/mono for translation and power</li>
-                    <li><strong>Bass (60-250Hz)</strong>: Mostly centered with slight stereo width</li>
-                    <li><strong>Low Mids (250-500Hz)</strong>: Moderate stereo width appropriate</li>
-                    <li><strong>Mids and above</strong>: Wider stereo image appropriate for most content</li>
+                    <li><strong>Phase Problems:</strong> Comb filtering and cancelation when summed to mono</li>
+                    <li><strong>Excessive Width:</strong> Unfocused, diffuse mix with weak center</li>
+                    <li><strong>Too Narrow:</strong> Lack of space and separation between elements</li>
+                    <li><strong>Bottom-Heavy Sides:</strong> Low frequencies spread too wide causing muddiness</li>
+                    <li><strong>Inconsistent Imaging:</strong> Elements jumping positions in the stereo field</li>
                 </ul>
-                </p>
                 
-                <h4>Common Stereo Issues:</h4>
+                <h4>Our AI-Powered Analysis:</h4>
+                <p>The AI analyzes your stereo field by:</p>
                 <ul>
-                    <li><strong>Phase cancellation</strong>: When frequencies disappear in mono</li>
-                    <li><strong>Excessive width</strong>: Can sound unnatural or cause translation problems</li>
-                    <li><strong>Imbalanced panning</strong>: Mix leaning too far to one side</li>
+                    <li>Measuring stereo width across different frequency bands</li>
+                    <li>Detecting phase issues and mono compatibility problems</li>
+                    <li>Analyzing mid/side balance compared to reference tracks</li>
+                    <li>Identifying elements that need stereo positioning adjustment</li>
+                    <li>Suggesting stereo enhancement or correction techniques</li>
+                </ul>
+                
+                <h4>Stereo Imaging Best Practices:</h4>
+                <ul>
+                    <li>Keep low frequencies (below 150Hz) mostly centered</li>
+                    <li>Use stereo width for atmospheric elements and high frequencies</li>
+                    <li>Place lead vocals and key elements in the center</li>
+                    <li>Check mono compatibility throughout the mixing process</li>
+                    <li>Use correlation meters to ensure phase coherence</li>
+                    <li>Apply stereo enhancement selectively rather than across the entire mix</li>
                 </ul>
             `);
         });
     }
-    
-    // Event listener for transients guide
+
     if (transientsGuideLink) {
         transientsGuideLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('Transient Analysis', `
-                <h3>Understanding Transients</h3>
-                <p>Transients are the short-duration, high-amplitude peaks at the beginning of sounds, especially percussive elements like drums. They provide impact, clarity, and rhythmic definition to a mix.</p>
+            showModal('AI Transient Analysis & Detection', `
+                <h3>Understanding Transient Analysis</h3>
+                <p>Transients are the initial attack portion of a sound that give it definition, impact, and clarity. Proper transient management is essential for creating punchy, clear mixes with depth and detail.</p>
                 
-                <h4>Why Transients Matter:</h4>
+                <h4>Key Concepts:</h4>
                 <ul>
-                    <li><strong>Impact and Punch</strong>: Strong transients create impact and energy in a mix.</li>
-                    <li><strong>Clarity</strong>: Well-preserved transients help individual elements cut through the mix.</li>
-                    <li><strong>Rhythmic Definition</strong>: Clear transients make rhythmic elements more defined.</li>
-                    <li><strong>Perceived Loudness</strong>: Preserved transients can make a mix sound louder without increasing overall level.</li>
+                    <li><strong>Attack Time:</strong> How quickly a sound reaches its peak level</li>
+                    <li><strong>Decay Time:</strong> How quickly a sound falls after the initial peak</li>
+                    <li><strong>Transient Energy:</strong> The amount of energy in the attack portion</li>
+                    <li><strong>Sustain Level:</strong> The level maintained after the initial transient</li>
+                    <li><strong>Transient Separation:</strong> How distinguishable transients are from other mix elements</li>
                 </ul>
-                
-                <h4>Measuring Transients:</h4>
-                <p>Our analyzer examines:
-                <ul>
-                    <li><strong>Transient Sharpness</strong>: How quickly levels rise at the start of sounds.</li>
-                    <li><strong>Transient-to-Sustain Ratio</strong>: The relationship between initial peaks and sustained sounds.</li>
-                    <li><strong>Transient Consistency</strong>: How evenly transients are preserved across the mix.</li>
-                </ul>
-                </p>
                 
                 <h4>Common Transient Issues:</h4>
                 <ul>
-                    <li><strong>Over-compression</strong>: Flattened transients leading to lifeless percussion.</li>
-                    <li><strong>Inconsistent transients</strong>: Some hits much louder than others.</li>
-                    <li><strong>Transient smearing</strong>: Lack of definition in fast rhythmic passages.</li>
+                    <li><strong>Dulled Transients:</strong> Over-compression removing attack and impact</li>
+                    <li><strong>Harsh Transients:</strong> Excessive attack causing listening fatigue</li>
+                    <li><strong>Conflicting Transients:</strong> Multiple elements with transients masking each other</li>
+                    <li><strong>Inconsistent Transients:</strong> Varying attack characteristics throughout a performance</li>
+                    <li><strong>Lost Transients:</strong> Important attack details buried in the mix</li>
+                </ul>
+                
+                <h4>Our AI-Powered Analysis:</h4>
+                <p>The AI analyzes your transients by:</p>
+                <ul>
+                    <li>Detecting transient events across different frequency bands</li>
+                    <li>Measuring attack and decay characteristics</li>
+                    <li>Identifying transient masking between instruments</li>
+                    <li>Analyzing transient consistency and energy</li>
+                    <li>Suggesting processing techniques for better transient management</li>
+                </ul>
+                
+                <h4>Transient Processing Techniques:</h4>
+                <ul>
+                    <li><strong>Transient Designers:</strong> Enhance or reduce attack portions selectively</li>
+                    <li><strong>Dynamic EQ:</strong> Boost or cut frequencies only during transients</li>
+                    <li><strong>Parallel Processing:</strong> Blend in unprocessed transients with compressed signals</li>
+                    <li><strong>Timing Adjustments:</strong> Align transients between tracks to avoid conflicts</li>
+                    <li><strong>Multiband Transient Processing:</strong> Adjust attack characteristics per frequency range</li>
+                    <li><strong>Enveloping:</strong> Shape the attack/decay profile of sounds using ADSR controls</li>
                 </ul>
             `);
         });
     }
-    
-    // Event listener for about app
-    if (aboutAppLink) {
-        aboutAppLink.addEventListener('click', function(e) {
+
+    if (spatialGuideLink) {
+        spatialGuideLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('About Mix Analyzer', `
-                <h3>Mix Analyzer</h3>
-                <p>Mix Analyzer is a professional audio analysis tool designed for musicians, producers, and audio engineers. Upload your tracks to get detailed analysis and AI-powered improvement suggestions.</p>
+            showModal('3D Spatial Mix Analysis Guide', `
+                <h3>Understanding 3D Spatial Audio</h3>
+                <p>3D spatial audio creates an immersive sound experience by positioning audio elements not just left-to-right, but also in terms of height, depth, and immersion. This advanced mixing approach is crucial for modern immersive audio formats.</p>
                 
-                <h4>Key Features:</h4>
+                <h4>Key Dimensions of Spatial Audio:</h4>
                 <ul>
-                    <li><strong>Comprehensive Analysis</strong>: Evaluate frequency balance, dynamics, stereo field, clarity, and more.</li>
-                    <li><strong>Audio Visualization</strong>: View waveforms, spectrograms, and other visual representations of your audio.</li>
-                    <li><strong>AI Insights</strong>: Get intelligent suggestions for improving your mix powered by OpenAI's GPT-4o.</li>
-                    <li><strong>Musical Theory Integration</strong>: Key detection and harmonic analysis to ensure tonal cohesion.</li>
+                    <li><strong>Width:</strong> Traditional left-to-right panning in the stereo field</li>
+                    <li><strong>Height:</strong> Vertical positioning of sounds from low to high</li>
+                    <li><strong>Depth:</strong> Front-to-back positioning creating distance perception</li>
+                    <li><strong>Immersion:</strong> The sense of being surrounded by the sound field</li>
+                    <li><strong>Object-Based Audio:</strong> Individual sound elements positioned in 3D space</li>
                 </ul>
                 
-                <h4>Technical Details:</h4>
-                <p>Mix Analyzer is built using:
+                <h4>Height Perception:</h4>
+                <p>Height cues are created through:</p>
                 <ul>
-                    <li>Python with Flask for the backend</li>
-                    <li>Librosa for audio analysis</li>
-                    <li>Matplotlib for visualization generation</li>
-                    <li>OpenAI API for AI-powered suggestions</li>
-                    <li>Modern JavaScript for the interactive frontend</li>
+                    <li>Spectral filtering (higher frequencies tend to be perceived as higher in space)</li>
+                    <li>Early reflections suggesting ceiling height</li>
+                    <li>Head-related transfer functions (HRTFs) modifying sounds based on elevation</li>
+                    <li>Frequency-dependent delays that simulate height-based arrival times</li>
                 </ul>
-                </p>
                 
-                <h4>Support:</h4>
-                <p>For questions, issues, or feature requests, please visit our GitHub repository or contact the development team.</p>
+                <h4>Depth Perception:</h4>
+                <p>Depth cues are created through:</p>
+                <ul>
+                    <li>Direct/reflected sound ratio (dry/wet balance)</li>
+                    <li>High-frequency attenuation (distance filtering)</li>
+                    <li>Pre-delay before reverb reflections</li>
+                    <li>Level differences (quieter sounds seem farther away)</li>
+                    <li>Doppler effects for moving sources</li>
+                </ul>
+                
+                <h4>Width Consistency:</h4>
+                <p>Maintaining coherent width across:</p>
+                <ul>
+                    <li>Different frequency bands (avoiding frequency-dependent stereo spread)</li>
+                    <li>Dynamic transitions (preventing image collapse during loud passages)</li>
+                    <li>Movement trajectories (smooth motion paths for moving sounds)</li>
+                    <li>Different playback systems (from headphones to multi-speaker arrays)</li>
+                </ul>
+                
+                <h4>Our 3D Spatial Analysis:</h4>
+                <p>The AI analyzes your spatial mix by:</p>
+                <ul>
+                    <li>Detecting height cues and vertical positioning accuracy</li>
+                    <li>Measuring depth consistency and front-to-back arrangement</li>
+                    <li>Analyzing width distribution across the frequency spectrum</li>
+                    <li>Evaluating immersion factors and envelopment</li>
+                    <li>Suggesting binaural and spatial processing improvements</li>
+                </ul>
+                
+                <h4>Tips for Creating Effective 3D Mixes:</h4>
+                <ul>
+                    <li>Use spectral shaping to reinforce height perception</li>
+                    <li>Apply different reverb types for different spatial zones</li>
+                    <li>Implement frequency-dependent stereo width control</li>
+                    <li>Consider binaural processing for headphone optimization</li>
+                    <li>Use precedence effect (Haas effect) to create spatial cues</li>
+                    <li>Maintain mono compatibility despite complex spatial processing</li>
+                </ul>
+                
+                <h4>Common Spatial Audio Issues:</h4>
+                <ul>
+                    <li><strong>Spatial Collapse:</strong> Loss of 3D image on certain playback systems</li>
+                    <li><strong>Phantom Image Instability:</strong> Spatial positioning that shifts unexpectedly</li>
+                    <li><strong>Excessive Diffusion:</strong> Loss of localization precision</li>
+                    <li><strong>Spatial Masking:</strong> Elements in similar spatial locations conflicting</li>
+                    <li><strong>Incoherent Height Cues:</strong> Contradictory vertical positioning information</li>
+                </ul>
+                
+                <h4>Optimizing for Different Playback Systems:</h4>
+                <ul>
+                    <li><strong>Headphones:</strong> Binaural processing, crossfeed control</li>
+                    <li><strong>Stereo Speakers:</strong> Phantom center management, boundary effect compensation</li>
+                    <li><strong>Surround Systems:</strong> Channel routing, bass management</li>
+                    <li><strong>Spatial Audio Formats:</strong> Dolby Atmos, Sony 360 Reality Audio, Ambisonics</li>
+                    <li><strong>VR/AR Applications:</strong> Head-tracking responsive mixes, object-based audio</li>
+                </ul>
             `);
         });
     }
+
+    if (aboutLink) {
+        aboutLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = '/about';
+        });
+    }
     
-    // Event listener for FAQ
     if (faqLink) {
         faqLink.addEventListener('click', function(e) {
             e.preventDefault();
-            showModal('Frequently Asked Questions', `
-                <h3>Frequently Asked Questions</h3>
-                
-                <div class="faq-item">
-                    <h4>What audio file formats are supported?</h4>
-                    <p>Mix Analyzer supports MP3, WAV, FLAC, AIFF, M4A, and PCM audio formats.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>Is there a file size limit?</h4>
-                    <p>Yes, there is a 16MB file size limit for uploads. For larger files, consider converting to a compressed format like MP3.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>What do the scores mean?</h4>
-                    <p>Scores range from 0-100 and represent how well your mix performs in each area compared to professional standards. Higher scores indicate better technical quality.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>Are my files kept private?</h4>
-                    <p>Yes, all uploaded files are private and used only for analysis. Files are not shared with third parties and are automatically deleted after processing.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>How does AI analysis work?</h4>
-                    <p>Our system extracts audio features and metrics from your track, then uses OpenAI's API to interpret these results and provide actionable suggestions based on professional audio engineering practices.</p>
-                </div>
-                
-                <div class="faq-item">
-                    <h4>What's the difference between instrumental and vocal tracks?</h4>
-                    <p>Indicating whether your track is instrumental or contains vocals helps our system provide more relevant analysis, especially for frequency balance and clarity assessments.</p>
-                </div>
-            `);
+            showFaqModal();
         });
     }
 }

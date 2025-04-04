@@ -172,6 +172,18 @@
                     "abstract": "Genre-specific analysis, reference track comparison, system-specific recommendations, and custom tailored mixing suggestions.",
                     "proficiencyLevel": "Beginner to Advanced"
                 }
+            },
+            {
+                "@type": "ListItem",
+                "position": 5,
+                "item": {
+                    "@type": "TechArticle",
+                    "name": "3D Spatial Mix Analysis",
+                    "headline": "Immersive 3D Spatial Audio Analysis",
+                    "description": "Our algorithms analyze height, depth, and immersion cues in your audio to evaluate spatial positioning and sound field representation in three dimensions.",
+                    "abstract": "Height perception analysis, depth consistency measurement, immersion factor evaluation, binaural processing effectiveness, and spatial translation recommendations for modern immersive audio formats.",
+                    "proficiencyLevel": "Beginner to Advanced"
+                }
             }
         ]
     }
@@ -197,6 +209,7 @@
             "Transient Analysis",
             "Harmonic Content Analysis",
             "Clarity and Spectral Balance Analysis",
+            "3D Spatial Audio Analysis",
             "AI-Powered Mix Recommendations"
         ]
     }
@@ -331,37 +344,49 @@
 <body>
     <div class="container">
         <header>
-            <div class="app-brand">
-                <a href="{{ url_for('main.index') }}">
-                    <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo">
-                </a>
-                <div class="app-title">
-                    <h1>About Mix Analyzer for Musicians, Producers & Sound Engineers</h1>
-                    <p>Learn how our free tool uses advanced AI algorithms to analyze your tracks and provide professional mixing and mastering recommendations</p>
+            <div class="header-container">
+                <div class="app-brand">
+                   <a href="{{ url_for('main.index') }}"><img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true"></a>
                 </div>
-            </div>
-            <div class="header-actions">
-                <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" id="buy-coffee-btn" class="coffee-button-container" aria-label="Buy me a coffee">
-                    <div class="coffee-button-blur"></div>
-                    <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="coffee-button-img" 
-                    onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'"/>
-                </a>
+                <div class="header-right">
+                    <div class="app-title">
+                        <h1>AI-Powered Audio Analysis Tool</h1>
+                    </div>
+                    <div class="header-actions">
+                        <button id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" fill="currentColor"/>
+                            </svg>
+                            Beta Feedback
+                        </button>
+                        <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" id="buy-coffee-btn" class="coffee-button-container" aria-label="Buy me a coffee">
+                            <div class="coffee-button-blur"></div>
+                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="coffee-button-img" 
+                            onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'"/>
+                            <span class="heart-count">0</span>
+                        </a>
+                    </div>
+                </div>
             </div>
         </header>
 
         <main>
             <section class="about-section">
-                <h2>Advanced AI-Powered Mixing and Mastering Analysis Technology</h2>
+                <div class="about-title">
+                    <h2>About Mix Analyzer for Musicians, Producers & Sound Engineers</h2>
+                    <p>Learn how our free tool uses advanced AI algorithms to analyze your tracks and provide professional mixing and mastering recommendations</p>
+                </div>
+                <h3>Advanced AI-Powered Mixing and Mastering Analysis Technology</h3>
                 <p>Mix Analyzer is a free online tool that combines cutting-edge audio analysis algorithms with artificial intelligence to help musicians, producers, and sound engineers create professional-quality mixes and masters. Whether you're a bedroom producer, aspiring mixing engineer, or seasoned professional, our tool offers valuable insights that would traditionally require expensive equipment and years of trained ears.</p>
                 
                 <div class="analysis-tech-overview">
-                    <h3>Our Analysis Technologies</h3>
+                    <h4>Our Analysis Technologies</h4>
                     <p>Mix Analyzer employs several sophisticated technologies to analyze different aspects of your audio tracks:</p>
                     
                     <div class="tech-grid">
                         <div class="tech-card" data-tech="frequency">
                             <div class="tech-card-header">
-                                <h4>Frequency Spectrum Analysis</h4>
+                                <h5>Frequency Spectrum Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed frequency analysis information">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M6 9l6 6 6-6"/>
@@ -370,9 +395,9 @@
                             </div>
                             <p class="tech-card-preview">Our AI analyzes your track's frequency content using Fast Fourier Transform (FFT) and advanced spectral processing to identify frequency imbalances, potential masking issues, and opportunities for more clarity in your mix.</p>
                             <div class="tech-card-details" hidden>
-                                <h5>Advanced Frequency Analysis Technology</h5>
+                                <h6>Advanced Frequency Analysis Technology</h6>
                                 <div class="detail-section">
-                                    <h6>Spectral Analysis Features</h6>
+                                    <h7>Spectral Analysis Features</h7>
                                     <ul>
                                         <li>Real-time FFT analysis with adjustable window sizes</li>
                                         <li>Multi-resolution spectral analysis for precise frequency detection</li>
@@ -381,7 +406,7 @@
                                     </ul>
                                 </div>
                                 <div class="detail-section">
-                                    <h6>Professional Applications</h6>
+                                    <h7>Professional Applications</h7>
                                     <ul>
                                         <li>Identify problematic frequency buildups</li>
                                         <li>Detect phase issues in critical frequency bands</li>
@@ -397,7 +422,7 @@
                         
                         <div class="tech-card" data-tech="dynamics">
                             <div class="tech-card-header">
-                                <h4>Dynamic Range Analysis</h4>
+                                <h5>Dynamic Range Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed dynamics analysis information">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M6 9l6 6 6-6"/>
@@ -406,9 +431,9 @@
                             </div>
                             <p class="tech-card-preview">Using statistical analysis of peak levels, RMS values, and crest factors, we assess your track's dynamic range and compression characteristics.</p>
                             <div class="tech-card-details" hidden>
-                                <h5>Professional Dynamic Range Analysis</h5>
+                                <h6>Professional Dynamic Range Analysis</h6>
                                 <div class="detail-section">
-                                    <h6>Key Measurements</h6>
+                                    <h7>Key Measurements</h7>
                                     <ul>
                                         <li>True Peak and RMS level analysis</li>
                                         <li>Dynamic range measurement (DR value)</li>
@@ -417,7 +442,7 @@
                                     </ul>
                                 </div>
                                 <div class="detail-section">
-                                    <h6>Compression Analysis</h6>
+                                    <h7>Compression Analysis</h7>
                                     <ul>
                                         <li>Detect over-compression issues</li>
                                         <li>Analyze attack and release characteristics</li>
@@ -433,7 +458,7 @@
                         
                         <div class="tech-card" data-tech="stereo">
                             <div class="tech-card-header">
-                                <h4>Stereo Field Analysis</h4>
+                                <h5>Stereo Field Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed stereo analysis information">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M6 9l6 6 6-6"/>
@@ -442,9 +467,9 @@
                             </div>
                             <p class="tech-card-preview">Through mid-side processing and phase correlation measurement, we evaluate your mix's stereo width and mono compatibility.</p>
                             <div class="tech-card-details" hidden>
-                                <h5>Advanced Stereo Imaging Analysis</h5>
+                                <h6>Advanced Stereo Imaging Analysis</h6>
                                 <div class="detail-section">
-                                    <h6>Stereo Width Features</h6>
+                                    <h7>Stereo Width Features</h7>
                                     <ul>
                                         <li>Mid/Side balance measurement</li>
                                         <li>Phase correlation analysis</li>
@@ -453,7 +478,7 @@
                                     </ul>
                                 </div>
                                 <div class="detail-section">
-                                    <h6>Mono Compatibility</h6>
+                                    <h7>Mono Compatibility</h7>
                                     <ul>
                                         <li>Phase cancellation detection</li>
                                         <li>Stereo enhancement suggestions</li>
@@ -469,7 +494,7 @@
                         
                         <div class="tech-card" data-tech="transients">
                             <div class="tech-card-header">
-                                <h4>Transient Analysis</h4>
+                                <h5>Transient Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed transient analysis information">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M6 9l6 6 6-6"/>
@@ -478,9 +503,9 @@
                             </div>
                             <p class="tech-card-preview">Our percussion and transient detection algorithms measure attack sharpness, detect transient density, and analyze the impact of your drums and percussive elements.</p>
                             <div class="tech-card-details" hidden>
-                                <h5>Professional Transient Analysis</h5>
+                                <h6>Professional Transient Analysis</h6>
                                 <div class="detail-section">
-                                    <h6>Transient Detection Features</h6>
+                                    <h7>Transient Detection Features</h7>
                                     <ul>
                                         <li>Attack time measurement</li>
                                         <li>Release curve analysis</li>
@@ -489,7 +514,7 @@
                                     </ul>
                                 </div>
                                 <div class="detail-section">
-                                    <h6>Percussion Analysis</h6>
+                                    <h7>Percussion Analysis</h7>
                                     <ul>
                                         <li>Drum hit detection</li>
                                         <li>Impact level measurement</li>
@@ -505,7 +530,7 @@
                         
                         <div class="tech-card" data-tech="harmonic">
                             <div class="tech-card-header">
-                                <h4>Harmonic Content Analysis</h4>
+                                <h5>Harmonic Content Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed harmonic analysis information">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M6 9l6 6 6-6"/>
@@ -514,9 +539,9 @@
                             </div>
                             <p class="tech-card-preview">Using chromagram analysis and harmonic detection, we identify the key of your track, assess harmonic complexity, and evaluate tonal balance.</p>
                             <div class="tech-card-details" hidden>
-                                <h5>Advanced Harmonic Analysis</h5>
+                                <h6>Advanced Harmonic Analysis</h6>
                                 <div class="detail-section">
-                                    <h6>Key Detection Features</h6>
+                                    <h7>Key Detection Features</h7>
                                     <ul>
                                         <li>Automatic key detection</li>
                                         <li>Scale analysis</li>
@@ -525,7 +550,7 @@
                                     </ul>
                                 </div>
                                 <div class="detail-section">
-                                    <h6>Tonal Balance Analysis</h6>
+                                    <h7>Tonal Balance Analysis</h7>
                                     <ul>
                                         <li>Harmonic series analysis</li>
                                         <li>Overtone structure evaluation</li>
@@ -541,7 +566,7 @@
                         
                         <div class="tech-card" data-tech="clarity">
                             <div class="tech-card-header">
-                                <h4>Clarity and Spectral Balance</h4>
+                                <h5>Clarity and Spectral Balance</h5>
                                 <button class="expand-button" aria-label="Show detailed clarity analysis information">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M6 9l6 6 6-6"/>
@@ -550,9 +575,9 @@
                             </div>
                             <p class="tech-card-preview">Our algorithms measure spectral contrast, flatness, and centroid to assess how clear and balanced your mix sounds.</p>
                             <div class="tech-card-details" hidden>
-                                <h5>Professional Clarity Analysis</h5>
+                                <h6>Professional Clarity Analysis</h6>
                                 <div class="detail-section">
-                                    <h6>Spectral Measurements</h6>
+                                    <h7>Spectral Measurements</h7>
                                     <ul>
                                         <li>Spectral contrast analysis</li>
                                         <li>Frequency masking detection</li>
@@ -561,7 +586,7 @@
                                     </ul>
                                 </div>
                                 <div class="detail-section">
-                                    <h6>Balance Analysis</h6>
+                                    <h7>Balance Analysis</h7>
                                     <ul>
                                         <li>Overall tonal balance</li>
                                         <li>Frequency distribution analysis</li>
@@ -574,38 +599,81 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <div class="tech-card" data-tech="spatial">
+                            <div class="tech-card-header">
+                                <h5>3D Spatial Mix Analysis</h5>
+                                <button class="expand-button" aria-label="Show detailed spatial analysis information">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <p class="tech-card-preview">Our advanced algorithms analyze height, depth, and immersion cues in your audio to evaluate and improve spatial positioning and 3D sound field representation.</p>
+                            <div class="tech-card-details" hidden>
+                                <h6>Immersive Spatial Analysis Technology</h6>
+                                <div class="detail-section">
+                                    <h7>Key Dimensions Analyzed</h7>
+                                    <ul>
+                                        <li>Height perception and vertical positioning</li>
+                                        <li>Depth and front-to-back placement analysis</li>
+                                        <li>Width consistency across frequency bands</li>
+                                        <li>Immersion factor and envelopment measurement</li>
+                                        <li>Binaural processing effectiveness</li>
+                                    </ul>
+                                </div>
+                                <div class="detail-section">
+                                    <h7>Advanced Spatial Techniques</h7>
+                                    <ul>
+                                        <li>Head-related transfer function (HRTF) analysis</li>
+                                        <li>Early reflection pattern detection</li>
+                                        <li>Spectral cue identification for height perception</li>
+                                        <li>Phantom center stability measurement</li>
+                                        <li>System-specific spatial translation analysis</li>
+                                    </ul>
+                                </div>
+                                <div class="tech-card-cta">
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's 3D Spatial Mix</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="ai-section">
-                    <h3>The AI Behind Mix Analyzer</h3>
+                    <h4>The AI Behind Mix Analyzer</h4>
                     <p>What sets Mix Analyzer apart is our integration of advanced artificial intelligence to interpret the raw data and provide actionable insights:</p>
                     
                     <div class="ai-features">
                         <div class="ai-feature">
-                            <h4>GPT-4o Integration</h4>
+                            <h5>GPT-4o Integration</h5>
                             <p>We leverage OpenAI's GPT-4o to analyze the technical measurements of your track and translate them into clear, professional recommendations. This AI has been trained on thousands of professionally mixed and mastered tracks across various genres to recognize patterns and best practices in audio production.</p>
                         </div>
                         
                         <div class="ai-feature">
-                            <h4>Genre-Specific Analysis</h4>
+                            <h5>Genre-Specific Analysis</h5>
                             <p>Our AI automatically detects the likely genre of your track and adjusts its recommendations accordingly. A hip-hop track requires different frequency balance and dynamic treatment than a classical recording, and our AI tailors its suggestions to match your musical context.</p>
                         </div>
                         
                         <div class="ai-feature">
-                            <h4>Reference Track Comparison</h4>
+                            <h5>Reference Track Comparison</h5>
                             <p>The AI compares your track's characteristics with our database of reference tracks in similar genres, identifying specific areas where your mix might diverge from professional standards and suggesting targeted improvements.</p>
                         </div>
                         
                         <div class="ai-feature">
-                            <h4>System-Specific Recommendations</h4>
+                            <h5>System-Specific Recommendations</h5>
                             <p>Our AI provides recommendations for how your mix will translate to different playback systems, from studio monitors to earbuds, helping you create mixes that sound great everywhere.</p>
+                        </div>
+                        
+                        <div class="ai-feature">
+                            <h5>3D Spatial Audio Intelligence</h5>
+                            <p>Our AI evaluates the immersive qualities of your mix, analyzing how elements are positioned in the three-dimensional sound field. It identifies issues like spatial collapse, phantom image instability, and excessive diffusion while recommending specific techniques to enhance height perception, depth consistency, and overall immersion factor for modern spatial audio formats.</p>
                         </div>
                     </div>
                 </div>
                 
                 <div class="library-section">
-                    <h3>Technical Foundation</h3>
+                    <h4>Technical Foundation</h4>
                     <p>Mix Analyzer is built on a foundation of proven open-source audio analysis libraries and custom algorithms:</p>
                     <ul>
                         <li><strong>Librosa:</strong> For advanced audio signal processing and feature extraction</li>
@@ -617,7 +685,7 @@
                 </div>
                 
                 <div class="workflow-section">
-                    <h3>How Your Track Gets Analyzed</h3>
+                    <h4>How Your Track Gets Analyzed</h4>
                     <ol>
                         <li><strong>Upload Processing:</strong> Your audio file is securely uploaded and processed to ensure compatibility</li>
                         <li><strong>Audio Analysis:</strong> Our algorithms extract over 50 different audio features and measurements from your track</li>
@@ -628,12 +696,12 @@
                 </div>
                 
                 <div class="privacy-section">
-                    <h3>Your Audio, Your Privacy</h3>
+                    <h4>Your Audio, Your Privacy</h4>
                     <p>We respect your creative work and privacy. Your uploaded audio files are processed securely and are not shared with third parties. Files are temporarily stored for analysis purposes only and can be removed upon request.</p>
                 </div>
                 
                 <div class="cta-section">
-                    <h3>Experience AI-Powered Mixing and Mastering Analysis</h3>
+                    <h4>Experience AI-Powered Mixing and Mastering Analysis</h4>
                     <p>Ready to see how our AI can help improve your mixes? Return to the main page to upload your track and get a free professional analysis with actionable insights.</p>
                     <a href="{{ url_for('main.index') }}" class="cta-button">Analyze Your Track Now</a>
                 </div>
@@ -643,29 +711,30 @@
         <footer class="site-footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>  AI-Powered Audio Analysis Tool</h3>
+                    <span class="footer-title">AI-Powered Audio Analysis Tool</span>
                     <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
                 </div>
                 
                 <div class="footer-section">
-                    <h3>Audio Production Knowledge</h3>
+                    <span class="footer-title">Audio Production Knowledge</span>
                     <ul class="footer-links">
                         <li><a href="#" id="open-frequency-guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
                         <li><a href="#" id="open-dynamics-guide">Dynamic Range & Compression Explained</a></li>
                         <li><a href="#" id="open-harmonic-guide">AI Harmonic Analysis & EQ Techniques</a></li>
                         <li><a href="#" id="open-stereo-guide">Understanding Stereo Field & Imaging</a></li>
                         <li><a href="#" id="open-transients-guide">AI Transient Analysis & Detection</a></li>
+                        <li><a href="#" id="open-spatial-guide">3D Spatial Mix Analysis Guide</a></li>
                     </ul>
                 </div>
                 
                 <div class="footer-section">
-                    <h3>Free Resources</h3>
+                    <span class="footer-title">Free Resources</span>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('main.about') }}">About Free Mix Analyzer</a></li>
+                        <li><a href="{{ url_for('main.about') }}">About Mix Analyzer Technology</a></li>
                         <li><a href="#" id="open-faq">FAQ</a></li>
-                        <li><a href="https://librosa.org/" target="_blank">Librosa Audio Analysis Library</a></li>
-                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank">GitHub Repository</a></li>
+                        <li><a href="https://librosa.org/" target="_blank" rel="noopener">Librosa Audio Analysis Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" rel="noopener">OpenAI API for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" rel="noopener">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>
@@ -688,25 +757,71 @@
     <script src="{{ versioned_asset(url_for('static', filename='js/main.js')) }}"></script>
     <script src="{{ versioned_asset(url_for('static', filename='js/modal.js')) }}"></script>
     <script src="{{ versioned_asset(url_for('static', filename='js/mobile.js')) }}"></script>
+    <script src="{{ versioned_asset(url_for('static', filename='js/feedback.js')) }}"></script>
+    <script src="{{ versioned_asset(url_for('static', filename='js/faq-data.js')) }}"></script>
     
-    <!-- Floating Buy Me a Coffee button -->
-    <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" class="floating-coffee-button-container" aria-label="Buy me a coffee">
-        <div class="floating-coffee-blur"></div>
-        <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="floating-coffee-img"
-        onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'floating-coffee-text\'>☕ Buy me a coffee</div>'"/>
-    </a>
-    
-    <script>
-    // Show floating coffee button when scrolling
-    window.addEventListener('scroll', function() {
-        const floatingButton = document.querySelector('.floating-coffee-button-container');
-        if (window.scrollY > 300) {
-            floatingButton.classList.add('visible');
-        } else {
-            floatingButton.classList.remove('visible');
-        }
-    });
-    </script>
+   
+
+    <!-- Feedback Beta Modal -->
+    <div id="feedback-modal" class="modal-overlay">
+        <div class="modal-content feedback-modal-content">
+            <div class="modal-title">Beta Feedback</div>
+            <button class="close-button" id="close-feedback-modal">&times;</button>
+            
+            <div class="feedback-form-container">
+                <form id="feedback-form">
+                    <div class="feedback-field">
+                        <label for="feedback-email">Email (optional)</label>
+                        <input type="email" id="feedback-email" name="email" placeholder="Your email address">
+                    </div>
+                    
+                    <div class="feedback-field">
+                        <label for="feedback-rating">Rating</label>
+                        <div class="star-rating">
+                            <input type="radio" id="star5" name="rating" value="5" required>
+                            <label for="star5" title="5 stars">★</label>
+                            <input type="radio" id="star4" name="rating" value="4">
+                            <label for="star4" title="4 stars">★</label>
+                            <input type="radio" id="star3" name="rating" value="3">
+                            <label for="star3" title="3 stars">★</label>
+                            <input type="radio" id="star2" name="rating" value="2">
+                            <label for="star2" title="2 stars">★</label>
+                            <input type="radio" id="star1" name="rating" value="1">
+                            <label for="star1" title="1 star">★</label>
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-field">
+                        <label for="feedback-type">Feedback Type</label>
+                        <select id="feedback-type" name="feedback_type" required>
+                            <option value="" disabled selected>Select a feedback type</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="feature">Feature Request</option>
+                            <option value="improvement">Improvement Suggestion</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="feedback-field">
+                        <label for="feedback-message">Your Feedback</label>
+                        <textarea id="feedback-message" name="message" rows="4" placeholder="Please share your thoughts, suggestions, or report issues..." required></textarea>
+                    </div>
+                    
+                    <div class="feedback-field checkbox-field">
+                        <label class="checkbox-container">
+                            <input type="checkbox" id="feedback-consent" name="consent" required>
+                            <span class="checkbox-text">I consent to having this feedback stored for product improvement purposes</span>
+                        </label>
+                    </div>
+                    
+                    <div class="feedback-submit">
+                        <button type="submit" id="submit-feedback" class="feedback-submit-btn">Submit Feedback</button>
+                        <div id="feedback-status" class="feedback-status"></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Add style for the animated blur effect -->
     <style>
