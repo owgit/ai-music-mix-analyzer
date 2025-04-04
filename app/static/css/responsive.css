@@ -353,12 +353,15 @@
         align-items: flex-start;
         margin-left: 12px;
         flex: 1;
+        max-width: calc(100% - 65px);
+        overflow: hidden;
     }
     
     .app-title {
         margin-bottom: 6px;
         align-self: flex-start;
         width: 100%;
+        max-width: 100%; /* Ensure it doesn't exceed container width */
     }
     
     .app-title h1 {
@@ -370,6 +373,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         font-weight: 600;
+        max-width: 100%; /* Ensure text doesn't overflow */
     }
     
     .header-actions {
@@ -388,14 +392,17 @@
         height: 28px;
         display: flex;
         align-items: center;
+        max-width: 100%; /* Prevent overflow */
     }
     
     .coffee-button-container {
         height: 28px;
+        max-width: 100%; /* Prevent overflow */
     }
     
     .coffee-button-img {
         height: 28px;
+        max-width: 100%; /* Ensure image doesn't overflow */
     }
 }
 
@@ -404,6 +411,7 @@
         padding: 4px 8px;
         font-size: 11px;
         height: 26px;
+        flex-shrink: 1; /* Allow shrinking if needed */
     }
     
     .feedback-field {
@@ -420,18 +428,24 @@
     
     .app-title h1 {
         font-size: 0.95rem;
+        white-space: normal; /* Allow wrapping on very small screens */
+        line-height: 1.1;
     }
     
     .header-actions {
         gap: 6px;
+        width: 100%;
+        flex-wrap: wrap;
     }
     
     .coffee-button-container {
         height: 26px;
+        flex-shrink: 1; /* Allow shrinking if needed */
     }
     
     .coffee-button-img {
         height: 26px;
+        object-fit: contain; /* Maintain aspect ratio */
     }
     
     .coffee-button-text {
@@ -450,6 +464,7 @@
     
     .header-right {
         margin-left: 10px;
+        max-width: calc(100% - 50px);
     }
     
     .feedback-modal-content {
@@ -489,5 +504,6 @@
     
     .header-right {
         margin-left: 8px;
+        max-width: calc(100% - 50px);
     }
 } 

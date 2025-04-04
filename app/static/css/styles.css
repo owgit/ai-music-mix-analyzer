@@ -313,7 +313,6 @@ header.scrolled {
     gap: 12px;
     transition: all 0.3s ease;
     flex-shrink: 0;
-    margin-right: 15px;
 }
 
 .app-logo {
