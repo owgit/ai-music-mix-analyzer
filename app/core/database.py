@@ -213,7 +213,21 @@ def delete_song_by_filename(filename):
     
     cursor = connection.cursor()
     try:
-        # First, try to find by filename
+        # First, try to find by file_hash (most reliable across schemas)
+        if len(filename) > 32:  # If it looks like a hash
+            print(f"Attempting to delete song with file_hash: {filename}")
+            cursor.execute("SELECT file_path FROM songs WHERE file_hash = %s", (filename,))
+            result = cursor.fetchone()
+            
+            if result:
+                print(f"Found song with file_hash, file path: {result[0]}")
+                cursor.execute("DELETE FROM songs WHERE file_hash = %s", (filename,))
+                connection.commit()
+                deleted_rows = cursor.rowcount
+                print(f"Deleted {deleted_rows} rows from songs table using file_hash")
+                return deleted_rows > 0
+        
+        # Next, try to find by filename
         print(f"Attempting to delete song with filename: {filename}")
         cursor.execute("SELECT file_path FROM songs WHERE filename = %s", (filename,))
         result = cursor.fetchone()
@@ -261,5 +275,8 @@ def delete_song_by_filename(filename):
         connection.rollback()
         return False
     finally:
+        # Make sure all results are consumed before closing
+        if cursor.with_rows:
+            cursor.fetchall()
         cursor.close()
         connection.close() 
