@@ -154,8 +154,12 @@ def create_app(test_config=None):
         response.headers['X-XSS-Protection'] = '1; mode=block'
         response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
         
-        # Add cache control headers for CSS files
+        # Add cache control headers for CSS and JavaScript files
         if response.mimetype == 'text/css' or request.path.endswith('.css'):
+            response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+            response.headers['Pragma'] = 'no-cache'
+            response.headers['Expires'] = '0'
+        elif response.mimetype == 'application/javascript' or request.path.endswith('.js'):
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
             response.headers['Pragma'] = 'no-cache'
             response.headers['Expires'] = '0'
@@ -187,5 +191,18 @@ def create_app(test_config=None):
             return url
         
         return dict(secure_url=secure_url)
+    
+    # Add cache-busting version parameter for static files
+    @app.context_processor
+    def asset_processor():
+        def versioned_asset(filename):
+            """Add a version parameter to static file URLs to prevent caching"""
+            version = app.config.get('VERSION', datetime.datetime.now().strftime("%Y%m%d%H%M%S"))
+            if '?' in filename:
+                return f"{filename}&v={version}"
+            else:
+                return f"{filename}?v={version}"
+        
+        return dict(versioned_asset=versioned_asset)
     
     return app 

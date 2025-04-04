@@ -685,9 +685,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/modal.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/mobile.js') }}"></script>
+    <script src="{{ versioned_asset(url_for('static', filename='js/main.js')) }}"></script>
+    <script src="{{ versioned_asset(url_for('static', filename='js/modal.js')) }}"></script>
+    <script src="{{ versioned_asset(url_for('static', filename='js/mobile.js')) }}"></script>
     
     <!-- Floating Buy Me a Coffee button -->
     <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" class="floating-coffee-button-container" aria-label="Buy me a coffee">
