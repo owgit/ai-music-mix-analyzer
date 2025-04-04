@@ -48,7 +48,7 @@ header {
     top: 0;
     z-index: 1000;
     width: 100%;
-    padding: 12px 0;
+    padding: 10px 0;
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -74,7 +74,7 @@ header {
 header.scrolled {
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
-    padding: 8px 0;
+    padding: 6px 0;
 }
 
 /* Minimal Logo */
@@ -178,10 +178,11 @@ header.scrolled {
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     transition: all 0.3s ease;
     margin-left: auto;
     justify-self: flex-end;
+    flex-shrink: 0;
 }
 
 .feedback-button {
@@ -205,6 +206,7 @@ header.scrolled {
 .feedback-button svg {
     width: 16px;
     height: 16px;
+    flex-shrink: 0;
 }
 
 .feedback-button:hover {
@@ -223,11 +225,20 @@ header.scrolled {
     transition: all 0.3s ease;
     transform: scale(1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 38px;
+    flex-shrink: 0;
 }
 
 .coffee-button-container:hover {
     transform: translateY(-2px) scale(1.02);
     box-shadow: 0 6px 16px rgba(255, 153, 0, 0.2);
+}
+
+.coffee-button-img {
+    position: relative;
+    z-index: 2;
+    display: block;
+    border-radius: 10px;
 }
 
 /* Floating coffee button (appears when scrolling) */
@@ -298,14 +309,17 @@ header.scrolled {
     align-items: center;
     gap: 12px;
     transition: all 0.3s ease;
+    flex-shrink: 0;
+    margin-right: 15px;
 }
 
 .app-logo {
-    width: 72px;
-    height: 72px;
+    width: 50px;
+    height: 50px;
     border-radius: 12px;
     transition: all 0.3s ease;
     filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
+    flex-shrink: 0;
 }
 
 .app-title {
@@ -314,8 +328,8 @@ header.scrolled {
 }
 
 .app-title h1 {
-    font-size: 1.4rem;
-    font-weight: 700;
+    font-size: 1.3rem;
+    font-weight: 600;
     line-height: 1.2;
     color: #333;
     margin: 0;
@@ -347,12 +361,26 @@ header.scrolled .app-logo {
     }
     
     .app-logo {
-        width: 32px;
-        height: 32px;
+        width: 50px;
+        height: 50px;
     }
     
     .app-title h1 {
-        font-size: 1.1rem;
+        font-size: 1.15rem;
+    }
+    
+    .feedback-button {
+        padding: 6px 10px;
+        font-size: 12px;
+        height: 28px;
+    }
+    
+    .coffee-button-container {
+        height: 28px;
+    }
+    
+    .coffee-button-img {
+        height: 28px;
     }
 }
 
@@ -3209,4 +3237,101 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     pointer-events: none;
     z-index: 2;
     overflow: hidden;
+}
+
+/* Header right column container */
+.header-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+@media (min-width: 769px) {
+    .header-right {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .app-title {
+        margin-bottom: 0;
+    }
+    
+    .header-actions {
+        margin-left: auto;
+    }
+}
+
+/* Buy Me a Coffee Button - Modern Design */
+.coffee-button-container {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 36px;
+    flex-shrink: 0;
+}
+
+.coffee-button-img {
+    position: relative;
+    z-index: 2;
+    height: 36px;
+    display: block;
+    border-radius: 10px;
+}
+
+/* Feedback button */
+.feedback-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: rgba(79, 70, 229, 0.08);
+    color: #4F46E5;
+    border: 1px solid rgba(79, 70, 229, 0.15);
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+    line-height: 1.2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    height: 36px;
+}
+
+/* Heart counter on coffee button */
+.heart-count {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 5;
+}
+
+.heart-count::before {
+    content: '♥';
+    margin-right: 3px;
+    font-size: 14px;
+    color: white;
+}
+
+@media (max-width: 480px) {
+    .heart-count {
+        font-size: 11px;
+        right: 8px;
+    }
+    
+    .heart-count::before {
+        font-size: 12px;
+    }
 }

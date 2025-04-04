@@ -10,19 +10,8 @@
         font-size: 1.8rem;
     }
     
-    .app-brand {
-        flex-direction: column;
-    }
-    
-    .app-logo {
-        width: 60px;
-        height: 60px;
-        margin-right: 0;
-        margin-bottom: 1rem;
-    }
-    
     .app-title {
-        text-align: center;
+        text-align: left;
     }
     
     /* Intro Section */
@@ -326,29 +315,95 @@
 /* Responsive styles for feedback modal and button */
 @media (max-width: 768px) {
     header {
+        flex-direction: row;
+        text-align: left;
+        padding: 8px 0;
+    }
+    
+    .header-container {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 12px;
+        padding: 0 10px;
+    }
+    
+    .app-brand {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        margin-bottom: 0;
+        max-width: 100%;
+        flex-shrink: 0;
+       
+    }
+    
+    .app-logo {
+        width: 50px;
+        height: 50px;
+        margin-right: 0;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    
+    .header-right {
+        display: flex;
         flex-direction: column;
-        text-align: center;
+        align-items: flex-start;
+        margin-left: 12px;
+        flex: 1;
+    }
+    
+    .app-title {
+        margin-bottom: 6px;
+        align-self: flex-start;
+        width: 100%;
+    }
+    
+    .app-title h1 {
+        font-size: 1.15rem;
+        text-align: left;
+        line-height: 1.2;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 600;
     }
     
     .header-actions {
         margin-left: 0;
-        margin-top: 15px;
+        margin-top: 0;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        align-self: flex-start;
     }
     
-    .feedback-modal-content {
-        width: 90%;
-        max-height: 80vh;
+    .feedback-button {
+        padding: 6px 10px;
+        font-size: 12px;
+        border-radius: 8px;
+        height: 28px;
+        display: flex;
+        align-items: center;
     }
     
-    .star-rating label {
-        font-size: 24px;
+    .coffee-button-container {
+        height: 28px;
+    }
+    
+    .coffee-button-img {
+        height: 28px;
     }
 }
 
 @media (max-width: 480px) {
     .feedback-button {
-        padding: 6px 10px;
-        font-size: 14px;
+        padding: 4px 8px;
+        font-size: 11px;
+        height: 26px;
     }
     
     .feedback-field {
@@ -357,5 +412,82 @@
     
     .star-rating label {
         font-size: 22px;
+    }
+    
+    .header-container {
+        padding: 0 8px;
+    }
+    
+    .app-title h1 {
+        font-size: 0.95rem;
+    }
+    
+    .header-actions {
+        gap: 6px;
+    }
+    
+    .coffee-button-container {
+        height: 26px;
+    }
+    
+    .coffee-button-img {
+        height: 26px;
+    }
+    
+    .coffee-button-text {
+        font-size: 11px;
+        padding: 4px 6px;
+    }
+    
+    .app-logo {
+        width: 75px;
+        height: 75px;
+    }
+    header.scrolled .app-logo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .header-right {
+        margin-left: 10px;
+    }
+    
+    .feedback-modal-content {
+        width: 90%;
+        max-height: 80vh;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+    .app-logo {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .app-title h1 {
+        font-size: 0.9rem;
+    }
+    
+    .feedback-button {
+        padding: 3px 6px;
+        height: 24px;
+    }
+    
+    .feedback-button svg {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .coffee-button-img {
+        height: 24px;
+    }
+    
+    .coffee-button-container {
+        height: 24px;
+    }
+    
+    .header-right {
+        margin-left: 8px;
     }
 } 
