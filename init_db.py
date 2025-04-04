@@ -37,18 +37,60 @@ def initialize_database():
                   `year` int DEFAULT NULL,
                   `duration` float DEFAULT NULL,
                   `file_path` varchar(255) DEFAULT NULL,
+                  `file_hash` varchar(255) DEFAULT NULL,
                   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
                   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                   `analysis_data` JSON DEFAULT NULL,
                   `user_id` int DEFAULT NULL,
                   PRIMARY KEY (`id`),
-                  KEY `title_artist_idx` (`title`, `artist`)
+                  KEY `title_artist_idx` (`title`, `artist`),
+                  KEY `file_hash_idx` (`file_hash`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
                 """
                 cursor.execute(create_songs_table)
                 print("Songs table created successfully!")
             else:
                 print("Songs table already exists")
+                
+                # Check if file_hash column exists and add it if missing
+                cursor.execute("""
+                SELECT COUNT(*) 
+                FROM INFORMATION_SCHEMA.COLUMNS 
+                WHERE TABLE_SCHEMA = %s 
+                AND TABLE_NAME = 'songs' 
+                AND COLUMN_NAME = 'file_hash'
+                """, (db_config['database'],))
+                
+                column_exists = cursor.fetchone()[0]
+                
+                if not column_exists:
+                    print("Adding file_hash column...")
+                    cursor.execute("""
+                    ALTER TABLE `songs` 
+                    ADD COLUMN `file_hash` varchar(255) DEFAULT NULL
+                    """)
+                    
+                    # Check if index exists and add if missing
+                    cursor.execute("""
+                    SELECT COUNT(*) 
+                    FROM INFORMATION_SCHEMA.STATISTICS 
+                    WHERE TABLE_SCHEMA = %s 
+                    AND TABLE_NAME = 'songs' 
+                    AND INDEX_NAME = 'file_hash_idx'
+                    """, (db_config['database'],))
+                    
+                    index_exists = cursor.fetchone()[0]
+                    
+                    if not index_exists:
+                        print("Adding file_hash index...")
+                        cursor.execute("""
+                        ALTER TABLE `songs` 
+                        ADD INDEX `file_hash_idx` (`file_hash`)
+                        """)
+                    
+                    print("file_hash column added successfully!")
+                else:
+                    print("file_hash column already exists")
                 
             cursor.close()
             connection.close()
