@@ -263,11 +263,13 @@ function startActivityCounterUpdater() {
     setInterval(() => {
         // Only update the animation if we're still processing
         if (counter.textContent.includes('Processing')) {
-            const parts = counter.textContent.split(':');
-            const baseText = parts[0] + ':';
+            // Handle potential missing colon with a safe default
+            const text = counter.textContent || '';
+            const parts = text.includes(':') ? text.split(':') : ['Processing', ''];
             
-            // Check if the second part exists before trying to split it
-            const stepText = parts.length > 1 && parts[1] ? parts[1].trim() : '';
+            // Safely get the base text and step text
+            const baseText = parts[0] + ':';
+            const stepText = parts.length > 1 ? parts[1].trim() : '';
             
             dots = (dots + 1) % 4;
             const ellipsis = '.'.repeat(dots);
