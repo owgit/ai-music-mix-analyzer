@@ -3365,3 +3365,124 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
         font-size: 0.95rem;
     }
 }
+
+/* Ad Banners */
+.ad-wrapper {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 160px;
+    z-index: 100;
+    overflow: visible;
+}
+
+.ad-wrapper.left {
+    left: -180px;
+}
+
+.ad-wrapper.right {
+    right: -180px;
+}
+
+.ad-container {
+    position: sticky;
+    top: 80px; /* Position from top - below header */
+    height: 600px;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 10px;
+    text-align: center;
+    display: none; /* Initially hidden */
+}
+
+.ad-container.visible {
+    display: flex;
+}
+
+/* Ensure the upload container has positioning context for ads */
+.upload-container {
+    position: relative;
+    margin: 40px auto;
+    max-width: 800px;
+    transition: padding 0.3s ease; /* Smooth transition for padding changes */
+    overflow: visible; /* Allow the ads to be visible outside container */
+}
+
+.upload-container.with-ads {
+    padding-left: 160px;
+    padding-right: 160px;
+}
+
+.ad-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-color);
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    border-radius: 4px;
+}
+
+.ad-placeholder-text {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.ad-placeholder svg {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+    opacity: 0.6;
+}
+
+/* Style adjustments for the upload container with ads */
+@media (max-width: 1400px) {
+    .ad-wrapper {
+        width: 120px;
+    }
+    
+    .ad-container {
+        height: 450px;
+    }
+    
+    .upload-container.with-ads {
+        padding-left: 120px;
+        padding-right: 120px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .ad-wrapper.left {
+        left: -160px;
+    }
+    
+    .ad-wrapper.right {
+        right: -160px;
+    }
+    
+    .upload-container.with-ads {
+        padding-left: 100px;
+        padding-right: 100px;
+    }
+}
+
+@media (max-width: 992px) {
+    .ad-wrapper, .ad-container {
+        display: none !important; /* Always hide on smaller screens */
+    }
+    
+    .upload-container.with-ads {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}

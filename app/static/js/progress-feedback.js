@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize the detailed progress feedback system
     initDetailedProgressFeedback();
+    
+    // Initialize ad banner functionality
+    initAdBanners();
 });
 
 /**
@@ -323,11 +326,100 @@ function updateSubTaskProgress(stepId, subTaskId, active, message) {
 }
 
 /**
+ * Initialize the ad banner functionality
+ */
+function initAdBanners() {
+    // Get the ad banner elements
+    const leftAdBanner = document.getElementById('left-ad-banner');
+    const rightAdBanner = document.getElementById('right-ad-banner');
+    
+    // Set up event listeners for upload and analysis process
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                // Show ad banners when file is selected
+                showAdBanners();
+            }
+        });
+    }
+    
+    // Add drag and drop event listeners
+    const uploadArea = document.getElementById('upload-area');
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                // Show ad banners when file is dropped
+                showAdBanners();
+            }
+        });
+    }
+    
+    // Add event listener for when analysis is complete
+    document.addEventListener('analysisComplete', function() {
+        // Hide ad banners when analysis is complete
+        hideAdBanners();
+    });
+}
+
+/**
+ * Show the ad banners
+ */
+function showAdBanners() {
+    const leftAdBanner = document.getElementById('left-ad-banner');
+    const rightAdBanner = document.getElementById('right-ad-banner');
+    const uploadContainer = document.getElementById('upload-container');
+    
+    if (leftAdBanner) leftAdBanner.classList.add('visible');
+    if (rightAdBanner) rightAdBanner.classList.add('visible');
+    
+    // Add class to upload container when ads are showing to create space
+    if (uploadContainer) {
+        uploadContainer.classList.add('with-ads');
+    }
+}
+
+/**
+ * Hide the ad banners
+ */
+function hideAdBanners() {
+    const leftAdBanner = document.getElementById('left-ad-banner');
+    const rightAdBanner = document.getElementById('right-ad-banner');
+    const uploadContainer = document.getElementById('upload-container');
+    
+    if (leftAdBanner) leftAdBanner.classList.remove('visible');
+    if (rightAdBanner) rightAdBanner.classList.remove('visible');
+    
+    // Remove class from upload container when ads are hidden
+    if (uploadContainer) {
+        uploadContainer.classList.remove('with-ads');
+    }
+}
+
+/**
  * Process stage changes from the main application and update detailed progress
  * @param {string} stage - The current processing stage
  * @param {number} percentage - The overall percentage complete
  */
 function handleProgressStageChange(stage, percentage) {
+    // Show ad banners during analysis
+    if (stage === 'Uploading' || stage === 'Analyzing' || stage === 'Visualize') {
+        showAdBanners();
+    } else if (stage === 'Complete') {
+        // Hide ad banners when complete
+        hideAdBanners();
+        
+        // Dispatch the analysis complete event
+        document.dispatchEvent(new CustomEvent('analysisComplete'));
+    }
+    
     // Map the main stages to our detailed steps
     switch(stage.toLowerCase()) {
         case 'uploading':

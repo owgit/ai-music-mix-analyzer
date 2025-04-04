@@ -170,7 +170,7 @@ Parameters:
   - File extension validation
   - MIME type validation
   - Secure filenames
-  - Maximum file size limit (50MB)
+  - Maximum file size limit (100MB)
 - Input validation for all endpoints
 - Directory traversal protection
 - X-Content-Type-Options, X-Frame-Options, X-XSS-Protection headers

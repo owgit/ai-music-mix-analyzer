@@ -53,7 +53,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
         UPLOAD_FOLDER=os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads'),
-        MAX_CONTENT_LENGTH=50 * 1024 * 1024,  # 50MB max upload
+        MAX_CONTENT_LENGTH=100 * 1024 * 1024,  # 100MB max upload
         VERSION=datetime.now().strftime("%Y%m%d%H%M%S"),  # Dynamic version based on timestamp
         LAST_UPDATED=datetime.now().strftime("%Y-%m-%d"),  # Current date for Schema.org dateModified
         FORCE_HTTPS=os.environ.get('FORCE_HTTPS', 'false').lower() == 'true'
