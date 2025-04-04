@@ -23,6 +23,9 @@ A powerful Flask-based web application for audio mixing analysis, mastering assi
 - **Transient Analysis**: Evaluate percussion energy and attack characteristics
 - **3D Spatial Analysis**: Visualize and analyze height, depth, and width perception in your mixes
 - **Security**: Enterprise-grade file handling with robust security measures
+- **About Page**: Comprehensive information about the tool, its features, and how to use it
+- **Guides**: Detailed user guides for making the most of the analysis features
+- **Music Theory Integration**: Analysis based on music theory principles from the music_theory_data module
 
 ## 🚀 Getting Started
 
@@ -97,11 +100,30 @@ chmod +x stop.sh
 ./stop.sh
 ```
 
+### Updating the Application
+
+To update the application to the latest version, use the provided update script:
+
+```bash
+chmod +x update.sh
+./update.sh
+```
+
+The script will:
+- Pull the latest changes from the Git repository
+- Rebuild Docker containers
+- Restart the application with the latest code
+
 ### Running the Application
 
 #### Standard Run
 ```bash
 python wsgi.py
+```
+
+Or use the management script:
+```bash
+python manage.py run
 ```
 
 The application will start on `http://127.0.0.1:5001`.
@@ -155,6 +177,7 @@ Parameters:
 - Strict-Transport-Security in production
 - Docker deployment with non-root user and secure permissions
 - API key authentication for API endpoints
+- Health check monitoring for Docker containers
 
 ## 💡 Development
 
@@ -168,12 +191,20 @@ music/
 │   ├── api/              # API endpoints
 │   ├── core/             # Core audio processing logic
 │   │   ├── audio_analyzer.py  # Audio analysis engine
-│   │   └── openai_analyzer.py # AI integration
+│   │   ├── openai_analyzer.py # AI integration
+│   │   ├── utils.py      # Utility functions
+│   │   └── music_theory_data/ # Music theory reference data
+│   ├── data/             # Application data storage
 │   ├── static/           # Static files
 │   │   ├── css/          # CSS files
 │   │   ├── js/           # JavaScript files
 │   │   └── img/          # Images and icons
-│   └── templates/        # HTML templates
+│   ├── templates/        # HTML templates
+│   │   ├── guides/       # User guides
+│   │   ├── index.html    # Main application page
+│   │   └── about.html    # About page
+│   ├── utils/            # Utility functions
+│   └── healthcheck.py    # Docker health check endpoint
 ├── config/               # Configuration files
 │   ├── .env.example      # Example environment variables
 │   └── docker/           # Docker configuration files
@@ -188,8 +219,13 @@ music/
 ├── .env.example          # Example environment variables
 ├── requirements.txt      # Python dependencies
 ├── docker-compose.yml    # Docker Compose configuration
+├── docker-compose.override.yml.example # Example Docker override
 ├── Dockerfile            # Docker container definition
 ├── wsgi.py               # WSGI entry point
+├── manage.py             # Management script
+├── run.sh                # Script to start the application
+├── stop.sh               # Script to stop the application
+├── update.sh             # Script to update the application
 └── LICENSE               # License information
 ```
 
@@ -205,6 +241,7 @@ The Docker setup includes:
 - Non-root user for security (UID:GID 1007:1008)
 - Health monitoring with regular checks
 - Log rotation with 20MB max file size and 5 file limit
+- Automatic environment detection (dev, test, prod)
 
 ### Security Audit
 
@@ -214,7 +251,13 @@ Run the security check script to identify potential security issues:
 python scripts/security_check.py
 ```
 
-This script checks for common security misconfigurations and vulnerabilities.
+Or use the management script:
+
+```bash
+python manage.py check --security
+```
+
+These scripts check for common security misconfigurations and vulnerabilities.
 
 ## 📄 Environment Configuration
 
@@ -246,14 +289,19 @@ The project uses a structured approach to environment variables:
 | `OPENAI_MODEL` | OpenAI model to use | "gpt-4o-mini" |
 | `OPENROUTER_API_KEY` | Your OpenRouter API key | None (required if using OpenRouter) |
 | `OPENROUTER_MODEL` | OpenRouter model to use | "anthropic/claude-3-haiku-20240307" |
+| `SITE_URL` | Site URL for OpenRouter tracking | None (optional) |
+| `SITE_TITLE` | Site title for OpenRouter tracking | "Mix Analyzer" |
 | **Security** |  |  |
 | `API_KEY` | Internal API authentication key | Generated |
 | `SECRET_KEY` | Flask secret key | Generated |
-| `FORCE_HTTPS` | Force HTTPS redirects | "false" (true in production) |
+| `FLASK_APP` | Flask application entry point | "app.py" |
+| `FLASK_ENV` | Flask environment | "development" |
 | **Analytics** |  |  |
 | `ENABLE_ANALYTICS` | Whether to enable analytics | "false" |
 | `MATOMO_URL` | Analytics platform URL | None |
 | `MATOMO_SITE_ID` | Analytics site ID | None |
+| **Other** |  |  |
+| `PYTHONUNBUFFERED` | Forces Python to run unbuffered | "1" |
 
 ### Available AI Models
 
@@ -270,7 +318,25 @@ The project uses a structured approach to environment variables:
 - `anthropic/claude-3-haiku-20240307` (Fast, cost-effective)
 - `google/gemini-1.5-pro-latest` (Google's advanced model)
 - `meta-llama/llama-3-70b-instruct` (Meta's powerful open model)
+- `mistralai/mistral-large-latest` (Mistral's flagship model)
+- `mistralai/mixtral-8x7b-instruct` (Strong open-source mixture of experts model)
 - Many other models accessible through OpenRouter
+
+### OpenRouter Variants
+OpenRouter supports various model variants that can be added as suffixes:
+
+- Static variants (model-specific):
+  - `:free` - Free tier with low rate limits
+  - `:beta` - Unmoderated by OpenRouter
+  - `:extended` - Longer context length
+  - `:thinking` - Reasoning enabled by default
+
+- Dynamic variants (work with all models):
+  - `:online` - Runs web search queries automatically
+  - `:nitro` - Prioritizes throughput over cost
+  - `:floor` - Prioritizes cost-effectiveness over speed
+
+Example: `anthropic/claude-3-haiku-20240307:nitro`
 
 ### Sanitizing Environment Files
 
@@ -278,6 +344,12 @@ To prevent accidentally committing API keys and secrets:
 
 ```bash
 python scripts/sanitize_env.py
+```
+
+Or use the management script:
+
+```bash
+python manage.py security --sanitize
 ```
 
 This script removes sensitive information from all environment files before committing.
@@ -304,6 +376,14 @@ The project includes a unified management script (`manage.py`) that provides a s
 # Handle security tasks
 ./manage.py security --sanitize [--dry-run] | --check
 ```
+
+### Helper Scripts
+
+Additional scripts are provided for convenience:
+
+- `run.sh`: Start the application in Docker
+- `stop.sh`: Stop the Docker containers
+- `update.sh`: Update the application to the latest version
 
 ## 🔍 How It Works
 
@@ -381,7 +461,7 @@ When an AI API key is provided, the application can:
 
 The AI analysis is performed using either:
 - OpenAI's GPT models (default)
-- Alternative providers through OpenRouter (Claude, Gemini, Llama, etc.)
+- Alternative providers through OpenRouter (Claude, Gemini, Llama, Mistral, etc.)
 
 ## 📊 Visualizations
 
@@ -399,6 +479,27 @@ All visualizations are interactive:
 - Drag to pan around when zoomed in
 - Rotate and adjust the 3D visualization for different perspectives
 - Press the Reset button to return to the original view
+
+## 🧪 Testing
+
+The project includes comprehensive testing using pytest:
+
+```bash
+# Run all tests
+pytest
+
+# Run tests with coverage report
+pytest --cov=app
+
+# Run specific test files
+pytest tests/test_audio_analyzer.py
+```
+
+The test suite covers:
+- Audio analysis functionality
+- API endpoints
+- Security features
+- UI functionality (using Selenium)
 
 ## 🤝 Contributing
 
