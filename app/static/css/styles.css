@@ -3415,11 +3415,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     overflow: visible; /* Allow the ads to be visible outside container */
 }
 
-.upload-container.with-ads {
-    padding-left: 160px;
-    padding-right: 160px;
-}
-
 .ad-placeholder {
     width: 100%;
     height: 100%;
@@ -3455,10 +3450,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
         height: 450px;
     }
     
-    .upload-container.with-ads {
-        padding-left: 120px;
-        padding-right: 120px;
-    }
+
 }
 
 @media (max-width: 1200px) {
@@ -3470,10 +3462,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
         right: -160px;
     }
     
-    .upload-container.with-ads {
-        padding-left: 100px;
-        padding-right: 100px;
-    }
+  
 }
 
 @media (max-width: 992px) {
@@ -3484,5 +3473,123 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     .upload-container.with-ads {
         padding-left: 0;
         padding-right: 0;
+    }
+}
+
+/* Mobile Ad Banner */
+.mobile-ad-banner {
+    display: none; /* Hidden by default */
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    margin: 15px 0;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.mobile-ad-banner.visible {
+    display: block;
+}
+
+.mobile-ad-placeholder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.mobile-ad-placeholder svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+.mobile-ad-text {
+    flex: 1;
+}
+
+.mobile-ad-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--primary-color);
+    margin-bottom: 4px;
+}
+
+.mobile-ad-text p {
+    font-size: 14px;
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+/* Show mobile ad only on smaller screens */
+@media (min-width: 993px) {
+    .mobile-ad-banner {
+        display: none !important;
+    }
+}
+
+/* Make sure mobile ad is visible on mobile even when desktop ads are hidden */
+@media (max-width: 992px) {
+    .mobile-ad-banner.visible {
+        display: block;
+        animation: fade-in 0.3s ease;
+    }
+    
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+}
+
+/* Processing indicator styling */
+.processing-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    background-color: var(--light-color);
+    border-radius: 50px;
+    padding: 8px 16px;
+    max-width: 90%;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.processing-indicator-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    opacity: 0.8;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+.processing-indicator-text {
+    font-size: 16px;
+    color: var(--text-primary);
+    font-weight: 500;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 80%;
+}
+
+@keyframes pulse-dot {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.5; }
+}
+
+@media (max-width: 768px) {
+    .processing-indicator {
+        max-width: 95%;
+        padding: 6px 12px;
+    }
+    
+    .processing-indicator-text {
+        font-size: 14px;
     }
 }

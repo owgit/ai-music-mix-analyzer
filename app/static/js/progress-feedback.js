@@ -4,6 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize ad banner functionality
     initAdBanners();
+    
+    // Initialize processing indicator
+    initProcessingIndicator();
 });
 
 /**
@@ -244,7 +247,7 @@ function updateActivityCounter(status, stepId) {
     
     if (status === 'in-progress') {
         const stepName = stepId.replace(/-/g, ' ').replace(/^\w/, c => c.toUpperCase());
-        counter.textContent = `Processing: ${stepName}`;
+        
     } else if (status === 'completed') {
         const completedSteps = document.querySelectorAll('.progress-detail-item.completed').length;
         const totalSteps = document.querySelectorAll('.progress-detail-item').length;
@@ -375,10 +378,12 @@ function initAdBanners() {
 function showAdBanners() {
     const leftAdBanner = document.getElementById('left-ad-banner');
     const rightAdBanner = document.getElementById('right-ad-banner');
+    const mobileAdBanner = document.getElementById('mobile-ad-banner');
     const uploadContainer = document.getElementById('upload-container');
     
     if (leftAdBanner) leftAdBanner.classList.add('visible');
     if (rightAdBanner) rightAdBanner.classList.add('visible');
+    if (mobileAdBanner) mobileAdBanner.classList.add('visible');
     
     // Add class to upload container when ads are showing to create space
     if (uploadContainer) {
@@ -392,10 +397,12 @@ function showAdBanners() {
 function hideAdBanners() {
     const leftAdBanner = document.getElementById('left-ad-banner');
     const rightAdBanner = document.getElementById('right-ad-banner');
+    const mobileAdBanner = document.getElementById('mobile-ad-banner');
     const uploadContainer = document.getElementById('upload-container');
     
     if (leftAdBanner) leftAdBanner.classList.remove('visible');
     if (rightAdBanner) rightAdBanner.classList.remove('visible');
+    if (mobileAdBanner) mobileAdBanner.classList.remove('visible');
     
     // Remove class from upload container when ads are hidden
     if (uploadContainer) {
@@ -404,22 +411,191 @@ function hideAdBanners() {
 }
 
 /**
- * Process stage changes from the main application and update detailed progress
+ * Initialize the processing indicator functionality
+ */
+function initProcessingIndicator() {
+    const processingIndicator = document.getElementById('processing-indicator');
+    const processingStatus = document.getElementById('processing-status');
+    
+    if (!processingIndicator || !processingStatus) return;
+    
+    // Hide initially
+    processingIndicator.style.display = 'none';
+    
+    // Set up event listener for the file input
+    const fileInput = document.getElementById('file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                showProcessingIndicator('Preparing your audio file...');
+                
+                // Set a timeout to start showing more informative messages
+                setTimeout(() => {
+                    updateProcessingStatus('Reading file metadata...');
+                }, 1500);
+                
+                setTimeout(() => {
+                    updateProcessingStatus('Loading audio data...');
+                }, 3000);
+                
+                setTimeout(() => {
+                    updateProcessingStatus('Analyzing frequency content...');
+                }, 5000);
+            }
+        });
+    }
+    
+    // Add drag and drop event listeners
+    const uploadArea = document.getElementById('upload-area');
+    if (uploadArea) {
+        uploadArea.addEventListener('drop', function(e) {
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                showProcessingIndicator('Preparing your audio file...');
+            }
+        });
+    }
+}
+
+/**
+ * Show the processing indicator with a specific message
+ * @param {string} message - The message to display
+ */
+function showProcessingIndicator(message) {
+    const processingIndicator = document.getElementById('processing-indicator');
+    const processingStatus = document.getElementById('processing-status');
+    const progressContainer = document.getElementById('progress-container');
+    const uploadArea = document.getElementById('upload-area');
+    
+    if (processingIndicator && processingStatus) {
+        // Hide upload area, show processing indicator
+        if (uploadArea) uploadArea.style.display = 'none';
+        processingIndicator.style.display = 'flex';
+        processingStatus.textContent = message || 'Processing...';
+        
+        // Show ad banners
+        showAdBanners();
+        
+        // Start animation for text
+        startProcessingAnimation();
+    }
+}
+
+/**
+ * Hide the processing indicator
+ */
+function hideProcessingIndicator() {
+    const processingIndicator = document.getElementById('processing-indicator');
+    if (processingIndicator) {
+        processingIndicator.style.display = 'none';
+    }
+}
+
+/**
+ * Update the processing status message
+ * @param {string} message - The new status message
+ */
+function updateProcessingStatus(message) {
+    const processingStatus = document.getElementById('processing-status');
+    if (processingStatus) {
+        processingStatus.textContent = message;
+    }
+}
+
+/**
+ * Start the text animation for the processing indicator
+ */
+function startProcessingAnimation() {
+    const processingStatus = document.getElementById('processing-status');
+    if (!processingStatus) return;
+    
+    let baseText = processingStatus.textContent || 'Processing';
+    let dots = 0;
+    
+    // Clear any existing interval
+    if (window.processingAnimationInterval) {
+        clearInterval(window.processingAnimationInterval);
+    }
+    
+    // Set new animation interval
+    window.processingAnimationInterval = setInterval(() => {
+        dots = (dots + 1) % 4;
+        const ellipsis = '.'.repeat(dots);
+        
+        // Extract the base text without ellipsis
+        if (baseText.endsWith('...')) {
+            baseText = baseText.substring(0, baseText.length - 3);
+        } else if (baseText.endsWith('..')) {
+            baseText = baseText.substring(0, baseText.length - 2);
+        } else if (baseText.endsWith('.')) {
+            baseText = baseText.substring(0, baseText.length - 1);
+        }
+        
+        processingStatus.textContent = baseText + ellipsis;
+    }, 500);
+}
+
+/**
+ * Stop the text animation for the processing indicator
+ */
+function stopProcessingAnimation() {
+    if (window.processingAnimationInterval) {
+        clearInterval(window.processingAnimationInterval);
+        window.processingAnimationInterval = null;
+    }
+}
+
+/**
+ * Process stage changes from the main application and update UI
  * @param {string} stage - The current processing stage
  * @param {number} percentage - The overall percentage complete
  */
 function handleProgressStageChange(stage, percentage) {
-    // Show ad banners during analysis
-    if (stage === 'Uploading' || stage === 'Analyzing' || stage === 'Visualize') {
-        showAdBanners();
+    // Update the processing indicator based on stage
+    if (stage === 'Uploading') {
+        updateProcessingStatus('Uploading your audio file...');
+    } else if (stage === 'Analyzing') {
+        if (percentage < 25) {
+            updateProcessingStatus('Analyzing frequency content...');
+        } else if (percentage < 50) {
+            updateProcessingStatus('Analyzing dynamics and stereo field...');
+        } else if (percentage < 75) {
+            updateProcessingStatus('Analyzing spatial characteristics...');
+        } else {
+            updateProcessingStatus('Generating visualizations...');
+        }
+    } else if (stage === 'Visualizing') {
+        updateProcessingStatus('Creating audio visualizations...');
+    } else if (stage === 'AI Analysis') {
+        updateProcessingStatus('Running AI analysis on your audio...');
     } else if (stage === 'Complete') {
-        // Hide ad banners when complete
-        hideAdBanners();
-        
-        // Dispatch the analysis complete event
-        document.dispatchEvent(new CustomEvent('analysisComplete'));
+        // Hide processing indicator when analysis is complete
+        hideProcessingIndicator();
+        stopProcessingAnimation();
     }
     
+    // Show the progress container once we start actual analysis
+    const progressContainer = document.getElementById('progress-container');
+    if (progressContainer && stage !== 'Uploading' && stage !== 'Preparing') {
+        progressContainer.style.display = 'block';
+        // Hide the processing indicator when the detailed progress is shown
+        hideProcessingIndicator();
+        stopProcessingAnimation();
+    }
+    
+    // Handle detailed progress updates
+    handleDetailedProgressStageChange(stage, percentage);
+    
+    // Show/hide ad banners
+    if (stage === 'Uploading' || stage === 'Analyzing' || stage === 'Visualizing') {
+        showAdBanners();
+    } else if (stage === 'Complete') {
+        hideAdBanners();
+        document.dispatchEvent(new CustomEvent('analysisComplete'));
+    }
+}
+
+// Previous function renamed to handle detailed progress updates separately
+function handleDetailedProgressStageChange(stage, percentage) {
     // Map the main stages to our detailed steps
     switch(stage.toLowerCase()) {
         case 'uploading':
@@ -554,5 +730,8 @@ window.detailedProgress = {
     handleProgressStageChange,
     updateDetailedProgress,
     updateSubTaskProgress,
-    addToProgressLog
+    addToProgressLog,
+    showProcessingIndicator,
+    hideProcessingIndicator,
+    updateProcessingStatus
 }; 

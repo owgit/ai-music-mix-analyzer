@@ -395,17 +395,38 @@
                     </div>
                     
                     <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Drag and drop audio file here or click to select file">
-                        <div class="upload-icon" aria-hidden="true">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64">
-                                <path d="M12 4V16M12 4L8 8M12 4L16 8M6 20H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                        <div class="upload-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
                             </svg>
                         </div>
-                        <p class="upload-title">Drag and drop your audio file here for musicians, producers and sound engineers</p>
-                        <p class="upload-subtitle">MP3, WAV, FLAC, AIFF, M4A formats supported for free professional audio analysis with artificial intelligence</p>
-                        <p>or</p>
-                        <label for="file-input" class="upload-button">Choose File</label>
-                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm" data-track-upload="true" hidden aria-label="Select audio file for analysis">
+                        <h2 class="upload-title">Drag & Drop your audio file</h2>
+                        <p class="upload-subtitle">or click to browse your files</p>
+                        
+                        <div class="track-type-selector">
+                            <label class="checkbox-container" for="is-instrumental">
+                                <input type="checkbox" id="is-instrumental" checked>
+                                <span class="checkbox-text">This is an instrumental track</span>
+                            </label>
+                            <div class="info-tooltip">
+                                <div class="info-icon">?</div>
+                                <div class="tooltip-content">
+                                    Check this if your track has no vocals. This helps our analysis algorithms optimize for instrumental content.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <input type="file" id="file-input" accept="audio/*" aria-label="Upload audio file" class="visually-hidden">
+                        <button class="upload-button" id="upload-button">Select File</button>
                     </div>
+                    
+                    <div class="processing-indicator" id="processing-indicator" style="display: none;">
+                        <div class="processing-indicator-dot"></div>
+                        <div class="processing-indicator-text" id="processing-status">Loading audio...</div>
+                    </div>
+                    
                     <div class="progress-container" id="progress-container" style="display: none;">
                         <div class="progress-header">
                             <div class="progress-status">
@@ -421,6 +442,22 @@
                             <div class="progress-bar" id="progress-bar"></div>
                         </div>
                         <p id="progress-text">Preparing your audio file...</p>
+                        
+                        <!-- Mobile Ad Banner - Only visible on mobile devices -->
+                        <div class="mobile-ad-banner" id="mobile-ad-banner">
+                            <div class="mobile-ad-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <div class="mobile-ad-text">
+                                    <div class="mobile-ad-title">Advertisement Space</div>
+                                    <p>Your ad could be here!</p>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <div class="progress-steps">
                             <div class="progress-step active" id="step-upload">
                                 <div class="step-indicator"></div>
