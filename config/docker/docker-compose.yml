@@ -77,8 +77,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=music_analyzer
-      - MYSQL_USER=music_user
-      - MYSQL_PASSWORD=music_password
+      - MYSQL_USER=mixanalytic_db
+      - MYSQL_PASSWORD=FH[@q#Z4YzQq1@8#
     ports:
       - "127.0.0.1:3301:3306"
     volumes:
