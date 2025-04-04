@@ -348,19 +348,30 @@
                 </div>
             </div>
         </header>
+        <div class="header-spacing"></div>
         <main>
             <section class="upload-section" aria-labelledby="upload-section-title">
                 <h2 id="upload-section-title" class="visually-hidden">Audio Upload</h2>
-                <div class="track-type-selector">
-                    <label class="checkbox-container" for="instrumental-checkbox">
-                        <input type="checkbox" id="instrumental-checkbox">
-                        <span class="checkbox-text">This is an instrumental track (no vocals)</span>
-                    </label>
-                    <div class="info-tooltip">
-                        <span class="info-icon" aria-hidden="true">i</span>
-                        <div class="tooltip-content" role="tooltip">
-                            Select this if your track has no vocals. It helps our audio analysis provide more relevant frequency analysis and EQ recommendations for musicians, producers and sound engineers for free.
+                <div class="instrumental-selection-container">
+                    <div class="track-type-selector">
+                        <label class="checkbox-container" for="instrumental-checkbox">
+                            <input type="checkbox" id="instrumental-checkbox">
+                            <span class="checkbox-text">This is an instrumental track (no vocals)</span>
+                        </label>
+                        <div class="info-tooltip">
+                            <span class="info-icon" aria-hidden="true">i</span>
+                            <div class="tooltip-content" role="tooltip">
+                                Select this if your track has no vocals. It helps our audio analysis provide more relevant frequency analysis and EQ recommendations for musicians, producers and sound engineers for free.
+                            </div>
                         </div>
+                    </div>
+                    <div class="instrument-hint-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        <span>Important setting</span>
                     </div>
                 </div>
                 
@@ -405,21 +416,18 @@
                         <h2 class="upload-title">Drag & Drop your audio file</h2>
                         <p class="upload-subtitle">or click to browse your files</p>
                         
-                        <div class="track-type-selector">
-                            <label class="checkbox-container" for="is-instrumental">
-                                <input type="checkbox" id="is-instrumental" checked>
-                                <span class="checkbox-text">This is an instrumental track</span>
-                            </label>
-                            <div class="info-tooltip">
-                                <div class="info-icon">?</div>
-                                <div class="tooltip-content">
-                                    Check this if your track has no vocals. This helps our analysis algorithms optimize for instrumental content.
-                                </div>
-                            </div>
-                        </div>
-                        
                         <input type="file" id="file-input" accept="audio/*" aria-label="Upload audio file" class="visually-hidden">
-                        <button class="upload-button" id="upload-button">Select File</button>
+                        <div class="button-wrapper">
+                            <button class="upload-button" id="upload-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px;">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                Select Audio File
+                            </button>
+                            <p class="upload-help-text">MP3, WAV, FLAC, AIFF supported up to 100MB</p>
+                        </div>
                     </div>
                     
                     <div class="processing-indicator" id="processing-indicator" style="display: none;">

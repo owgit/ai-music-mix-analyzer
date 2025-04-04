@@ -125,8 +125,8 @@ def upload_file():
         file.save(file_path)
         
         try:
-            # Analyze the mix
-            results = analyze_mix(file_path)
+            # Analyze the mix with instrumental flag
+            results = analyze_mix(file_path, is_instrumental)
             
             # Generate AI insights if possible
             try:

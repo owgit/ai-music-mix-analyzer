@@ -42,12 +42,13 @@ def convert_numpy_types(obj):
     else:
         return obj
 
-def analyze_mix(file_path):
+def analyze_mix(file_path, is_instrumental=None):
     """
     Analyze an audio file and return metrics about the mix quality.
     
     Args:
         file_path: Path to the audio file
+        is_instrumental: Boolean indicating if the track is instrumental (no vocals)
         
     Returns:
         Dictionary containing analysis results
@@ -58,6 +59,7 @@ def analyze_mix(file_path):
     try:
         print(f"\n{'='*50}")
         print(f"STARTING ANALYSIS: {file_path}")
+        print(f"Is instrumental: {is_instrumental}")
         print(f"{'='*50}\n")
         
         # Step 1: Load audio file
@@ -176,7 +178,7 @@ def analyze_mix(file_path):
         print("Step 2: Analyzing frequency balance...")
         start_time = time.time()
         try:
-            results["frequency_balance"] = analyze_frequency_balance(y, sr)
+            results["frequency_balance"] = analyze_frequency_balance(y, sr, is_instrumental)
             print(f"Frequency balance analysis completed in {time.time() - start_time:.2f} seconds")
             print(f"Balance score: {results['frequency_balance']['balance_score']:.2f}")
             for band, energy in results['frequency_balance']['band_energy'].items():
@@ -220,7 +222,7 @@ def analyze_mix(file_path):
         print("Step 5: Analyzing clarity...")
         start_time = time.time()
         try:
-            results["clarity"] = analyze_clarity(y, sr)
+            results["clarity"] = analyze_clarity(y, sr, is_instrumental)
             print(f"Clarity analysis completed in {time.time() - start_time:.2f} seconds")
             print(f"Clarity score: {results['clarity']['clarity_score']:.2f}")
             print(f"Spectral contrast: {results['clarity']['spectral_contrast']:.4f}")
@@ -375,12 +377,23 @@ def analyze_mix(file_path):
         
         return error_results
 
-def analyze_frequency_balance(y, sr):
-    """Analyze the frequency balance of the mix"""
+def analyze_frequency_balance(y, sr, is_instrumental=None):
+    """
+    Analyze the frequency balance of the mix
+    
+    Args:
+        y: Audio time series
+        sr: Sample rate
+        is_instrumental: Boolean indicating if the track is instrumental (no vocals)
+    
+    Returns:
+        Dictionary containing frequency balance analysis results
+    """
     start_time = time.time()
     try:
         print(f"\n{'-'*30}")
         print("FREQUENCY BALANCE ANALYSIS:")
+        print(f"Is instrumental: {is_instrumental}")
         
         # Convert to mono for frequency analysis
         print("Converting to mono for frequency analysis...")
@@ -447,15 +460,32 @@ def analyze_frequency_balance(y, sr):
         
         # Calculate balance score based on ideal curve and deviation
         print("Calculating balance score against ideal curve...")
-        ideal_curve = {
-            "sub_bass": 85,
-            "bass": 90,
-            "low_mids": 85,
-            "mids": 80,
-            "high_mids": 75,
-            "highs": 70,
-            "air": 65
-        }
+        
+        # Use different ideal curves based on whether the track is instrumental or has vocals
+        if is_instrumental:
+            # Ideal curve for instrumental tracks - more balanced between low and high frequencies
+            ideal_curve = {
+                "sub_bass": 80,
+                "bass": 85,
+                "low_mids": 80,
+                "mids": 75,
+                "high_mids": 70,
+                "highs": 70,
+                "air": 65
+            }
+            print("Using ideal curve for instrumental tracks")
+        else:
+            # Ideal curve for tracks with vocals - more emphasis on mid frequencies
+            ideal_curve = {
+                "sub_bass": 75,
+                "bass": 80,
+                "low_mids": 85,
+                "mids": 90,  # Higher emphasis on mids for vocals
+                "high_mids": 85,
+                "highs": 75,
+                "air": 65
+            }
+            print("Using ideal curve for tracks with vocals")
         
         # Calculate deviation from ideal curve
         deviations = [abs(normalized_energy[band] - ideal_curve[band]) for band in bands.keys()]
@@ -469,7 +499,7 @@ def analyze_frequency_balance(y, sr):
         balance_score = float(max(0, min(100, 100 - avg_deviation)))
         print(f"Final balance score: {balance_score:.2f}/100")
         
-        analysis = get_frequency_balance_analysis(normalized_energy)
+        analysis = get_frequency_balance_analysis(normalized_energy, is_instrumental)
         print("Generated analysis:")
         for item in analysis:
             print(f"  - {item}")
@@ -481,7 +511,8 @@ def analyze_frequency_balance(y, sr):
         return {
             "band_energy": normalized_energy,
             "balance_score": balance_score,
-            "analysis": analysis
+            "analysis": analysis,
+            "is_instrumental": is_instrumental
         }
     except Exception as e:
         print(f"Error in frequency balance analysis: {str(e)}")
@@ -499,38 +530,100 @@ def analyze_frequency_balance(y, sr):
         return {
             "band_energy": default_energy,
             "balance_score": 70.0,
-            "analysis": ["Unable to analyze frequency balance."]
+            "analysis": ["Unable to analyze frequency balance."],
+            "is_instrumental": is_instrumental
         }
 
-def get_frequency_balance_analysis(normalized_energy):
-    """Generate textual analysis of frequency balance"""
+def get_frequency_balance_analysis(normalized_energy, is_instrumental=None):
+    """
+    Generate textual analysis of frequency balance
+    
+    Args:
+        normalized_energy: Dictionary of normalized energy values for each frequency band
+        is_instrumental: Boolean indicating if the track is instrumental (no vocals)
+        
+    Returns:
+        List of analysis points
+    """
     analysis = []
     
-    # Check for potential issues
-    if normalized_energy["sub_bass"] > 95:
-        analysis.append("Sub bass is very prominent, which may cause muddiness.")
-    elif normalized_energy["sub_bass"] < 40:
-        analysis.append("Sub bass is lacking, mix may sound thin.")
+    # Check for potential issues - different thresholds based on track type
+    if is_instrumental:
+        # Analysis for instrumental tracks
         
-    if normalized_energy["bass"] > 95:
-        analysis.append("Bass is very prominent, which may overpower other elements.")
-    elif normalized_energy["bass"] < 40:
-        analysis.append("Bass is lacking, mix may lack warmth and foundation.")
+        if normalized_energy["sub_bass"] > 95:
+            analysis.append("Sub bass is very prominent, which may cause muddiness in this instrumental track.")
+        elif normalized_energy["sub_bass"] < 40:
+            analysis.append("Sub bass is lacking, instrumental mix may sound thin without a foundation.")
+            
+        if normalized_energy["bass"] > 95:
+            analysis.append("Bass is very prominent, which may overpower melodic elements in this instrumental track.")
+        elif normalized_energy["bass"] < 40:
+            analysis.append("Bass is lacking, instrumental mix may lack warmth and impact.")
+        
+        if normalized_energy["mids"] < 40:
+            analysis.append("Mids are recessed, instrumental mix may sound hollow (scooped mids).")
+        
+        if normalized_energy["high_mids"] > 95:
+            analysis.append("High mids are very prominent, instrumental elements may sound harsh.")
+        
+        if normalized_energy["highs"] > 95:
+            analysis.append("Highs are very prominent, instrumental mix may sound brittle or cause ear fatigue.")
+        elif normalized_energy["highs"] < 40:
+            analysis.append("Highs are lacking, instrumental details may be lost and mix may sound dull.")
+
+        # Additional instrumental-specific analysis
+        if normalized_energy["mids"] > normalized_energy["low_mids"] and normalized_energy["mids"] > normalized_energy["high_mids"]:
+            analysis.append("Good balance for melodic instrumental elements in the mid-range.")
+            
+        # Check for extended frequency content
+        good_extremes = (normalized_energy["sub_bass"] > 50) and (normalized_energy["air"] > 50)
+        if good_extremes:
+            analysis.append("Good extended frequency range, providing a full spectrum instrumental sound.")
+        
+    else:
+        # Analysis for tracks with vocals
+        
+        if normalized_energy["sub_bass"] > 95:
+            analysis.append("Sub bass is very prominent, which may mask vocals and cause muddiness.")
+        elif normalized_energy["sub_bass"] < 40:
+            analysis.append("Sub bass is lacking, mix may sound thin beneath the vocals.")
+            
+        if normalized_energy["bass"] > 95:
+            analysis.append("Bass is very prominent, which may compete with lower vocal registers.")
+        elif normalized_energy["bass"] < 40:
+            analysis.append("Bass is lacking, vocal-focused mix may lack warmth and foundation.")
+        
+        # Vocal presence checks
+        if normalized_energy["mids"] < 60:
+            analysis.append("Mids are recessed, vocals may lack presence and clarity.")
+        elif normalized_energy["mids"] > 95:
+            analysis.append("Mids are very emphasized, vocals may sound too forward or harsh.")
+            
+        vocal_presence = normalized_energy["mids"] + normalized_energy["high_mids"]
+        if vocal_presence < 140:
+            analysis.append("Potential lack of vocal presence in the mid and high-mid range.")
+        elif vocal_presence > 180:
+            analysis.append("Vocals may be overly emphasized in the mid and high-mid range.")
+        
+        if normalized_energy["high_mids"] > 95:
+            analysis.append("High mids are very prominent, may cause vocal sibilance issues.")
+        
+        if normalized_energy["highs"] > 95:
+            analysis.append("Highs are very prominent, may exaggerate vocal sibilance or create brittleness.")
+        elif normalized_energy["highs"] < 40:
+            analysis.append("Highs are lacking, vocal air and detail may be lost.")
+            
+        # Check for potential vocal clarity issues
+        if normalized_energy["mids"] > 80 and normalized_energy["low_mids"] > 80:
+            analysis.append("Potential vocal clarity issue with both mids and low-mids being prominent.")
     
-    if normalized_energy["mids"] < 50:
-        analysis.append("Mids are recessed, mix may sound hollow (scooped mids).")
-    
-    if normalized_energy["high_mids"] > 90:
-        analysis.append("High mids are very prominent, may cause listening fatigue.")
-    
-    if normalized_energy["highs"] > 90:
-        analysis.append("Highs are very prominent, mix may sound harsh or brittle.")
-    elif normalized_energy["highs"] < 40:
-        analysis.append("Highs are lacking, mix may sound dull or muffled.")
-    
-    # If no issues found
-    if not analysis:
-        analysis.append("Frequency balance appears good across the spectrum.")
+    # Common analysis for both types
+    if len(analysis) == 0:
+        if is_instrumental:
+            analysis.append("Frequency balance appears well suited for instrumental music.")
+        else:
+            analysis.append("Frequency balance appears well suited for music with vocals.")
     
     return analysis
 
@@ -724,10 +817,21 @@ def get_stereo_field_analysis(correlation, mid_ratio):
     
     return analysis
 
-def analyze_clarity(y, sr):
-    """Analyze the clarity and definition of the mix"""
+def analyze_clarity(y, sr, is_instrumental=None):
+    """
+    Analyze the clarity and definition of the mix
+    
+    Args:
+        y: Audio time series
+        sr: Sample rate
+        is_instrumental: Boolean indicating if the track is instrumental (no vocals)
+        
+    Returns:
+        Dictionary containing clarity analysis results
+    """
     try:
         print("Starting clarity analysis...")
+        print(f"Is instrumental: {is_instrumental}")
         
         # Convert to mono for clarity analysis
         y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
@@ -754,7 +858,7 @@ def analyze_clarity(y, sr):
             if contrast.size > 0:
                 contrast_mean = float(np.nanmean(np.abs(contrast)))
             else:
-                contrast_mean = 0.0  # Default value when the array is empty
+                contrast_mean = 0.5  # Default value when the array is empty
             print(f"Spectral contrast calculated: {contrast_mean}")
         except Exception as e:
             print(f"Error calculating spectral contrast: {str(e)}")
@@ -793,8 +897,22 @@ def analyze_clarity(y, sr):
             print(f"Error calculating spectral centroid: {str(e)}")
             centroid_mean = sr/4  # Default value
         
-        # Calculate clarity score (0-100) with bounds checking
+        # Calculate clarity score (0-100) with bounds checking and adjustments for track type
         try:
+            # Different weights for instrumental vs. vocal tracks
+            if is_instrumental:
+                # For instrumental tracks - higher weight on contrast and flatness
+                contrast_weight = 0.5  # Higher contrast weight for instrumental clarity
+                flatness_weight = 0.3
+                centroid_weight = 0.2
+                print("Using instrumental weights for clarity score calculation")
+            else:
+                # For tracks with vocals - higher weight on centroid for vocal clarity
+                contrast_weight = 0.4
+                flatness_weight = 0.2
+                centroid_weight = 0.4  # Higher centroid weight for vocal clarity
+                print("Using vocal weights for clarity score calculation")
+            
             # Scale contrast score between 0-100
             contrast_score = min(100, max(0, contrast_mean * 1000))
             if np.isnan(contrast_score):
@@ -805,16 +923,24 @@ def analyze_clarity(y, sr):
             if np.isnan(flatness_score):
                 flatness_score = 70.0
             
-            # Calculate centroid score (optimal range between sr/8 and sr/3)
-            centroid_score = min(100, max(0, 100 - abs(centroid_mean - sr/4)/(sr/8)))
+            # Calculate centroid score with different optimal ranges based on track type
+            if is_instrumental:
+                # For instrumental, a wider range can be optimal
+                centroid_score = min(100, max(0, 100 - abs(centroid_mean - sr/4)/(sr/8)))
+            else:
+                # For vocals, a more specific range focused on vocal clarity
+                # Approx 1-5 kHz for vocal clarity
+                vocal_clarity_center = sr/8 + sr/6  # Aim for a bit higher centroid for vocals
+                centroid_score = min(100, max(0, 100 - abs(centroid_mean - vocal_clarity_center)/(sr/10)))
+            
             if np.isnan(centroid_score):
                 centroid_score = 70.0
             
             # Combine scores with weights
             clarity_score = float(
-                contrast_score * 0.4 +    # Weight contrast more as it's most important for clarity
-                flatness_score * 0.3 +    # Moderate weight for flatness
-                centroid_score * 0.3      # Moderate weight for spectral balance
+                contrast_score * contrast_weight +
+                flatness_score * flatness_weight +
+                centroid_score * centroid_weight
             )
             
             # Ensure final score is between 0-100 and not NaN
@@ -823,13 +949,15 @@ def analyze_clarity(y, sr):
                 clarity_score = 70.0
                 
             print(f"Final clarity score calculated: {clarity_score}")
+            print(f"Component scores - Contrast: {contrast_score:.1f}, Flatness: {flatness_score:.1f}, Centroid: {centroid_score:.1f}")
+            print(f"Component weights - Contrast: {contrast_weight:.1f}, Flatness: {flatness_weight:.1f}, Centroid: {centroid_weight:.1f}")
             
         except Exception as e:
             print(f"Error calculating clarity score: {str(e)}")
             clarity_score = 70.0  # Default score
         
         # Generate analysis text
-        analysis = get_clarity_analysis(contrast_mean, flatness_mean, centroid_mean, sr)
+        analysis = get_clarity_analysis(contrast_mean, flatness_mean, centroid_mean, sr, is_instrumental)
         
         # Ensure all values are valid for JSON
         result = {
@@ -837,7 +965,8 @@ def analyze_clarity(y, sr):
             "spectral_contrast": float(contrast_mean),
             "spectral_flatness": float(flatness_mean),
             "spectral_centroid": float(centroid_mean),
-            "analysis": analysis
+            "analysis": analysis,
+            "is_instrumental": is_instrumental
         }
         
         # Final validation of all numeric values
@@ -858,42 +987,89 @@ def analyze_clarity(y, sr):
             "analysis": [f"Unable to analyze clarity: {str(e)}"]
         }
 
-def get_clarity_analysis(contrast, flatness, centroid, sr):
-    """Generate textual analysis of clarity"""
+def get_clarity_analysis(contrast, flatness, centroid, sr, is_instrumental=None):
+    """
+    Generate textual analysis of clarity
+    
+    Args:
+        contrast: Spectral contrast value
+        flatness: Spectral flatness value
+        centroid: Spectral centroid value
+        sr: Sample rate
+        is_instrumental: Boolean indicating if the track is instrumental (no vocals)
+        
+    Returns:
+        List of analysis points
+    """
     try:
         analysis = []
         
         # Analyze spectral contrast
-        if contrast < 0.1:
-            analysis.append("Very low spectral contrast - mix may sound muddy or lacking in definition.")
-        elif contrast < 0.3:
-            analysis.append("Low spectral contrast - consider enhancing separation between elements.")
-        elif contrast < 0.6:
-            analysis.append("Moderate spectral contrast - good balance between elements.")
+        if is_instrumental:
+            # Instrumental tracks often benefit from higher contrast
+            if contrast < 0.1:
+                analysis.append("Very low spectral contrast - instrumental elements may lack definition and separation.")
+            elif contrast < 0.3:
+                analysis.append("Low spectral contrast - consider enhancing separation between instrumental elements.")
+            elif contrast < 0.6:
+                analysis.append("Moderate spectral contrast - good balance between instrumental elements.")
+            else:
+                analysis.append("High spectral contrast - excellent separation between instrumental elements.")
         else:
-            analysis.append("High spectral contrast - excellent separation between elements.")
+            # Vocal tracks need enough contrast for vocal clarity but not too much
+            if contrast < 0.1:
+                analysis.append("Very low spectral contrast - vocals may lack definition against the backing music.")
+            elif contrast < 0.25:
+                analysis.append("Low spectral contrast - consider enhancing separation between vocals and background elements.")
+            elif contrast < 0.5:
+                analysis.append("Moderate spectral contrast - good balance between vocals and instrumental elements.")
+            else:
+                analysis.append("High spectral contrast - excellent separation between vocal and instrumental elements.")
         
-        # Analyze spectral flatness
-        if flatness < 0.2:
-            analysis.append("Low spectral flatness indicates good tonal focus and clarity.")
-        elif flatness < 0.4:
-            analysis.append("Moderate spectral flatness - good balance of tonal and noise elements.")
+        # Analyze spectral flatness - similar for both types but with different implications
+        if is_instrumental:
+            if flatness < 0.2:
+                analysis.append("Low spectral flatness indicates good tonal focus in instrumental elements.")
+            elif flatness < 0.4:
+                analysis.append("Moderate spectral flatness - good balance between tonal and textural elements.")
+            else:
+                analysis.append("High spectral flatness may indicate noise or lack of tonal focus in instrumental parts.")
         else:
-            analysis.append("High spectral flatness may indicate noise or lack of tonal focus.")
+            if flatness < 0.2:
+                analysis.append("Low spectral flatness indicates good tonal focus, favorable for vocal clarity.")
+            elif flatness < 0.4:
+                analysis.append("Moderate spectral flatness - good balance between vocal intelligibility and background textures.")
+            else:
+                analysis.append("High spectral flatness may compromise vocal clarity due to noise or diffuse tonal content.")
         
-        # Analyze spectral centroid
-        if centroid < sr/8:
-            analysis.append("Low spectral centroid - mix may sound dark or muffled.")
-        elif centroid < sr/4:
-            analysis.append("Good spectral centroid range for balanced clarity.")
-        elif centroid < sr/2:
-            analysis.append("High spectral centroid - mix may sound bright or harsh.")
+        # Analyze spectral centroid - different optimal ranges
+        if is_instrumental:
+            # Instrumental can vary more widely in centroid
+            if centroid < sr/8:
+                analysis.append("Low spectral centroid - instrumental mix may sound dark or lack brightness.")
+            elif centroid < sr/4:
+                analysis.append("Good spectral centroid range for balanced instrumental clarity.")
+            elif centroid < sr/2:
+                analysis.append("High spectral centroid - instrumental mix may sound bright or emphasized in the high end.")
+            else:
+                analysis.append("Very high spectral centroid - consider reducing excessive high frequency content in instruments.")
         else:
-            analysis.append("Very high spectral centroid - consider reducing high frequency content.")
+            # Vocals need more specific centroid ranges for clarity
+            if centroid < sr/10:
+                analysis.append("Low spectral centroid - vocals may sound dark or muffled.")
+            elif centroid < sr/6:
+                analysis.append("Moderate spectral centroid - adequate for vocal clarity but may benefit from more presence.")
+            elif centroid < sr/3:
+                analysis.append("Good spectral centroid range for vocal clarity and presence.")
+            else:
+                analysis.append("Very high spectral centroid - vocals may sound harsh or sibilant, consider reducing high frequency content.")
         
         if not analysis:
-            analysis.append("Mix appears to have balanced clarity and definition.")
-            
+            if is_instrumental:
+                analysis.append("Mix appears to have good clarity and definition across instrumental elements.")
+            else:
+                analysis.append("Mix appears to have good vocal clarity and definition against backing elements.")
+                
         return analysis
         
     except Exception as e:

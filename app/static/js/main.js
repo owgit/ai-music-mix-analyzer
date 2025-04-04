@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM fully loaded and parsed");
     
+    // Show button arrow indicator after a short delay
+    setTimeout(() => {
+        const uploadArea = document.querySelector('.upload-area');
+        if (uploadArea) {
+            uploadArea.classList.add('show-button-indicator');
+        }
+    }, 1500);
+    
     // Header scroll effect
     const header = document.querySelector('header');
     let lastScrollY = window.scrollY;
@@ -122,11 +130,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Prevent propagation from upload button to avoid double file selection 
-    const uploadButton = document.querySelector('.upload-button');
+    const uploadButton = document.getElementById('upload-button');
     if (uploadButton) {
         uploadButton.addEventListener('click', function(e) {
             e.stopPropagation();
             console.log("Upload button clicked directly");
+            if (fileInput) {
+                fileInput.click();
+            }
         });
     }
     
@@ -167,12 +178,92 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (this.checked) {
                     checkboxContainer.classList.add('checked');
                     checkboxContainer.style.transform = 'scale(1.05)';
+                    
+                    // Add animation flash to highlight the selection
+                    const container = document.querySelector('.instrumental-selection-container');
+                    if (container) {
+                        container.style.backgroundColor = '#dff0ff';
+                        container.style.borderColor = '#2547e3';
+                        
+                        // Create and add animation for confirmation
+                        const confirmMessage = document.createElement('div');
+                        confirmMessage.className = 'vocal-selection-confirm';
+                        confirmMessage.textContent = 'Instrumental mode activated';
+                        confirmMessage.style.position = 'absolute';
+                        confirmMessage.style.bottom = '-40px';
+                        confirmMessage.style.left = '50%';
+                        confirmMessage.style.transform = 'translateX(-50%)';
+                        confirmMessage.style.backgroundColor = '#4361ee';
+                        confirmMessage.style.color = 'white';
+                        confirmMessage.style.padding = '8px 16px';
+                        confirmMessage.style.borderRadius = '20px';
+                        confirmMessage.style.fontWeight = '600';
+                        confirmMessage.style.fontSize = '14px';
+                        confirmMessage.style.opacity = '0';
+                        confirmMessage.style.transition = 'all 0.3s ease';
+                        
+                        container.appendChild(confirmMessage);
+                        
+                        // Animate the confirmation message
+                        setTimeout(() => {
+                            confirmMessage.style.opacity = '1';
+                            confirmMessage.style.bottom = '-30px';
+                        }, 50);
+                        
+                        // Remove the confirmation message after some time
+                        setTimeout(() => {
+                            confirmMessage.style.opacity = '0';
+                            confirmMessage.style.bottom = '-40px';
+                            setTimeout(() => confirmMessage.remove(), 300);
+                        }, 3000);
+                    }
+                    
                     setTimeout(() => {
-                        checkboxContainer.style.transform = 'scale(1)';
+                        checkboxContainer.style.transform = 'scale(1.02)';
                     }, 200);
                     console.log("Instrumental checkbox checked - Analysis will focus on instrumental aspects");
                 } else {
                     checkboxContainer.classList.remove('checked');
+                    
+                    // Add animation flash for deselection
+                    const container = document.querySelector('.instrumental-selection-container');
+                    if (container) {
+                        container.style.backgroundColor = '#f0f5ff';
+                        container.style.borderColor = '#4361ee';
+                        
+                        // Create and add deactivation message
+                        const deactivateMessage = document.createElement('div');
+                        deactivateMessage.className = 'vocal-selection-confirm';
+                        deactivateMessage.textContent = 'Vocals mode activated';
+                        deactivateMessage.style.position = 'absolute';
+                        deactivateMessage.style.bottom = '-40px';
+                        deactivateMessage.style.left = '50%';
+                        deactivateMessage.style.transform = 'translateX(-50%)';
+                        deactivateMessage.style.backgroundColor = '#6c757d';
+                        deactivateMessage.style.color = 'white';
+                        deactivateMessage.style.padding = '8px 16px';
+                        deactivateMessage.style.borderRadius = '20px';
+                        deactivateMessage.style.fontWeight = '600';
+                        deactivateMessage.style.fontSize = '14px';
+                        deactivateMessage.style.opacity = '0';
+                        deactivateMessage.style.transition = 'all 0.3s ease';
+                        
+                        container.appendChild(deactivateMessage);
+                        
+                        // Animate the deactivation message
+                        setTimeout(() => {
+                            deactivateMessage.style.opacity = '1';
+                            deactivateMessage.style.bottom = '-30px';
+                        }, 50);
+                        
+                        // Remove the message after some time
+                        setTimeout(() => {
+                            deactivateMessage.style.opacity = '0';
+                            deactivateMessage.style.bottom = '-40px';
+                            setTimeout(() => deactivateMessage.remove(), 300);
+                        }, 3000);
+                    }
+                    
                     console.log("Instrumental checkbox unchecked - Analysis will include vocal aspects");
                 }
             }

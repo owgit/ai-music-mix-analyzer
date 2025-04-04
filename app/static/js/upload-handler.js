@@ -32,7 +32,7 @@ function handleFileUpload(file) {
     formData.append('audio_file', file);
     
     // Get the instrumental track status
-    const isInstrumental = document.getElementById('is-instrumental')?.checked || false;
+    const isInstrumental = document.getElementById('instrumental-checkbox')?.checked || false;
     formData.append('is_instrumental', isInstrumental ? 'true' : 'false');
     
     // Create the upload request
