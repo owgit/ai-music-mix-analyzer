@@ -1426,7 +1426,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Calculate component scores similar to backend algorithm
         // These formulas should match the backend calculation as closely as possible
-        const contrastScore = Math.min(100, Math.max(0, contrastRaw * 1000));
+        // Adjust scaling for much larger contrast values
+        const contrastScale = contrastRaw > 1 ? 5 : 1000; // Use different scaling based on raw value size
+        const contrastScore = Math.min(100, Math.max(0, contrastRaw * (contrastRaw > 1 ? 5 : 1000)));
         const flatnessScore = Math.min(100, Math.max(0, (1 - flatnessRaw) * 100));
         
         // Different weightings based on if track is instrumental or has vocals
@@ -1503,8 +1505,8 @@ document.addEventListener('DOMContentLoaded', function() {
         let fftMethodDescription = "";
         if (fftParams.method === "spectral_contrast") {
             fftMethodDescription = `Calculated using librosa's spectral_contrast with n_fft=${fftParams.n_fft}, hop_length=${fftParams.hop_length}`;
-        } else if (fftParams.method === "alternative_std") {
-            fftMethodDescription = `Calculated using alternative method (spectrum standard deviation) with n_fft=${fftParams.n_fft}, hop_length=${fftParams.hop_length}`;
+        } else if (fftParams.method === "alternative_std" || fftParams.method === "alternative_bands_std") {
+            fftMethodDescription = `Calculated using alternative method (spectrum analysis) with n_fft=${fftParams.n_fft}, hop_length=${fftParams.hop_length}`;
         } else if (fftParams.method.startsWith("default") || fftParams.method.startsWith("alternative_empty")) {
             fftMethodDescription = `Using default value (audio may be very quiet or contain mostly silence)`;
         } else if (fftParams.method === "error" || fftParams.method === "error_fallback") {
@@ -1517,8 +1519,13 @@ document.addEventListener('DOMContentLoaded', function() {
         componentsEl.innerHTML = `
             <div class="clarity-component">
                 <span class="component-label">Spectral Contrast:</span>
-                <span class="component-value">${contrastRaw.toFixed(6)}</span>
-                <span class="component-calculation">× 1000 = ${(contrastRaw * 1000).toFixed(2)} → clamped to ${Math.round(contrastScore)}%</span>
+                <span class="component-value">${contrastRaw.toFixed(4)}</span>
+                <span class="component-calculation">
+                    ${fftParams.raw_value ? 
+                        `Raw: ${fftParams.raw_value.toFixed(4)} → Scaled: ${contrastRaw.toFixed(4)}` : 
+                        `× ${contrastScale} = ${(contrastRaw * contrastScale).toFixed(2)}`
+                    } → clamped to ${Math.round(contrastScore)}%
+                </span>
                 <span class="component-score">Score: ${Math.round(contrastScore)}/100</span>
                 <span class="component-weight">Weight: ${contrastWeight.toFixed(1)}</span>
             </div>
@@ -1526,6 +1533,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span class="component-label">FFT Parameters:</span>
                 <span class="component-value">${fftParams.n_fft > 0 ? fftParams.n_fft : 'N/A'}</span>
                 <span class="component-calculation">${fftMethodDescription}</span>
+                ${fftParams.raw_value ? 
+                    `<span class="component-score">Scaling: ${fftParams.scaling || 'standard'}</span>` : 
+                    ''
+                }
             </div>
             <div class="clarity-component">
                 <span class="component-label">Spectral Flatness:</span>
@@ -1561,7 +1572,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 <span>Clarity Score = (${Math.round(contrastScore)} × ${contrastWeight.toFixed(1)}) + (${Math.round(flatnessScore)} × ${flatnessWeight.toFixed(1)}) + (${Math.round(centroidScore)} × ${centroidWeight.toFixed(1)}) = ${Math.round(score)}</span>
             </div>
             <div class="clarity-note">
-                <span><strong>Note:</strong> Spectral Contrast typically has very small raw values (around 0.0005). It is multiplied by 1000 to bring it to a useful scale, which is why it often shows around 50% after scaling.</span>
+                <span><strong>Note:</strong> Your spectral contrast value of ${contrastRaw.toFixed(2)} indicates ${
+                    contrastRaw > 15 ? "excellent separation between frequency bands" : 
+                    contrastRaw > 10 ? "good separation between frequency bands" : 
+                    contrastRaw > 5 ? "moderate separation between frequency bands" : 
+                    "limited separation between frequency bands"
+                }. It's calculated using ${fftParams.method?.includes("alternative") ? "an alternative algorithm" : "librosa's spectral_contrast"} with n_fft=${fftParams.n_fft || "default"}.</span>
             </div>
         `;
         

@@ -862,70 +862,145 @@ def analyze_clarity(y, sr, is_instrumental=None):
                 contrast = np.zeros((4, 1))  # Default shape for analysis
                 successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "default_quiet"}
             else:
-                # Try with different parameter combinations until we get valid results
+                # Try multiple approaches to get a valid spectral contrast value
                 successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "default"}
-                for n_fft in [2048, 4096, 1024]:  # Try different FFT sizes
-                    for hop_length in [512, 1024, 256]:  # Try different hop lengths
+                contrast_results = []
+                
+                # Try different parameters
+                for n_fft in [2048, 4096, 1024]:
+                    for hop_length in [512, 1024, 256]:
                         try:
                             # Suppress numpy warnings temporarily
                             with np.errstate(all='ignore'):
                                 contrast = librosa.feature.spectral_contrast(
                                     y=y_mono,
                                     sr=sr,
-                                    n_bands=4,  # Reduced from default 6
-                                    fmin=20.0,  # Set minimum frequency
+                                    n_bands=4,
+                                    fmin=20.0,
                                     n_fft=n_fft,
                                     hop_length=hop_length
                                 )
                                 
                                 # Check if we got valid results
                                 if contrast.size > 0 and not np.all(np.isnan(contrast)):
-                                    # Calculate mean without warnings
-                                    contrast_mean = float(np.nanmean(np.abs(contrast)))
-                                    if not np.isnan(contrast_mean) and not np.isinf(contrast_mean):
-                                        print(f"Successfully calculated contrast with n_fft={n_fft}, hop_length={hop_length}")
-                                        successful_fft_params = {"n_fft": n_fft, "hop_length": hop_length, "method": "spectral_contrast"}
-                                        break  # Exit the hop_length loop if successful
+                                    # Use absolute values to ensure positive contrast measurements
+                                    contrast_abs = np.abs(contrast)
+                                    
+                                    # Get mean across time and frequency bands
+                                    contrast_frame_means = np.nanmean(contrast_abs, axis=0)
+                                    if not np.all(np.isnan(contrast_frame_means)) and contrast_frame_means.size > 0:
+                                        # Store this calculation result
+                                        contrast_result = float(np.nanmean(contrast_frame_means))
+                                        if not np.isnan(contrast_result) and not np.isinf(contrast_result):
+                                            contrast_results.append({
+                                                "value": contrast_result,
+                                                "n_fft": n_fft, 
+                                                "hop_length": hop_length
+                                            })
+                                            print(f"Got contrast value {contrast_result:.6f} with n_fft={n_fft}, hop_length={hop_length}")
                         except Exception as e:
                             print(f"Failed with n_fft={n_fft}, hop_length={hop_length}: {str(e)}")
                             continue
-                    
-                    # Break out of n_fft loop if we got valid results
-                    if 'contrast_mean' in locals() and not np.isnan(contrast_mean) and not np.isinf(contrast_mean):
-                        break
                 
-                # If we still don't have a valid result after trying all combinations
-                if 'contrast_mean' not in locals() or np.isnan(contrast_mean) or np.isinf(contrast_mean):
-                    print("Still getting invalid contrast after trying all parameter combinations, using alternative approach")
-                    # Alternative approach: calculate the standard deviation of the spectrum
-                    stft = np.abs(librosa.stft(y_mono, n_fft=2048, hop_length=512))
-                    if stft.size > 0:
-                        # Convert to log amplitude
-                        log_stft = librosa.amplitude_to_db(stft, ref=np.max)
-                        # Calculate the standard deviation across frequency bins as a measure of contrast
-                        contrast_values = np.std(log_stft, axis=0)
-                        if contrast_values.size > 0:
-                            # Scale to typical spectral contrast range
-                            contrast_mean = float(np.nanmean(contrast_values) / 100)
-                            contrast_mean = min(1.0, max(0.1, contrast_mean))  # Bound to reasonable range
-                            successful_fft_params = {"n_fft": 2048, "hop_length": 512, "method": "alternative_std"}
+                # Check if we got any valid results
+                if contrast_results:
+                    # Sort results by contrast value (descending) and take the highest
+                    contrast_results.sort(key=lambda x: x["value"], reverse=True)
+                    best_result = contrast_results[0]
+                    contrast_mean = best_result["value"]
+                    successful_fft_params = {
+                        "n_fft": best_result["n_fft"], 
+                        "hop_length": best_result["hop_length"],
+                        "method": "spectral_contrast"
+                    }
+                    print(f"Using best contrast value: {contrast_mean:.6f}")
+                else:
+                    # Alternative approach using DIY spectral contrast
+                    print("Using alternative spectral contrast calculation")
+                    try:
+                        # Calculate STFT
+                        stft = np.abs(librosa.stft(y_mono, n_fft=2048, hop_length=512))
+                        
+                        if stft.size > 0:
+                            # Convert to log amplitude
+                            log_stft = librosa.amplitude_to_db(stft, ref=np.max)
+                            
+                            # Split the spectrum into 4 frequency bands
+                            band_edges = np.logspace(np.log10(20), np.log10(sr/2), 5)
+                            freqs = librosa.fft_frequencies(sr=sr, n_fft=2048)
+                            
+                            band_contrasts = []
+                            for i in range(4):
+                                # Get indices for this frequency band
+                                band_mask = (freqs >= band_edges[i]) & (freqs < band_edges[i+1])
+                                
+                                if np.any(band_mask):
+                                    # Get spectrum for this band
+                                    band_spectrum = log_stft[band_mask, :]
+                                    
+                                    if band_spectrum.size > 0:
+                                        # Calculate contrast as the standard deviation
+                                        band_contrast = np.std(band_spectrum, axis=0)
+                                        if band_contrast.size > 0:
+                                            mean_band_contrast = np.nanmean(band_contrast)
+                                            if not np.isnan(mean_band_contrast):
+                                                band_contrasts.append(mean_band_contrast)
+                            
+                            if band_contrasts:
+                                # Average the contrasts across all bands
+                                # Scale to typical spectral contrast range
+                                contrast_mean = float(np.nanmean(band_contrasts) / 60)
+                                # Ensure the result is in a reasonable range
+                                contrast_mean = min(0.9, max(0.1, contrast_mean))
+                                successful_fft_params = {
+                                    "n_fft": 2048, 
+                                    "hop_length": 512,
+                                    "method": "alternative_bands_std"
+                                }
+                            else:
+                                # Fallback to basic std dev if band approach failed
+                                overall_contrast = np.std(log_stft, axis=0)
+                                contrast_mean = float(np.nanmean(overall_contrast) / 60)
+                                contrast_mean = min(0.9, max(0.1, contrast_mean))
+                                successful_fft_params = {
+                                    "n_fft": 2048, 
+                                    "hop_length": 512,
+                                    "method": "alternative_std"
+                                }
                         else:
                             contrast_mean = 0.5
-                            successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "alternative_empty"}
-                    else:
+                            successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "alternative_empty_stft"}
+                    except Exception as e:
+                        print(f"Alternative calculation failed: {str(e)}")
                         contrast_mean = 0.5
-                        successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "alternative_empty_stft"}
+                        successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "alternative_error"}
+            
+            # Scale the contrast to make it perceptually meaningful
+            # Use a logarithmic scaling to emphasize differences
+            if contrast_mean > 0 and contrast_mean < 1:
+                # Apply logarithmic scaling to enhance differences
+                log_base = 10
+                scaled_contrast = np.log(1 + (log_base - 1) * contrast_mean) / np.log(log_base)
+                # Store both raw and scaled values
+                contrast_raw = contrast_mean
+                contrast_mean = scaled_contrast
+                print(f"Raw contrast: {contrast_raw:.6f}, Scaled contrast: {contrast_mean:.6f}")
+                
+                # Add scaling info to fft_params
+                successful_fft_params["scaling"] = "logarithmic"
+                successful_fft_params["raw_value"] = float(contrast_raw)
             
             # Ensure the value is valid
             if np.isnan(contrast_mean) or np.isinf(contrast_mean):
                 print("Warning: Invalid final contrast value, using default")
                 contrast_mean = 0.5
                 
-            print(f"Spectral contrast calculated: {contrast_mean}")
+            print(f"Final spectral contrast: {contrast_mean}")
         except Exception as e:
             print(f"Error calculating spectral contrast: {str(e)}")
             contrast_mean = 0.5  # Default value
             contrast = np.zeros((4, 1))  # Default shape for analysis
+            successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "error_fallback"}
         
         print("Calculating spectral flatness...")
         # Calculate spectral flatness with error handling
