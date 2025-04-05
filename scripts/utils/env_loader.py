@@ -84,6 +84,11 @@ def check_required_variables():
     elif ai_provider == 'openrouter' and not os.environ.get('OPENROUTER_MODEL'):
         logger.warning("OPENROUTER_MODEL not set, please set in .env")
     
+    # Check for OpenRouter timeout threshold
+    if ai_provider == 'openrouter' and not os.environ.get('OPENROUTER_TIMEOUT_THRESHOLD'):
+        logger.info("OPENROUTER_TIMEOUT_THRESHOLD not set, defaulting to 30 seconds")
+        os.environ['OPENROUTER_TIMEOUT_THRESHOLD'] = '30'
+    
     # Check for security-related variables
     if not os.environ.get('SECRET_KEY'):
         logger.warning("SECRET_KEY not set, please generate one with scripts/generate_secret_key.py")

@@ -42,10 +42,6 @@ def sitemap():
     urls = [
         {'loc': f'https://{site_domain}/', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '1.0'},
         {'loc': f'https://{site_domain}/about', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
-        {'loc': f'https://{site_domain}/3d-spatial-analysis', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.9'},
-        {'loc': f'https://{site_domain}/dolby-atmos-mixing', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.9'},
-        {'loc': f'https://{site_domain}/immersive-audio-guide', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
-        {'loc': f'https://{site_domain}/spatial-audio-tips', 'lastmod': datetime.now().strftime('%Y-%m-%d'), 'priority': '0.8'},
         # Add more URLs as needed
     ]
     
@@ -350,26 +346,6 @@ def serve_error_image():
 def health_check():
     """Health check endpoint"""
     return jsonify({'status': 'ok'})
-
-@main_bp.route('/3d-spatial-analysis')
-def spatial_analysis_guide():
-    """3D Spatial Analysis guide page"""
-    return render_template('guides/3d-spatial-analysis.html')
-
-@main_bp.route('/dolby-atmos-mixing')
-def dolby_atmos_guide():
-    """Dolby Atmos Mixing guide page"""
-    return render_template('guides/dolby-atmos-mixing.html')
-
-@main_bp.route('/immersive-audio-guide')
-def immersive_audio_guide():
-    """Immersive Audio guide page"""
-    return render_template('guides/immersive-audio-guide.html')
-
-@main_bp.route('/spatial-audio-tips')
-def spatial_audio_tips():
-    """Spatial Audio Tips guide page"""
-    return render_template('guides/spatial-audio-tips.html')
 
 @main_bp.route('/api/feedback', methods=['POST'])
 def submit_feedback():

@@ -41,6 +41,7 @@ services:
       - OPENROUTER_MODEL=${OPENROUTER_MODEL:-deepseek/deepseek-chat-v3-0324:free}
       - SITE_URL=${SITE_URL:-https://uygarduzgun.com}
       - SITE_TITLE=${SITE_TITLE:-Mix Analyzer}
+      - OPENROUTER_TIMEOUT_THRESHOLD=${OPENROUTER_TIMEOUT_THRESHOLD:-30}
       # Visualization settings
       - SKIP_3D_VISUALIZATION=false
     volumes:

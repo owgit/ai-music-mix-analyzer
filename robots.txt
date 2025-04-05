@@ -1,9 +1,5 @@
 User-agent: *
 Allow: /
-Allow: /3d-spatial-analysis/
-Allow: /dolby-atmos-mixing/
-Allow: /immersive-audio-guide/
-Allow: /spatial-audio-tips/
 Disallow: /admin/
 Disallow: /uploads/
 Disallow: /api/
@@ -12,18 +8,10 @@ Disallow: /*.json$
 # Specific directives for major crawlers
 User-agent: Googlebot
 Allow: /
-Allow: /3d-spatial-analysis/
-Allow: /dolby-atmos-mixing/
-Allow: /immersive-audio-guide/
-Allow: /spatial-audio-tips/
 Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
-Allow: /3d-spatial-analysis/
-Allow: /dolby-atmos-mixing/
-Allow: /immersive-audio-guide/
-Allow: /spatial-audio-tips/
 Crawl-delay: 2
 
 User-agent: Baiduspider

@@ -4,6 +4,9 @@ import json
 import httpx
 import logging
 import re
+import time
+import threading
+import concurrent.futures
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -80,6 +83,7 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
     """
     Use AI models (OpenAI or OpenRouter) to provide additional insights on the mix analysis.
     If API keys are not available, returns a default response.
+    If OpenRouter API times out (>30 seconds), falls back to OpenAI.
     
     Args:
         analysis_results: Dictionary containing the analysis results from our audio analyzer
@@ -92,6 +96,10 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
         # Get the AI provider from environment variable with fallback to OpenAI
         ai_provider = os.environ.get("AI_PROVIDER", "openai").lower()
         logger.info(f"Using AI provider: {ai_provider}")
+        
+        # Get timeout threshold for OpenRouter fallback
+        timeout_threshold = int(os.environ.get("OPENROUTER_TIMEOUT_THRESHOLD", 30))
+        logger.info(f"OpenRouter timeout threshold set to {timeout_threshold} seconds")
         
         # Check if we should skip AI analysis
         skip_ai = os.environ.get("SKIP_AI_ANALYSIS", "false").lower() == "true"
@@ -111,7 +119,55 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
                 logger.warning("OpenRouter API key not available, skipping AI analysis")
                 return get_default_ai_response("OpenRouter API key not available")
             
-            sections = analyze_with_openrouter(system_prompt, user_message)
+            # Use a more robust timeout approach with a separate thread
+            def run_openrouter_with_timeout():
+                logger.info("Thread started for OpenRouter request")
+                try:
+                    result = analyze_with_openrouter(system_prompt, user_message)
+                    logger.info("OpenRouter thread completed successfully")
+                    return result
+                except Exception as e:
+                    logger.error(f"Exception in OpenRouter thread: {str(e)}")
+                    raise
+            
+            # Use a ThreadPoolExecutor to run the API call with a timeout
+            logger.info(f"Starting OpenRouter request with {timeout_threshold} second timeout")
+            executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+            future = executor.submit(run_openrouter_with_timeout)
+            
+            try:
+                # Wait for the result with a timeout
+                sections = future.result(timeout=timeout_threshold)
+                logger.info("OpenRouter request completed successfully within timeout")
+                # Clean shutdown of executor
+                executor.shutdown(wait=False)
+                return sections
+            except concurrent.futures.TimeoutError:
+                logger.warning(f"OpenRouter request timed out after {timeout_threshold} seconds")
+                # Attempt to cancel the future if it's still running
+                if not future.done():
+                    logger.info("Attempting to cancel the running OpenRouter request")
+                    future.cancel()
+                
+                # Shutdown the executor without waiting for tasks to complete
+                logger.info("Shutting down OpenRouter thread executor")
+                executor.shutdown(wait=False)
+                
+                logger.warning("Falling back to OpenAI")
+                # Check if OpenAI API key is available for fallback
+                openai_api_key = get_openai_api_key()
+                if not openai_api_key:
+                    logger.warning("Cannot fall back to OpenAI: API key not available")
+                    return get_default_ai_response("OpenRouter timed out and OpenAI API key not available")
+                
+                # Fall back to OpenAI
+                logger.info("Attempting fallback to OpenAI")
+                return analyze_with_openai(system_prompt, user_message)
+            except Exception as e:
+                logger.error(f"Error during OpenRouter request: {str(e)}")
+                # Clean shutdown of executor
+                executor.shutdown(wait=False)
+                raise
         else:  # Default to OpenAI
             # Check if OpenAI API key is available
             api_key = get_openai_api_key()
@@ -120,8 +176,7 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
                 return get_default_ai_response("OpenAI API key not available")
                 
             sections = analyze_with_openai(system_prompt, user_message)
-        
-        return sections
+            return sections
         
     except Exception as e:
         logger.error(f"Error generating AI insights: {str(e)}")
@@ -148,7 +203,7 @@ def analyze_with_openai(system_prompt, user_message):
         
         # Create a custom HTTP client without proxies
         http_client = httpx.Client(
-            timeout=60.0,
+            timeout=45.0,  # Set timeout to 45 seconds for OpenAI requests
             follow_redirects=True
         )
         
@@ -203,7 +258,7 @@ def analyze_with_openrouter(system_prompt, user_message):
         
         # Create a custom HTTP client without proxies
         http_client = httpx.Client(
-            timeout=60.0,
+            timeout=28.0,  # Set timeout to 28 seconds to catch timeouts before our 30-second limit
             follow_redirects=True
         )
         
@@ -216,26 +271,31 @@ def analyze_with_openrouter(system_prompt, user_message):
         
         # Call the OpenRouter API via OpenAI compatible interface
         logger.info("Sending request to OpenRouter API")
-        response = client.chat.completions.create(
-            model=model,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message}
-            ],
-            max_tokens=2500,
-            temperature=0.7,
-            extra_headers={
-                "HTTP-Referer": site_url,
-                "X-Title": site_title
-            }
-        )
-        
-        # Extract the response
-        response_text = response.choices[0].message.content
-        logger.info("Received response from OpenRouter API")
-        
-        # Parse the response into sections
-        return parse_response(response_text)
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message}
+                ],
+                max_tokens=2500,
+                temperature=0.7,
+                extra_headers={
+                    "HTTP-Referer": site_url,
+                    "X-Title": site_title
+                }
+            )
+            
+            # Extract the response
+            response_text = response.choices[0].message.content
+            logger.info("Received response from OpenRouter API")
+            
+            # Parse the response into sections
+            return parse_response(response_text)
+        except Exception as e:
+            # Catch and log exceptions that might occur during API call
+            logger.error(f"Error during OpenRouter API call: {str(e)}")
+            raise
     
     except Exception as e:
         logger.error(f"Error using OpenRouter: {str(e)}")

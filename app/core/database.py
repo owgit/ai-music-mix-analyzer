@@ -11,12 +11,47 @@ import hashlib
 import json
 from app.core.db_utils import get_db_connection, get_db_config
 
+def validate_schema():
+    """
+    Validates that the database schema matches the expected structure.
+    Returns True if valid, False otherwise.
+    """
+    connection = get_db_connection()
+    if not connection:
+        print("Failed to connect to database for schema validation")
+        return False
+    
+    cursor = connection.cursor(dictionary=True)
+    try:
+        # Check songs table exists and has required columns
+        cursor.execute("DESCRIBE songs")
+        columns = cursor.fetchall()
+        column_names = [col['Field'] for col in columns]
+        
+        required_columns = ['id', 'filename', 'original_name', 'analysis_json', 'file_hash']
+        missing_columns = [col for col in required_columns if col not in column_names]
+        
+        if missing_columns:
+            print(f"Schema validation failed: missing required columns: {', '.join(missing_columns)}")
+            return False
+            
+        print("Schema validation passed: all required columns exist")
+        return True
+    except Error as e:
+        print(f"Error validating schema: {e}")
+        return False
+    finally:
+        if cursor and cursor.with_rows:
+            cursor.fetchall()
+        cursor.close()
+        connection.close()
+
 def create_tables_if_not_exist():
     """
     Create the necessary tables if they don't exist
     """
-    connection = get_db_connection()
-    if not connection:
+    connection = get_db_connection(with_database=True)
+    if connection is None:
         return False
     
     cursor = connection.cursor()
@@ -36,7 +71,10 @@ def create_tables_if_not_exist():
         )
         """)
         connection.commit()
-        return True
+        
+        # Validate schema after creation
+        schema_valid = validate_schema()
+        return schema_valid
     except Error as e:
         print(f"Error creating tables: {e}")
         return False
