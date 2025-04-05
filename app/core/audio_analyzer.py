@@ -58,6 +58,83 @@ def analyze_mix(file_path, is_instrumental=None):
     # Track total analysis time
     total_start_time = time.time()
     
+    # Initialize default results at the start of the function
+    default_results = {
+        "channel_info": {
+            "is_mono": True,
+            "channel_count": 1,
+            "analysis": ["Unable to determine channel information"]
+        },
+        "frequency_balance": {
+            "band_energy": {
+                "sub_bass": 70.0,
+                "bass": 70.0,
+                "low_mids": 70.0,
+                "mids": 70.0,
+                "high_mids": 70.0,
+                "highs": 70.0,
+                "air": 70.0
+            },
+            "balance_score": 70.0,
+            "analysis": ["Unable to analyze frequency balance."]
+        },
+        "dynamic_range": {
+            "dynamic_range_db": 12.0,
+            "crest_factor_db": 15.0,
+            "plr": 12.0,
+            "dynamic_range_score": 70.0,
+            "analysis": ["Unable to analyze dynamic range."]
+        },
+        "stereo_field": {
+            "correlation": 0.5,
+            "mid_ratio": 0.7,
+            "side_ratio": 0.3,
+            "width_score": 70.0,
+            "phase_score": 70.0,
+            "analysis": ["Unable to analyze stereo field."]
+        },
+        "clarity": {
+            "clarity_score": 70.0,
+            "spectral_contrast": 0.5,
+            "spectral_flatness": 0.5,
+            "spectral_centroid": 2000.0,
+            "analysis": ["Unable to analyze clarity."]
+        },
+        "harmonic_content": {
+            "key": "Unknown",
+            "harmonic_complexity": 70.0,
+            "key_consistency": 70.0,
+            "chord_changes_per_minute": 0.0,
+            "analysis": ["Unable to analyze harmonic content."],
+            "key_relationships": {},
+            "top_key_candidates": []
+        },
+        "transients": {
+            "transients_score": 70.0,
+            "attack_time": 15.0,
+            "transient_density": 2.0,
+            "percussion_energy": 20.0,
+            "analysis": ["Unable to analyze transients."],
+            "transient_data": []
+        },
+        "3d_spatial": {
+            "height_score": 70.0,
+            "depth_score": 70.0,
+            "width_consistency": 70.0,
+            "analysis": ["Unable to analyze 3D spatial imaging."]
+        },
+        "surround_compatibility": {
+            "mono_compatibility": 70.0,
+            "phase_score": 70.0,
+            "analysis": ["Unable to analyze surround compatibility."]
+        },
+        "headphone_speaker_optimization": {
+            "headphone_score": 70.0,
+            "speaker_score": 70.0,
+            "analysis": ["Unable to analyze headphone/speaker optimization."]
+        }
+    }
+    
     try:
         print(f"\n{'='*50}")
         print(f"STARTING ANALYSIS: {file_path}")
@@ -65,18 +142,19 @@ def analyze_mix(file_path, is_instrumental=None):
         print(f"{'='*50}\n")
         
         # Step 1: Load audio file
-        print(f"\n{'*'*40}")
-        print(f"Step 1: Loading audio file for analysis: {file_path}")
-        load_start_time = time.time()
-        
-        # Load the audio file with mono=False to preserve stereo
+        print(f"Loading audio file for analysis: {file_path}")
+        load_start = time.time()
         y, sr = librosa.load(file_path, sr=None, mono=False)
-        
-        load_time = time.time() - load_start_time
-        print(f"Audio loaded in {load_time:.2f} seconds")
+        print(f"Audio loaded in {time.time() - load_start:.2f} seconds")
         print(f"Sample rate: {sr} Hz")
-        print(f"Loaded audio shape: {y.shape}, dimensions: {y.ndim}")
-        print(f"Audio duration: {len(y[0])/sr:.2f} seconds")
+        
+        # Check audio shape and calculate duration
+        if y.ndim == 1:
+            print(f"Loaded audio shape: {y.shape}, dimensions: {y.ndim}")
+            print(f"Audio duration: {y.shape[0]/sr:.2f} seconds")
+        else:
+            print(f"Loaded audio shape: {y.shape}, dimensions: {y.ndim}")
+            print(f"Audio duration: {y.shape[1]/sr:.2f} seconds")
         
         # Handle mono files by duplicating the channel
         if y.ndim == 1:
@@ -99,78 +177,6 @@ def analyze_mix(file_path, is_instrumental=None):
         
         # Create mono version for certain analyses
         y_mono = np.mean(y, axis=0)
-        
-        # Initialize default results structure
-        default_results = {
-            "frequency_balance": {
-                "band_energy": {
-                    "sub_bass": 70.0,
-                    "bass": 70.0,
-                    "low_mids": 70.0,
-                    "mids": 70.0,
-                    "high_mids": 70.0,
-                    "highs": 70.0,
-                    "air": 70.0
-                },
-                "balance_score": 70.0,
-                "analysis": ["Unable to analyze frequency balance."]
-            },
-            "dynamic_range": {
-                "dynamic_range_db": 12.0,
-                "crest_factor_db": 15.0,
-                "plr": 12.0,
-                "dynamic_range_score": 70.0,
-                "analysis": ["Unable to analyze dynamic range."]
-            },
-            "stereo_field": {
-                "correlation": 0.5,
-                "mid_ratio": 0.7,
-                "side_ratio": 0.3,
-                "width_score": 70.0,
-                "phase_score": 70.0,
-                "analysis": ["Unable to analyze stereo field."]
-            },
-            "clarity": {
-                "clarity_score": 70.0,
-                "spectral_contrast": 0.5,
-                "spectral_flatness": 0.5,
-                "spectral_centroid": 2000.0,
-                "analysis": ["Unable to analyze clarity."]
-            },
-            "harmonic_content": {
-                "key": "Unknown",
-                "harmonic_complexity": 70.0,
-                "key_consistency": 70.0,
-                "chord_changes_per_minute": 0.0,
-                "analysis": ["Unable to analyze harmonic content."],
-                "key_relationships": {},
-                "top_key_candidates": []
-            },
-            "transients": {
-                "transients_score": 70.0,
-                "attack_time": 15.0,
-                "transient_density": 2.0,
-                "percussion_energy": 20.0,
-                "analysis": ["Unable to analyze transients."],
-                "transient_data": []
-            },
-            "3d_spatial": {
-                "height_score": 70.0,
-                "depth_score": 70.0,
-                "width_consistency": 70.0,
-                "analysis": ["Unable to analyze 3D spatial imaging."]
-            },
-            "surround_compatibility": {
-                "mono_compatibility": 70.0,
-                "phase_score": 70.0,
-                "analysis": ["Unable to analyze surround compatibility."]
-            },
-            "headphone_speaker_optimization": {
-                "headphone_score": 70.0,
-                "speaker_score": 70.0,
-                "analysis": ["Unable to analyze headphone/speaker optimization."]
-            }
-        }
         
         # Calculate various metrics with error handling
         results = {}

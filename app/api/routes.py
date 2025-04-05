@@ -61,7 +61,8 @@ def analyze_file(file_id):
         
         return jsonify({
             'file_id': file_id,
-            'results': results
+            'results': results,
+            'channel_info': results.get('channel_info', {})
         })
     except Exception as e:
         print(f"Error analyzing file: {str(e)}")

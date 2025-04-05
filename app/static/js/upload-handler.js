@@ -71,6 +71,19 @@ function handleFileUpload(file) {
             try {
                 const response = JSON.parse(xhr.responseText);
                 if (response.success) {
+                    // Display analysis results
+                    if (response.results && response.results.channel_info) {
+                        const channelInfo = response.results.channel_info;
+                        const channelDisplay = document.createElement('div');
+                        channelDisplay.className = 'analysis-result';
+                        channelDisplay.innerHTML = `
+                            <h4>Channel Information</h4>
+                            <p>Format: ${channelInfo.is_mono ? 'Mono' : 'Stereo'}</p>
+                            <p>Channels: ${channelInfo.channel_count}</p>
+                        `;
+                        document.getElementById('analysis-results').prepend(channelDisplay);
+                    }
+                    
                     // Redirect to the results page
                     window.location.href = response.redirect_url;
                 } else {
