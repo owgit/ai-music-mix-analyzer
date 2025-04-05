@@ -30,7 +30,7 @@ def index():
 @main_bp.route('/about')
 def about():
     """About page route"""
-    return render_template('about.html')
+    return render_template('about.html', last_modified=datetime.now().isoformat())
 
 @main_bp.route('/sitemap.xml')
 def sitemap():

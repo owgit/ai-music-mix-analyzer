@@ -1407,89 +1407,324 @@ document.addEventListener('DOMContentLoaded', function() {
             clarityChart.destroy();
         }
         
-        // Normalize values for display (all between 0-100)
-        const contrastValue = Math.min(100, clarityData.spectral_contrast * 1000); // Scale contrast to visible range
-        const flatnessValue = Math.min(100, (1 - clarityData.spectral_flatness) * 100); // Invert flatness (lower is better)
-        const centroidValue = Math.min(100, Math.max(0, (clarityData.spectral_centroid / 20000) * 100)); // Normalize centroid
+        // Get the raw data values
+        const contrastRaw = clarityData.spectral_contrast;
+        const flatnessRaw = clarityData.spectral_flatness;
+        const centroidRaw = clarityData.spectral_centroid;
+        const score = clarityData.clarity_score;
+        const isInstrumental = clarityData.is_instrumental;
+        const fftParams = clarityData.fft_params || { n_fft: 0, hop_length: 0, method: "unknown" };
         
-        // Calculate an "optimal" zone for each value
-        const contrastOptimal = 70; // Higher contrast is generally better for clarity
-        const flatnessOptimal = 80; // Lower flatness (higher tonal focus) is better for clarity
-        const centroidOptimal = 60; // Mid-high centroid is best for clarity (not too dark, not too bright)
+        // Add component score labels under the chart
+        const container = ctx.canvas.parentNode;
+        let componentsEl = container.querySelector('.clarity-components');
+        if (!componentsEl) {
+            componentsEl = document.createElement('div');
+            componentsEl.className = 'clarity-components';
+            container.appendChild(componentsEl);
+        }
         
-        // Create bar chart for clarity metrics
+        // Calculate component scores similar to backend algorithm
+        // These formulas should match the backend calculation as closely as possible
+        const contrastScore = Math.min(100, Math.max(0, contrastRaw * 1000));
+        const flatnessScore = Math.min(100, Math.max(0, (1 - flatnessRaw) * 100));
+        
+        // Different weightings based on if track is instrumental or has vocals
+        let contrastWeight, flatnessWeight, centroidWeight, centroidScore;
+        if (isInstrumental) {
+            contrastWeight = 0.5;  // Higher contrast weight for instrumental
+            flatnessWeight = 0.3;
+            centroidWeight = 0.2;
+            // For instrumental, wider range is optimal
+            const sampleRate = 44100; // Estimate, real value would come from backend
+            centroidScore = Math.min(100, Math.max(0, 100 - Math.abs(centroidRaw - sampleRate/4)/(sampleRate/8)));
+        } else {
+            contrastWeight = 0.4;
+            flatnessWeight = 0.2;
+            centroidWeight = 0.4;  // Higher centroid weight for vocals
+            // For vocals, more specific range for vocal clarity
+            const sampleRate = 44100; // Estimate
+            const vocalClarityCenter = sampleRate/8 + sampleRate/6;
+            centroidScore = Math.min(100, Math.max(0, 100 - Math.abs(centroidRaw - vocalClarityCenter)/(sampleRate/10)));
+        }
+        
+        // Try to get harmonic content data if available
+        let harmonicData = null;
+        const harmonicComplexityEl = document.getElementById('harmonic-complexity');
+        if (harmonicComplexityEl) {
+            const complexityText = harmonicComplexityEl.textContent;
+            if (complexityText) {
+                const complexityValue = parseInt(complexityText);
+                if (!isNaN(complexityValue)) {
+                    harmonicData = {
+                        complexity: complexityValue
+                    };
+                    // Get the key consistency if available
+                    const keyConsistencyEl = document.getElementById('key-consistency');
+                    if (keyConsistencyEl) {
+                        const consistencyText = keyConsistencyEl.textContent;
+                        if (consistencyText) {
+                            const consistencyValue = parseInt(consistencyText);
+                            if (!isNaN(consistencyValue)) {
+                                harmonicData.keyConsistency = consistencyValue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Try to get transient data if available
+        let transientData = null;
+        const transientScoreEl = document.getElementById('transients-score');
+        if (transientScoreEl && transientScoreEl.textContent !== 'N/A') {
+            const transientScoreText = transientScoreEl.textContent;
+            if (transientScoreText) {
+                const transientScoreValue = parseInt(transientScoreText);
+                if (!isNaN(transientScoreValue)) {
+                    transientData = {
+                        score: transientScoreValue
+                    };
+                    
+                    // Get attack time if available
+                    const attackTimeEl = document.getElementById('attack-time');
+                    if (attackTimeEl && attackTimeEl.textContent !== 'N/A') {
+                        const attackTimeText = attackTimeEl.textContent.replace(' ms', '');
+                        const attackTimeValue = parseFloat(attackTimeText);
+                        if (!isNaN(attackTimeValue)) {
+                            transientData.attackTime = attackTimeValue;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Get FFT method description
+        let fftMethodDescription = "";
+        if (fftParams.method === "spectral_contrast") {
+            fftMethodDescription = `Calculated using librosa's spectral_contrast with n_fft=${fftParams.n_fft}, hop_length=${fftParams.hop_length}`;
+        } else if (fftParams.method === "alternative_std") {
+            fftMethodDescription = `Calculated using alternative method (spectrum standard deviation) with n_fft=${fftParams.n_fft}, hop_length=${fftParams.hop_length}`;
+        } else if (fftParams.method.startsWith("default") || fftParams.method.startsWith("alternative_empty")) {
+            fftMethodDescription = `Using default value (audio may be very quiet or contain mostly silence)`;
+        } else if (fftParams.method === "error" || fftParams.method === "error_fallback") {
+            fftMethodDescription = `Error during spectral analysis, using fallback value`;
+        } else {
+            fftMethodDescription = `Calculation method: ${fftParams.method}`;
+        }
+        
+        // Display the component values, the scaling calculation, and weights
+        componentsEl.innerHTML = `
+            <div class="clarity-component">
+                <span class="component-label">Spectral Contrast:</span>
+                <span class="component-value">${contrastRaw.toFixed(6)}</span>
+                <span class="component-calculation">× 1000 = ${(contrastRaw * 1000).toFixed(2)} → clamped to ${Math.round(contrastScore)}%</span>
+                <span class="component-score">Score: ${Math.round(contrastScore)}/100</span>
+                <span class="component-weight">Weight: ${contrastWeight.toFixed(1)}</span>
+            </div>
+            <div class="clarity-component fft-params">
+                <span class="component-label">FFT Parameters:</span>
+                <span class="component-value">${fftParams.n_fft > 0 ? fftParams.n_fft : 'N/A'}</span>
+                <span class="component-calculation">${fftMethodDescription}</span>
+            </div>
+            <div class="clarity-component">
+                <span class="component-label">Spectral Flatness:</span>
+                <span class="component-value">${flatnessRaw.toFixed(4)}</span>
+                <span class="component-calculation">inverted: (1 - ${flatnessRaw.toFixed(4)}) × 100 = ${(flatnessScore).toFixed(1)}%</span>
+                <span class="component-score">Score: ${Math.round(flatnessScore)}/100</span>
+                <span class="component-weight">Weight: ${flatnessWeight.toFixed(1)}</span>
+            </div>
+            <div class="clarity-component">
+                <span class="component-label">Spectral Centroid:</span>
+                <span class="component-value">${Math.round(centroidRaw)} Hz</span>
+                <span class="component-calculation">normalized to ${Math.round(centroidScore)}%</span>
+                <span class="component-score">Score: ${Math.round(centroidScore)}/100</span>
+                <span class="component-weight">Weight: ${centroidWeight.toFixed(1)}</span>
+            </div>
+            ${harmonicData ? `
+            <div class="clarity-component harmonic-data">
+                <span class="component-label">Harmonic Complexity:</span>
+                <span class="component-value">${harmonicData.complexity}%</span>
+                <span class="component-calculation">Higher complexity can affect perceived clarity</span>
+                ${harmonicData.keyConsistency ? `<span class="component-score">Key Consistency: ${harmonicData.keyConsistency}%</span>` : ''}
+            </div>
+            ` : ''}
+            ${transientData ? `
+            <div class="clarity-component transient-data">
+                <span class="component-label">Transient Quality:</span>
+                <span class="component-value">${transientData.score}/100</span>
+                <span class="component-calculation">Sharp transients increase perceived clarity</span>
+                ${transientData.attackTime ? `<span class="component-score">Attack Time: ${transientData.attackTime} ms</span>` : ''}
+            </div>
+            ` : ''}
+            <div class="clarity-formula">
+                <span>Clarity Score = (${Math.round(contrastScore)} × ${contrastWeight.toFixed(1)}) + (${Math.round(flatnessScore)} × ${flatnessWeight.toFixed(1)}) + (${Math.round(centroidScore)} × ${centroidWeight.toFixed(1)}) = ${Math.round(score)}</span>
+            </div>
+            <div class="clarity-note">
+                <span><strong>Note:</strong> Spectral Contrast typically has very small raw values (around 0.0005). It is multiplied by 1000 to bring it to a useful scale, which is why it often shows around 50% after scaling.</span>
+            </div>
+        `;
+        
+        // Create radar chart to visualize all clarity-related factors
+        if (document.getElementById('clarity-radar-chart')) {
+            // If radar chart element exists, create or update it
+            const radarCtx = document.getElementById('clarity-radar-chart').getContext('2d');
+            
+            // Destroy previous radar chart if it exists
+            if (window.clarityRadarChart) {
+                window.clarityRadarChart.destroy();
+            }
+            
+            // Prepare radar chart data
+            const radarData = {
+                labels: [
+                    'Spectral Contrast', 
+                    'Tonal Focus',
+                    'Frequency Balance',
+                    harmonicData ? 'Harmonic Quality' : null,
+                    transientData ? 'Transient Quality' : null
+                ].filter(Boolean),
+                datasets: [{
+                    label: 'Your Track',
+                    data: [
+                        Math.round(contrastScore),
+                        Math.round(flatnessScore),
+                        Math.round(centroidScore),
+                        harmonicData ? 
+                            // Average of harmonic complexity and key consistency, or just complexity if that's all we have
+                            harmonicData.keyConsistency ? 
+                                Math.round((harmonicData.complexity + harmonicData.keyConsistency) / 2) : 
+                                harmonicData.complexity 
+                            : null,
+                        transientData ? transientData.score : null
+                    ].filter(item => item !== null),
+                    backgroundColor: 'rgba(74, 107, 255, 0.2)',
+                    borderColor: 'rgba(74, 107, 255, 1)',
+                    pointBackgroundColor: 'rgba(74, 107, 255, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(74, 107, 255, 1)'
+                }, {
+                    label: 'Professional Reference',
+                    data: [
+                        70, // Contrast reference
+                        80, // Flatness reference
+                        75, // Centroid reference
+                        harmonicData ? 85 : null, // Harmonic reference
+                        transientData ? 80 : null  // Transient reference
+                    ].filter(item => item !== null),
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+                }]
+            };
+            
+            // Create radar chart
+            window.clarityRadarChart = new Chart(radarCtx, {
+                type: 'radar',
+                data: radarData,
+                options: {
+                    elements: {
+                        line: {
+                            borderWidth: 3
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}/100`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create stacked bar chart to visualize component contributions to total score
         clarityChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Spectral Contrast', 'Tonal Focus', 'Frequency Balance'],
-                datasets: [{
-                    label: 'Your Mix',
-                    data: [contrastValue, flatnessValue, centroidValue],
-                    backgroundColor: [
-                        'rgba(74, 107, 255, 0.7)',  // Blue
-                        'rgba(255, 99, 132, 0.7)',  // Pink
-                        'rgba(75, 192, 192, 0.7)'   // Teal
-                    ],
-                    borderColor: [
-                        'rgba(74, 107, 255, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(75, 192, 192, 1)'
-                    ],
-                    borderWidth: 1
-                }, {
-                    label: 'Optimal Range',
-                    data: [contrastOptimal, flatnessOptimal, centroidOptimal],
-                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                    borderColor: 'rgba(0, 0, 0, 0.3)',
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    type: 'line',
-                    fill: false,
-                    pointRadius: 0
-                }]
+                labels: ['Raw Values', 'Normalized Scores', 'Weighted Contributions'],
+                datasets: [
+                    {
+                        label: 'Spectral Contrast',
+                        data: [contrastRaw * 1000, contrastScore, contrastScore * contrastWeight],
+                        backgroundColor: 'rgba(74, 107, 255, 0.7)',
+                        borderColor: 'rgba(74, 107, 255, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Tonal Focus',
+                        data: [(1 - flatnessRaw) * 100, flatnessScore, flatnessScore * flatnessWeight],
+                        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Frequency Balance',
+                        data: [centroidScore, centroidScore, centroidScore * centroidWeight],
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Processing Steps'
+                        }
+                    },
                     y: {
                         beginAtZero: true,
                         max: 100,
                         title: {
                             display: true,
-                            text: 'Score (0-100)'
-                        },
-                        grid: {
-                            color: 'rgba(0, 0, 0, 0.05)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Clarity Metrics'
+                            text: 'Values'
                         }
                     }
                 },
                 plugins: {
                     legend: {
-                        display: true,
-                        position: 'top'
+                        position: 'top',
                     },
                     tooltip: {
                         callbacks: {
-                            afterBody: function(context) {
-                                const index = context[0].dataIndex;
-                                const label = context[0].label;
-                                let explanation = '';
+                            label: function(context) {
+                                const label = context.dataset.label;
+                                const value = context.raw.toFixed(2);
+                                const index = context.dataIndex;
                                 
-                                if (label === 'Spectral Contrast') {
-                                    explanation = 'Higher values indicate better separation between elements in your mix.';
-                                } else if (label === 'Tonal Focus') {
-                                    explanation = 'Higher values indicate more tonal (musical) content vs. noise-like content.';
-                                } else if (label === 'Frequency Balance') {
-                                    explanation = 'Shows how well the high/mid frequencies are represented (affects clarity).';
+                                if (index === 0) {
+                                    if (label === 'Spectral Contrast') {
+                                        return `${label}: Raw ${contrastRaw.toFixed(6)} × 1000 = ${value}`;
+                                    } else if (label === 'Tonal Focus') {
+                                        return `${label}: 1 - ${flatnessRaw.toFixed(4)} = ${value}%`;
+                                    } else {
+                                        return `${label}: ${value}%`;
+                                    }
+                                } else if (index === 1) {
+                                    return `${label} normalized: ${value}%`;
+                                } else {
+                                    return `${label} contribution: ${value} points`;
                                 }
-                                
-                                return explanation;
                             }
                         }
                     }
@@ -1497,19 +1732,362 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Add chart description text
-        const container = ctx.canvas.parentNode;
-        let descriptionEl = container.querySelector('.clarity-chart-description');
-        if (!descriptionEl) {
-            descriptionEl = document.createElement('p');
-            descriptionEl.className = 'clarity-chart-description';
-            container.appendChild(descriptionEl);
+        // Add radar chart container if it doesn't exist
+        if (!document.getElementById('clarity-radar-chart')) {
+            const radarContainer = document.createElement('div');
+            radarContainer.className = 'radar-container';
+            radarContainer.innerHTML = `
+                <h3>Clarity Factors Overview</h3>
+                <p class="radar-description">This radar chart compares your track's clarity factors to professional reference standards.</p>
+                <canvas id="clarity-radar-chart"></canvas>
+            `;
+            container.parentNode.insertBefore(radarContainer, container.nextSibling);
+            
+            // Create the radar chart
+            createClarityChart(clarityData);  // Recursive call to create the radar chart
+            return;  // Exit to avoid infinite recursion
         }
-        descriptionEl.innerHTML = 'This chart shows how your mix performs on key clarity factors compared to optimal ranges. Higher bars generally indicate better clarity.';
-        descriptionEl.style.marginTop = '10px';
-        descriptionEl.style.fontSize = '14px';
-        descriptionEl.style.color = '#666';
-        descriptionEl.style.textAlign = 'center';
+        
+        // Add clarity insights section
+        let insightsEl = document.querySelector('.clarity-insights');
+        if (!insightsEl) {
+            insightsEl = document.createElement('div');
+            insightsEl.className = 'clarity-insights';
+            container.parentNode.appendChild(insightsEl);
+            
+            // Add clarity insights content
+            const trackType = isInstrumental ? 'instrumental' : 'vocal';
+            let insightsContent = `
+                <h3>Clarity Insights</h3>
+                <div class="insights-summary">
+                    <div class="insight-summary-score">
+                        <div class="summary-score-circle" style="--percent: ${Math.round(score)}">
+                            <span>${Math.round(score)}</span>
+                        </div>
+                        <p>Overall Clarity</p>
+                    </div>
+                    <div class="insight-summary-text">
+                        <p>
+                            Your ${trackType} track ${score > 75 ? 'has excellent clarity with well-defined elements.' : 
+                                score > 60 ? 'has good clarity with generally well-defined elements.' :
+                                score > 45 ? 'has moderate clarity with some elements that could be better defined.' :
+                                'has limited clarity with elements that need better definition.'}
+                        </p>
+                        <p class="insight-summary-strengths">
+                            <strong>Strengths:</strong> ${
+                                (contrastScore > 70 ? 'Strong frequency separation' : '') +
+                                (flatnessScore > 70 ? (contrastScore > 70 ? ', Good' : 'Good') + ' tonal focus' : '') +
+                                (centroidScore > 70 ? (contrastScore > 70 || flatnessScore > 70 ? ', Excellent' : 'Excellent') + ' frequency balance' : '') +
+                                (contrastScore <= 70 && flatnessScore <= 70 && centroidScore <= 70 ? 'None identified - improvement recommended in all areas' : '')
+                            }
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="insights-categories">
+                    <div class="insights-category">
+                        <h4>Frequency Definition</h4>
+                        <div class="insights-items">`;
+            
+            // Spectral contrast insights
+            if (contrastScore < 40) {
+                insightsContent += `
+                    <div class="insight warning" data-score="${Math.round(contrastScore)}">
+                        <div class="insight-meter" style="--score: ${Math.round(contrastScore)}%"></div>
+                        <div class="insight-content">
+                            <h5>Low Spectral Contrast</h5>
+                            <p>Your track lacks definition between frequencies. This can make it sound muddy or undefined.</p>
+                            <div class="insight-recommendation">
+                                <strong>Try:</strong> Gentle EQ to separate frequency ranges, careful compression to maintain dynamics
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (contrastScore > 70) {
+                insightsContent += `
+                    <div class="insight positive" data-score="${Math.round(contrastScore)}">
+                        <div class="insight-meter" style="--score: ${Math.round(contrastScore)}%"></div>
+                        <div class="insight-content">
+                            <h5>Good Spectral Contrast</h5>
+                            <p>Your track has excellent separation between frequencies, creating a clear sound.</p>
+                            <div class="insight-recommendation">
+                                <strong>Maintain:</strong> Your current EQ approach works well for frequency separation
+                            </div>
+                        </div>
+                    </div>`;
+            } else {
+                insightsContent += `
+                    <div class="insight neutral" data-score="${Math.round(contrastScore)}">
+                        <div class="insight-meter" style="--score: ${Math.round(contrastScore)}%"></div>
+                        <div class="insight-content">
+                            <h5>Moderate Spectral Contrast</h5>
+                            <p>Your track has adequate separation between frequencies.</p>
+                            <div class="insight-recommendation">
+                                <strong>Consider:</strong> Strategic EQ to further enhance the separation between instruments
+                            </div>
+                        </div>
+                    </div>`;
+            }
+
+            insightsContent += `
+                        </div>
+                    </div>
+                    
+                    <div class="insights-category">
+                        <h4>Tonal Characteristics</h4>
+                        <div class="insights-items">`;
+            
+            // Spectral flatness insights
+            if (flatnessScore < 50) {
+                insightsContent += `
+                    <div class="insight warning" data-score="${Math.round(flatnessScore)}">
+                        <div class="insight-meter" style="--score: ${Math.round(flatnessScore)}%"></div>
+                        <div class="insight-content">
+                            <h5>High Spectral Flatness</h5>
+                            <p>Your track has a noise-like quality that reduces clarity.</p>
+                            <div class="insight-recommendation">
+                                <strong>Try:</strong> Saturation to enhance harmonics, noise reduction if needed
+                            </div>
+                        </div>
+                    </div>`;
+            } else if (flatnessScore > 75) {
+                insightsContent += `
+                    <div class="insight positive" data-score="${Math.round(flatnessScore)}">
+                        <div class="insight-meter" style="--score: ${Math.round(flatnessScore)}%"></div>
+                        <div class="insight-content">
+                            <h5>Low Spectral Flatness</h5>
+                            <p>Your track has a tonal, musical quality that enhances clarity.</p>
+                            <div class="insight-recommendation">
+                                <strong>Maintain:</strong> Your current approach works well for tonal quality
+                            </div>
+                        </div>
+                    </div>`;
+            } else {
+                insightsContent += `
+                    <div class="insight neutral" data-score="${Math.round(flatnessScore)}">
+                        <div class="insight-meter" style="--score: ${Math.round(flatnessScore)}%"></div>
+                        <div class="insight-content">
+                            <h5>Moderate Spectral Flatness</h5>
+                            <p>Your track has a balanced mix of tonal and noise-like qualities.</p>
+                            <div class="insight-recommendation">
+                                <strong>Consider:</strong> Slight harmonic enhancement to bring out more tonal qualities
+                            </div>
+                        </div>
+                    </div>`;
+            }
+            
+            insightsContent += `
+                        </div>
+                    </div>
+                    
+                    <div class="insights-category">
+                        <h4>Frequency Balance</h4>
+                        <div class="insights-items">`;
+            
+            // Spectral centroid insights
+            if (isInstrumental) {
+                if (centroidScore < 50) {
+                    insightsContent += `
+                        <div class="insight warning" data-score="${Math.round(centroidScore)}">
+                            <div class="insight-meter" style="--score: ${Math.round(centroidScore)}%"></div>
+                            <div class="insight-content">
+                                <h5>Dark Frequency Balance</h5>
+                                <p>Your instrumental track may sound too dark or muffled.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Try:</strong> Gentle high-shelf boost around 6-10kHz, reduce excessive low-mids
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (centroidScore > 75) {
+                    insightsContent += `
+                        <div class="insight positive" data-score="${Math.round(centroidScore)}">
+                            <div class="insight-meter" style="--score: ${Math.round(centroidScore)}%"></div>
+                            <div class="insight-content">
+                                <h5>Balanced Frequency Spectrum</h5>
+                                <p>Your instrumental track has a well-balanced brightness.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Maintain:</strong> Your current frequency balance works well
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    insightsContent += `
+                        <div class="insight neutral" data-score="${Math.round(centroidScore)}">
+                            <div class="insight-meter" style="--score: ${Math.round(centroidScore)}%"></div>
+                            <div class="insight-content">
+                                <h5>Adequate Frequency Balance</h5>
+                                <p>Your instrumental track has adequate brightness.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Consider:</strong> Subtle high-frequency enhancement for more clarity
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            } else {
+                if (centroidScore < 50) {
+                    insightsContent += `
+                        <div class="insight warning" data-score="${Math.round(centroidScore)}">
+                            <div class="insight-meter" style="--score: ${Math.round(centroidScore)}%"></div>
+                            <div class="insight-content">
+                                <h5>Lacking Vocal Presence</h5>
+                                <p>Your vocal track may lack presence and articulation.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Try:</strong> Presence boost around 3-5kHz, de-essing if needed, focused compression
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (centroidScore > 75) {
+                    insightsContent += `
+                        <div class="insight positive" data-score="${Math.round(centroidScore)}">
+                            <div class="insight-meter" style="--score: ${Math.round(centroidScore)}%"></div>
+                            <div class="insight-content">
+                                <h5>Excellent Vocal Presence</h5>
+                                <p>Your vocal track has excellent presence and articulation.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Maintain:</strong> Your current approach to vocal presence works well
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    insightsContent += `
+                        <div class="insight neutral" data-score="${Math.round(centroidScore)}">
+                            <div class="insight-meter" style="--score: ${Math.round(centroidScore)}%"></div>
+                            <div class="insight-content">
+                                <h5>Adequate Vocal Presence</h5>
+                                <p>Your vocal track has adequate presence.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Consider:</strong> Subtle presence enhancement around 3-5kHz
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            }
+            
+            // Add harmonic and transient insights if available
+            if (harmonicData) {
+                insightsContent += `
+                    </div>
+                    </div>
+                    
+                    <div class="insights-category">
+                        <h4>Harmonic Content</h4>
+                        <div class="insights-items">`;
+                        
+                if (harmonicData.complexity > 75) {
+                    insightsContent += `
+                        <div class="insight neutral" data-score="${harmonicData.complexity}">
+                            <div class="insight-meter" style="--score: ${harmonicData.complexity}%"></div>
+                            <div class="insight-content">
+                                <h5>Rich Harmonic Content</h5>
+                                <p>Your track has rich harmonic content, which can affect clarity if not balanced properly.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Consider:</strong> Check for frequency masking between harmonically related elements
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (harmonicData.complexity < 40) {
+                    insightsContent += `
+                        <div class="insight neutral" data-score="${harmonicData.complexity}">
+                            <div class="insight-meter" style="--score: ${harmonicData.complexity}%"></div>
+                            <div class="insight-content">
+                                <h5>Simple Harmonic Content</h5>
+                                <p>Your track has simpler harmonic content, which can enhance clarity but might sound less rich.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Consider:</strong> Subtle harmonic enhancement through saturation or excitation
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    insightsContent += `
+                        <div class="insight neutral" data-score="${harmonicData.complexity}">
+                            <div class="insight-meter" style="--score: ${harmonicData.complexity}%"></div>
+                            <div class="insight-content">
+                                <h5>Balanced Harmonic Content</h5>
+                                <p>Your track has well-balanced harmonic content.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Maintain:</strong> Your current approach to harmonic content works well
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            }
+            
+            if (transientData) {
+                insightsContent += `
+                    </div>
+                    </div>
+                    
+                    <div class="insights-category">
+                        <h4>Transient Response</h4>
+                        <div class="insights-items">`;
+                        
+                if (transientData.score > 70) {
+                    insightsContent += `
+                        <div class="insight positive" data-score="${transientData.score}">
+                            <div class="insight-meter" style="--score: ${transientData.score}%"></div>
+                            <div class="insight-content">
+                                <h5>Excellent Transient Quality</h5>
+                                <p>Your track has excellent attack characteristics, enhancing clarity and definition.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Maintain:</strong> Your current approach to preserving transients works well
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (transientData.score < 50) {
+                    insightsContent += `
+                        <div class="insight warning" data-score="${transientData.score}">
+                            <div class="insight-meter" style="--score: ${transientData.score}%"></div>
+                            <div class="insight-content">
+                                <h5>Limited Transient Quality</h5>
+                                <p>Your track could benefit from sharper attacks to improve clarity.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Try:</strong> Transient enhancement, less aggressive compression, attack time adjustments
+                                </div>
+                            </div>
+                        </div>`;
+                } else {
+                    insightsContent += `
+                        <div class="insight neutral" data-score="${transientData.score}">
+                            <div class="insight-meter" style="--score: ${transientData.score}%"></div>
+                            <div class="insight-content">
+                                <h5>Adequate Transient Quality</h5>
+                                <p>Your track has adequate transient response.</p>
+                                <div class="insight-recommendation">
+                                    <strong>Consider:</strong> Subtle transient enhancement for more definition
+                                </div>
+                            </div>
+                        </div>`;
+                }
+            }
+            
+            insightsContent += `
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="insights-footer">
+                    <p>Click on any insight for more detailed recommendations</p>
+                </div>`;
+                
+            insightsEl.innerHTML = insightsContent;
+            
+            // Add click event listeners to insights for interactivity
+            setTimeout(() => {
+                const insightItems = document.querySelectorAll('.insight');
+                insightItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        // Toggle expanded class
+                        this.classList.toggle('expanded');
+                        
+                        // Close other expanded insights
+                        insightItems.forEach(otherItem => {
+                            if (otherItem !== this && otherItem.classList.contains('expanded')) {
+                                otherItem.classList.remove('expanded');
+                            }
+                        });
+                    });
+                });
+            }, 500);
+        }
     }
     
     // Handle errors

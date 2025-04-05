@@ -855,18 +855,72 @@ def analyze_clarity(y, sr, is_instrumental=None):
         print("Calculating spectral contrast...")
         # Calculate spectral contrast with adjusted parameters and error handling
         try:
-            contrast = librosa.feature.spectral_contrast(
-                y=y_mono, 
-                sr=sr,
-                n_bands=4,  # Reduced from default 6
-                fmin=20.0,  # Set minimum frequency
-                n_fft=2048,  # Increased window size
-                hop_length=512  # Add explicit hop length
-            )
-            if contrast.size > 0:
-                contrast_mean = float(np.nanmean(np.abs(contrast)))
+            # First check if audio is too quiet which might cause empty spectral data
+            if np.max(np.abs(y_mono)) < 1e-6:  # Lowered threshold to catch only truly silent audio
+                print("Audio is very quiet, using default spectral contrast value")
+                contrast_mean = 0.5
+                contrast = np.zeros((4, 1))  # Default shape for analysis
+                successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "default_quiet"}
             else:
-                contrast_mean = 0.5  # Default value when the array is empty
+                # Try with different parameter combinations until we get valid results
+                successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "default"}
+                for n_fft in [2048, 4096, 1024]:  # Try different FFT sizes
+                    for hop_length in [512, 1024, 256]:  # Try different hop lengths
+                        try:
+                            # Suppress numpy warnings temporarily
+                            with np.errstate(all='ignore'):
+                                contrast = librosa.feature.spectral_contrast(
+                                    y=y_mono,
+                                    sr=sr,
+                                    n_bands=4,  # Reduced from default 6
+                                    fmin=20.0,  # Set minimum frequency
+                                    n_fft=n_fft,
+                                    hop_length=hop_length
+                                )
+                                
+                                # Check if we got valid results
+                                if contrast.size > 0 and not np.all(np.isnan(contrast)):
+                                    # Calculate mean without warnings
+                                    contrast_mean = float(np.nanmean(np.abs(contrast)))
+                                    if not np.isnan(contrast_mean) and not np.isinf(contrast_mean):
+                                        print(f"Successfully calculated contrast with n_fft={n_fft}, hop_length={hop_length}")
+                                        successful_fft_params = {"n_fft": n_fft, "hop_length": hop_length, "method": "spectral_contrast"}
+                                        break  # Exit the hop_length loop if successful
+                        except Exception as e:
+                            print(f"Failed with n_fft={n_fft}, hop_length={hop_length}: {str(e)}")
+                            continue
+                    
+                    # Break out of n_fft loop if we got valid results
+                    if 'contrast_mean' in locals() and not np.isnan(contrast_mean) and not np.isinf(contrast_mean):
+                        break
+                
+                # If we still don't have a valid result after trying all combinations
+                if 'contrast_mean' not in locals() or np.isnan(contrast_mean) or np.isinf(contrast_mean):
+                    print("Still getting invalid contrast after trying all parameter combinations, using alternative approach")
+                    # Alternative approach: calculate the standard deviation of the spectrum
+                    stft = np.abs(librosa.stft(y_mono, n_fft=2048, hop_length=512))
+                    if stft.size > 0:
+                        # Convert to log amplitude
+                        log_stft = librosa.amplitude_to_db(stft, ref=np.max)
+                        # Calculate the standard deviation across frequency bins as a measure of contrast
+                        contrast_values = np.std(log_stft, axis=0)
+                        if contrast_values.size > 0:
+                            # Scale to typical spectral contrast range
+                            contrast_mean = float(np.nanmean(contrast_values) / 100)
+                            contrast_mean = min(1.0, max(0.1, contrast_mean))  # Bound to reasonable range
+                            successful_fft_params = {"n_fft": 2048, "hop_length": 512, "method": "alternative_std"}
+                        else:
+                            contrast_mean = 0.5
+                            successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "alternative_empty"}
+                    else:
+                        contrast_mean = 0.5
+                        successful_fft_params = {"n_fft": 0, "hop_length": 0, "method": "alternative_empty_stft"}
+            
+            # Ensure the value is valid
+            if np.isnan(contrast_mean) or np.isinf(contrast_mean):
+                print("Warning: Invalid final contrast value, using default")
+                contrast_mean = 0.5
+                
             print(f"Spectral contrast calculated: {contrast_mean}")
         except Exception as e:
             print(f"Error calculating spectral contrast: {str(e)}")
@@ -876,14 +930,20 @@ def analyze_clarity(y, sr, is_instrumental=None):
         print("Calculating spectral flatness...")
         # Calculate spectral flatness with error handling
         try:
-            flatness = librosa.feature.spectral_flatness(y=y_mono)
-            if flatness.size > 0:
-                flatness_mean = float(np.nanmean(flatness))
-                if np.isnan(flatness_mean):
-                    print("Warning: NaN detected in spectral flatness, using default value")
-                    flatness_mean = 0.5
+            if np.max(np.abs(y_mono)) < 1e-5:
+                print("Audio is very quiet, using default spectral flatness value")
+                flatness_mean = 0.5
             else:
-                flatness_mean = 0.5  # Default value when array is empty
+                flatness = librosa.feature.spectral_flatness(y=y_mono)
+                # More robust checking for valid flatness data
+                if flatness.size > 0 and not np.all(np.isnan(flatness)):
+                    with np.errstate(all='ignore'):  # Suppress all numpy warnings
+                        flatness_mean = float(np.nanmean(flatness))
+                        if np.isnan(flatness_mean) or np.isinf(flatness_mean):
+                            print("Warning: NaN detected in spectral flatness, using default value")
+                            flatness_mean = 0.5
+                else:
+                    flatness_mean = 0.5  # Default value when array is empty
             print(f"Spectral flatness calculated: {flatness_mean}")
         except Exception as e:
             print(f"Error calculating spectral flatness: {str(e)}")
@@ -892,14 +952,21 @@ def analyze_clarity(y, sr, is_instrumental=None):
         print("Calculating spectral centroid...")
         # Calculate spectral centroid with error handling
         try:
-            centroid = librosa.feature.spectral_centroid(y=y_mono, sr=sr)
-            if centroid.size > 0:
-                centroid_mean = float(np.nanmean(centroid))
-                if np.isnan(centroid_mean):
-                    print("Warning: NaN detected in spectral centroid, using default value")
-                    centroid_mean = sr/4
+            if np.max(np.abs(y_mono)) < 1e-5:
+                print("Audio is very quiet, using default spectral centroid value")
+                centroid_mean = sr/4
             else:
-                centroid_mean = sr/4  # Default value when array is empty
+                centroid = librosa.feature.spectral_centroid(y=y_mono, sr=sr)
+                # More robust checking for valid centroid data
+                if centroid.size > 0 and not np.all(np.isnan(centroid)):
+                    with np.errstate(all='ignore'):  # Suppress all numpy warnings
+                        centroid_mean = float(np.nanmean(centroid))
+                        if np.isnan(centroid_mean) or np.isinf(centroid_mean):
+                            print("Warning: Invalid value in spectral centroid mean, using default")
+                            centroid_mean = sr/4
+                else:
+                    print("Empty or invalid centroid array, using default value")
+                    centroid_mean = sr/4
             print(f"Spectral centroid calculated: {centroid_mean}")
         except Exception as e:
             print(f"Error calculating spectral centroid: {str(e)}")
@@ -974,7 +1041,8 @@ def analyze_clarity(y, sr, is_instrumental=None):
             "spectral_flatness": float(flatness_mean),
             "spectral_centroid": float(centroid_mean),
             "analysis": analysis,
-            "is_instrumental": is_instrumental
+            "is_instrumental": is_instrumental,
+            "fft_params": successful_fft_params  # Add the successful FFT parameters
         }
         
         # Final validation of all numeric values
@@ -992,7 +1060,8 @@ def analyze_clarity(y, sr, is_instrumental=None):
             "spectral_contrast": 0.5,
             "spectral_flatness": 0.5,
             "spectral_centroid": sr/4 if sr else 2000.0,
-            "analysis": [f"Unable to analyze clarity: {str(e)}"]
+            "analysis": [f"Unable to analyze clarity: {str(e)}"],
+            "fft_params": {"n_fft": 0, "hop_length": 0, "method": "error"}
         }
 
 def get_clarity_analysis(contrast, flatness, centroid, sr, is_instrumental=None):

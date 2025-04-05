@@ -92,8 +92,8 @@
             "@type": "WebPage",
             "@id": "{{ secure_url(request.url) }}"
         },
-        "datePublished": "2023-11-15T08:00:00+08:00",
-        "dateModified": "2025-01-10T08:00:00+08:00"
+        "datePublished": "{{ last_modified }}",
+        "dateModified": "{{ last_modified }}"
     }
     </script>
     
@@ -938,4 +938,4 @@
     }
     </style>
 </body>
-</html> 
+</html>
