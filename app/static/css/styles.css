@@ -4102,3 +4102,46 @@ main {
     color: #28a745;
     font-weight: bold;
 }
+
+/* Clarity Chart Styles */
+.clarity-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding: 12px;
+    background-color: rgba(240, 240, 245, 0.5);
+    border-radius: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.legend-color {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    border-radius: 3px;
+}
+
+.clarity-chart-description {
+    margin-top: 12px;
+    padding: 10px;
+    background-color: rgba(240, 240, 245, 0.7);
+    border-radius: 8px;
+    border-left: 4px solid rgba(74, 107, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+    .clarity-legend {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px;
+    }
+}

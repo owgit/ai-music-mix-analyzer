@@ -662,23 +662,47 @@
                             <h3>Clarity Score</h3>
                             <div class="score-value" id="clarity-score">0</div>
                         </div>
+                        <div class="analysis-description">
+                            <p>Clarity analysis measures how distinct and well-defined the elements in your mix sound. A clear mix allows each instrument and vocal to be heard without being masked by other elements, creating a professional sound with proper separation and definition across the frequency spectrum.</p>
+                        </div>
                         <div class="metrics-container">
                             <div class="metric">
                                 <h4>Spectral Contrast</h4>
                                 <div class="metric-value" id="spectral-contrast">0</div>
+                                <p class="metric-description">Measures the distinction between peaks and valleys in the frequency spectrum</p>
                             </div>
                             <div class="metric">
                                 <h4>Spectral Flatness</h4>
                                 <div class="metric-value" id="spectral-flatness">0</div>
+                                <p class="metric-description">Indicates how noise-like or tone-like your mix is, affecting perceived clarity</p>
                             </div>
                             <div class="metric">
                                 <h4>Spectral Centroid</h4>
                                 <div class="metric-value" id="spectral-centroid">0 Hz</div>
+                                <p class="metric-description">The "center of gravity" of your sound's frequency spectrum</p>
                             </div>
                         </div>
                         <div class="analysis-card">
                             <h3>Analysis</h3>
                             <ul id="clarity-analysis"></ul>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Clarity Factors Visualization</h3>
+                            <div class="clarity-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background: rgba(74, 107, 255, 0.7);"></span>
+                                    <span>Spectral Contrast: Separation between elements</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background: rgba(255, 99, 132, 0.7);"></span>
+                                    <span>Tonal Focus: Musical content vs. noise</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color" style="background: rgba(75, 192, 192, 0.7);"></span>
+                                    <span>Frequency Balance: Distribution across spectrum</span>
+                                </div>
+                            </div>
+                            <canvas id="clarity-chart"></canvas>
                         </div>
                     </div>
 

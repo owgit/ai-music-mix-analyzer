@@ -808,6 +808,9 @@ document.addEventListener('DOMContentLoaded', function() {
             clarityAnalysis.appendChild(li);
         });
         
+        // Create clarity chart
+        createClarityChart(clarity);
+
         // Transients analysis
         if (data.results.transients) {
             console.log("Transients data:", data.results.transients);
@@ -1392,6 +1395,121 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
+    }
+    
+    // Create clarity chart
+    let clarityChart = null;
+    function createClarityChart(clarityData) {
+        const ctx = document.getElementById('clarity-chart').getContext('2d');
+        
+        // Destroy previous chart if it exists
+        if (clarityChart) {
+            clarityChart.destroy();
+        }
+        
+        // Normalize values for display (all between 0-100)
+        const contrastValue = Math.min(100, clarityData.spectral_contrast * 1000); // Scale contrast to visible range
+        const flatnessValue = Math.min(100, (1 - clarityData.spectral_flatness) * 100); // Invert flatness (lower is better)
+        const centroidValue = Math.min(100, Math.max(0, (clarityData.spectral_centroid / 20000) * 100)); // Normalize centroid
+        
+        // Calculate an "optimal" zone for each value
+        const contrastOptimal = 70; // Higher contrast is generally better for clarity
+        const flatnessOptimal = 80; // Lower flatness (higher tonal focus) is better for clarity
+        const centroidOptimal = 60; // Mid-high centroid is best for clarity (not too dark, not too bright)
+        
+        // Create bar chart for clarity metrics
+        clarityChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Spectral Contrast', 'Tonal Focus', 'Frequency Balance'],
+                datasets: [{
+                    label: 'Your Mix',
+                    data: [contrastValue, flatnessValue, centroidValue],
+                    backgroundColor: [
+                        'rgba(74, 107, 255, 0.7)',  // Blue
+                        'rgba(255, 99, 132, 0.7)',  // Pink
+                        'rgba(75, 192, 192, 0.7)'   // Teal
+                    ],
+                    borderColor: [
+                        'rgba(74, 107, 255, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Optimal Range',
+                    data: [contrastOptimal, flatnessOptimal, centroidOptimal],
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    borderColor: 'rgba(0, 0, 0, 0.3)',
+                    borderWidth: 2,
+                    borderDash: [5, 5],
+                    type: 'line',
+                    fill: false,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (0-100)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Clarity Metrics'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterBody: function(context) {
+                                const index = context[0].dataIndex;
+                                const label = context[0].label;
+                                let explanation = '';
+                                
+                                if (label === 'Spectral Contrast') {
+                                    explanation = 'Higher values indicate better separation between elements in your mix.';
+                                } else if (label === 'Tonal Focus') {
+                                    explanation = 'Higher values indicate more tonal (musical) content vs. noise-like content.';
+                                } else if (label === 'Frequency Balance') {
+                                    explanation = 'Shows how well the high/mid frequencies are represented (affects clarity).';
+                                }
+                                
+                                return explanation;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Add chart description text
+        const container = ctx.canvas.parentNode;
+        let descriptionEl = container.querySelector('.clarity-chart-description');
+        if (!descriptionEl) {
+            descriptionEl = document.createElement('p');
+            descriptionEl.className = 'clarity-chart-description';
+            container.appendChild(descriptionEl);
+        }
+        descriptionEl.innerHTML = 'This chart shows how your mix performs on key clarity factors compared to optimal ranges. Higher bars generally indicate better clarity.';
+        descriptionEl.style.marginTop = '10px';
+        descriptionEl.style.fontSize = '14px';
+        descriptionEl.style.color = '#666';
+        descriptionEl.style.textAlign = 'center';
     }
     
     // Handle errors
