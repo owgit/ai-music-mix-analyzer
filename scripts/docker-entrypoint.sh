@@ -5,6 +5,10 @@ set -e
 echo "Waiting for MySQL to be ready..."
 python /app/scripts/wait_for_db.py
 
+# Fix database schema issues
+echo "Fixing database schema..."
+python /app/scripts/fix_database_schema.py
+
 # Initialize the database
 echo "Initializing database..."
 python -c "
