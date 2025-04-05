@@ -28,7 +28,7 @@ def validate_schema():
         columns = cursor.fetchall()
         column_names = [col['Field'] for col in columns]
         
-        required_columns = ['id', 'filename', 'original_name', 'analysis_json', 'file_hash']
+        required_columns = ['id', 'filename', 'original_name', 'analysis_json', 'file_hash', 'file_path', 'is_instrumental']
         missing_columns = [col for col in required_columns if col not in column_names]
         
         if missing_columns:
@@ -63,7 +63,7 @@ def create_tables_if_not_exist():
             filename VARCHAR(255) NOT NULL DEFAULT '',
             original_name VARCHAR(255) NOT NULL DEFAULT '',
             file_hash VARCHAR(64) NOT NULL,
-            file_path VARCHAR(255) NOT NULL,
+            file_path VARCHAR(255) NOT NULL DEFAULT '',
             is_instrumental BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             analysis_json LONGTEXT NULL,
@@ -93,6 +93,18 @@ def create_tables_if_not_exist():
             """)
             has_analysis_json = cursor.fetchone()[0] > 0
             
+            cursor.execute("""
+            SELECT COUNT(*) FROM information_schema.columns 
+            WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'is_instrumental'
+            """)
+            has_is_instrumental = cursor.fetchone()[0] > 0
+            
+            cursor.execute("""
+            SELECT COUNT(*) FROM information_schema.columns 
+            WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'file_path'
+            """)
+            has_file_path = cursor.fetchone()[0] > 0
+            
             # Add any missing columns
             if not has_filename:
                 print("Adding missing 'filename' column to songs table")
@@ -105,6 +117,14 @@ def create_tables_if_not_exist():
             if not has_analysis_json:
                 print("Adding missing 'analysis_json' column to songs table")
                 cursor.execute("ALTER TABLE songs ADD COLUMN analysis_json LONGTEXT NULL")
+                
+            if not has_is_instrumental:
+                print("Adding missing 'is_instrumental' column to songs table")
+                cursor.execute("ALTER TABLE songs ADD COLUMN is_instrumental BOOLEAN DEFAULT FALSE")
+                
+            if not has_file_path:
+                print("Adding missing 'file_path' column to songs table")
+                cursor.execute("ALTER TABLE songs ADD COLUMN file_path VARCHAR(255) NOT NULL DEFAULT ''")
             
             connection.commit()
         except Exception as e:

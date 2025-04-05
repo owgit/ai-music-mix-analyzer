@@ -47,6 +47,28 @@ PREPARE stmt FROM @add_analysis_json;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+-- Add is_instrumental column if it doesn't exist
+SELECT COUNT(*) INTO @col_exists FROM information_schema.columns 
+WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'is_instrumental';
+
+SET @add_is_instrumental = IF(@col_exists = 0, 
+    'ALTER TABLE songs ADD COLUMN is_instrumental BOOLEAN DEFAULT FALSE', 
+    'SELECT "is_instrumental column already exists"');
+PREPARE stmt FROM @add_is_instrumental;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Add file_path column if it doesn't exist
+SELECT COUNT(*) INTO @col_exists FROM information_schema.columns 
+WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'file_path';
+
+SET @add_file_path = IF(@col_exists = 0, 
+    'ALTER TABLE songs ADD COLUMN file_path VARCHAR(255) NOT NULL DEFAULT ""', 
+    'SELECT "file_path column already exists"');
+PREPARE stmt FROM @add_file_path;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
 -- Migrate data from title column if needed
 SELECT COUNT(*) INTO @col_exists FROM information_schema.columns 
 WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'title';
