@@ -297,14 +297,19 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("handleFileUpload called with file:", file.name, file.type, file.size);
         
         // Check if file is a supported audio format
-        const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
+        const supportedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
                                'audio/aiff', 'audio/x-aiff', 'audio/m4a', 'audio/x-m4a', 'audio/pcm'];
         const supportedExtensions = ['.mp3', '.wav', '.flac', '.aiff', '.aif', '.m4a', '.pcm'];
         
+        // Improved validation for mobile devices where MIME types may not be reliable
+        const fileName = file.name.toLowerCase();
         const isValidType = supportedTypes.some(type => file.type.includes(type));
-        const isValidExtension = supportedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+        const isValidExtension = supportedExtensions.some(ext => fileName.endsWith(ext));
         
-        if (!isValidType && !isValidExtension) {
+        // Special check for MP3 files on mobile where type might be empty or incorrect
+        const isMobileMP3 = (file.type === '' || file.type === 'audio/octet-stream') && fileName.endsWith('.mp3');
+        
+        if (!isValidType && !isValidExtension && !isMobileMP3) {
             alert('Please upload a supported audio file (MP3, WAV, FLAC, AIFF, M4A, PCM).');
             return;
         }

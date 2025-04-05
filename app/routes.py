@@ -20,7 +20,16 @@ main_bp = Blueprint('main', __name__)
 
 def allowed_file(filename):
     """Check if the file has an allowed extension"""
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'mp3', 'wav', 'flac', 'aiff', 'ogg'}
+    if '.' not in filename:
+        return False
+    
+    # Get the file extension and convert to lowercase for case-insensitive comparison
+    extension = filename.rsplit('.', 1)[1].lower()
+    
+    # List of allowed audio extensions
+    allowed_extensions = {'mp3', 'wav', 'flac', 'aiff', 'aif', 'm4a', 'ogg', 'pcm'}
+    
+    return extension in allowed_extensions
 
 @main_bp.route('/')
 def index():
@@ -90,11 +99,14 @@ def upload_file():
     """Handle file upload and analysis"""
     print("Upload endpoint called")
     
-    if 'file' not in request.files:
+    # Handle both 'file' and 'audio_file' parameter names for compatibility
+    if 'file' in request.files:
+        file = request.files['file']
+    elif 'audio_file' in request.files:
+        file = request.files['audio_file']
+    else:
         print("No file part in request")
         return jsonify({'error': 'No file part'}), 400
-    
-    file = request.files['file']
     
     if file.filename == '':
         print("No file selected")

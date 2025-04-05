@@ -7,7 +7,7 @@
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Learn how Mix Analyzer uses AI to improve your music. Our tool analyzes frequency, dynamics, and stereo field to enhance your audio production.">
-    <meta name="keywords" content="AI mixing, AI mastering, online mixing tool, free mastering assistant, music production AI, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, professional mixing, mastering online, AI audio analysis, mix improvement, AI mixing engineer">
+    <meta name="keywords" content="AI mixing, AI mastering, online mixing tool, free mastering assistant, music production AI, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, professional mixing, mastering online, AI audio analysis, mix improvement, AI mixing engineer, spectral analyzer, 3D audio visualization, harmonic distortion analysis, phase correlation, loudness metering, audio engineering tool, pro audio software">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Mix Analyzer">
     
@@ -92,8 +92,8 @@
             "@type": "WebPage",
             "@id": "{{ secure_url(request.url) }}"
         },
-        "datePublished": "{{ last_modified }}",
-        "dateModified": "{{ last_modified }}"
+        "datePublished": "{{ current_timestamp }}",
+        "dateModified": "{{ current_timestamp }}"
     }
     </script>
     
@@ -223,18 +223,34 @@
         "mainEntity": [
             {
                 "@type": "Question",
-                "name": "How does Mix Analyzer's AI improve my music mixes?",
+                "name": "What audio formats does Mix Analyzer support?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Mix Analyzer uses advanced AI algorithms to analyze your track's frequency balance, dynamic range, stereo field, harmonic content, and more. It then provides professional recommendations based on genre-specific standards and comparison with reference tracks to help you make targeted improvements to your mix."
+                    "text": "Mix Analyzer supports all professional audio formats including WAV, AIFF, FLAC, MP3, and OGG. We recommend using uncompressed formats (WAV/AIFF) at 44.1kHz or higher for most accurate analysis."
                 }
             },
             {
                 "@type": "Question",
-                "name": "What file formats does Mix Analyzer support?",
+                "name": "What algorithms power the audio analysis?",
                 "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "Mix Analyzer supports common audio formats including WAV, MP3, AIFF, FLAC, OGG, and M4A files. For best results, we recommend uploading high-quality WAV or FLAC files."
+                    "text": "Our analysis combines FFT for spectral analysis, perceptual loudness algorithms (EBU R128), advanced stereo field analysis using correlation meters, and AI models trained on thousands of professional mixes."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What are the technical requirements?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer works in all modern browsers. For best performance, we recommend Chrome or Firefox with Web Audio API support. No special hardware is required beyond a standard computer or mobile device."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does Mix Analyzer ensure my audio files remain private?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Your uploaded audio files are processed securely and are not shared with third parties. Files are temporarily stored for analysis purposes only and can be removed upon request. We respect your creative work and privacy."
                 }
             },
             {
@@ -259,14 +275,6 @@
                 "acceptedAnswer": {
                     "@type": "Answer",
                     "text": "Dynamic range analysis measures the difference between the loudest and quietest parts of your track, along with compression characteristics. This helps you achieve the right balance of dynamics for your genre, avoiding over-compression that can lead to listener fatigue or insufficient dynamics that can make your mix sound weak."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "How does Mix Analyzer ensure my audio files remain private?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Your uploaded audio files are processed securely and are not shared with third parties. Files are temporarily stored for analysis purposes only and can be removed upon request. We respect your creative work and privacy."
                 }
             }
         ]
@@ -350,7 +358,7 @@
                 </div>
                 <div class="header-right">
                     <div class="app-title">
-                        <h1>AI-Powered Audio Analysis Tool</h1>
+                        <h1>About Mix Analyzer's AI-Powered Audio Analysis</h1>
                     </div>
                     <div class="header-actions">
                         <button id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
