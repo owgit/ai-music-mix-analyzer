@@ -1014,7 +1014,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 let iframe = document.getElementById('spatial-field-iframe');
                 if (iframe) {
                     // Update iframe source to regenerated file
-                    iframe.src = data.interactive_path;
+                    iframe.src = data.results.visualizations.spatial_field_interactive;
                     iframe.style.display = 'block';
                     
                     // Hide the static image
