@@ -10,6 +10,23 @@ import time
 import mysql.connector
 from mysql.connector import Error
 
+# Add parent directory to path to allow importing from app
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+try:
+    from app.core.db_utils import get_db_connection, get_db_config
+except ImportError:
+    print("Could not import from app.core.db_utils, falling back to local implementation")
+    
+    def get_db_config():
+        return {
+            'host': os.environ.get('MYSQL_HOST', 'localhost'),
+            'port': int(os.environ.get('MYSQL_PORT', 3306)),
+            'user': os.environ.get('MYSQL_USER', 'root'),
+            'password': os.environ.get('MYSQL_PASSWORD', 'root'),
+            'database': os.environ.get('MYSQL_DATABASE', 'music_analyzer')
+        }
+
 def wait_for_db(max_attempts=30, delay=2):
     """
     Wait for the MySQL database to be ready.
@@ -21,17 +38,19 @@ def wait_for_db(max_attempts=30, delay=2):
     Returns:
         True if connection succeeded, False otherwise
     """
-    host = os.environ.get('MYSQL_HOST', 'localhost')
-    port = int(os.environ.get('MYSQL_PORT', 3307))
-    user = os.environ.get('MYSQL_USER', 'root')
-    password = os.environ.get('MYSQL_PASSWORD', 'root')
-    database = os.environ.get('MYSQL_DATABASE', 'music_analyzer')
+    config = get_db_config()
+    host = config['host']
+    port = config['port']
+    user = config['user']
+    password = config['password']
+    database = config['database']
     
     print(f"Waiting for MySQL database at {host}:{port}...")
     
     for attempt in range(1, max_attempts + 1):
         try:
             print(f"Attempt {attempt}/{max_attempts}...")
+            # Connect without specifying the database in case it doesn't exist yet
             connection = mysql.connector.connect(
                 host=host,
                 port=port,

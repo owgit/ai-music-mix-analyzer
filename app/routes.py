@@ -13,7 +13,7 @@ from pathlib import Path
 
 from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types, generate_3d_spatial_visualization
 from app.core.openai_analyzer import analyze_with_gpt
-from app.core.database import calculate_file_hash, find_song_by_hash, save_song, delete_song_by_filename
+from app.core.database import calculate_file_hash, find_song_by_hash, save_song, delete_song, get_db_connection
 
 # Create a Blueprint for the main routes
 main_bp = Blueprint('main', __name__)
@@ -130,18 +130,16 @@ def upload_file():
             file_hash = calculate_file_hash(file_path)
             print(f"File hash: {file_hash}")
             
-            # Check if the file already exists in the database
+            # Check if we've already analyzed this file
             existing_song = find_song_by_hash(file_hash)
-            
             if existing_song:
-                print(f"Found existing song: {existing_song['title']}")
+                print(f"Found existing song: {existing_song.get('original_name') or existing_song.get('filename')}")
                 
                 # Return the existing analysis results
                 try:
-                    # Parse the saved analysis JSON
-                    results = json.loads(existing_song['analysis_data']) if existing_song['analysis_data'] else None
-                    
-                    if results:
+                    # Only look for analysis_json field from the standardized schema
+                    if existing_song.get('analysis_json'):
+                        results = json.loads(existing_song['analysis_json'])
                         print("Using existing analysis results from database")
                         
                         # Return the cached results
@@ -154,9 +152,9 @@ def upload_file():
                         return jsonify(response_data)
                     else:
                         print("Existing record found but no analysis data, performing new analysis")
-                except Exception as e:
+                except (json.JSONDecodeError, KeyError) as e:
                     print(f"Error parsing existing analysis: {str(e)}")
-                    print("Performing new analysis instead")
+                    # Continue with new analysis
             
             # If we reach here, we need to analyze the file
             # Analyze the mix with instrumental flag
@@ -204,7 +202,7 @@ def upload_file():
             
             # Save the analysis results to the database
             try:
-                save_song(
+                song_id = save_song(
                     filename=file_id,
                     original_name=file.filename,
                     file_path=file_path,
@@ -212,7 +210,10 @@ def upload_file():
                     is_instrumental=is_instrumental,
                     analysis_json=results
                 )
-                print("Song analysis saved to database")
+                if song_id:
+                    print(f"Song analysis saved to database with ID: {song_id}")
+                else:
+                    print("Song analysis could not be saved to database (possibly already exists)")
             except Exception as e:
                 print(f"Error saving song to database: {str(e)}")
                 traceback.print_exc()
@@ -486,8 +487,36 @@ def delete_track():
         file_id = data['fileId']
         print(f"Received delete request for file ID: {file_id}")
         
-        # Delete from database
-        db_result = delete_song_by_filename(file_id)
+        # First try to find the song to get its file_hash (more reliable)
+        connection = get_db_connection()
+        file_hash = None
+        
+        if connection:
+            try:
+                cursor = connection.cursor(dictionary=True)
+                # Try different ways to match the song
+                cursor.execute("""
+                    SELECT file_hash FROM songs 
+                    WHERE filename = %s 
+                    OR original_name = %s 
+                    OR filename LIKE %s 
+                    OR original_name LIKE %s
+                """, (file_id, file_id, f"%{file_id}%", f"%{file_id}%"))
+                
+                result = cursor.fetchone()
+                if result and result.get('file_hash'):
+                    file_hash = result['file_hash']
+                    print(f"Found file_hash for deletion: {file_hash}")
+            except Exception as db_err:
+                print(f"Error looking up file_hash: {db_err}")
+            finally:
+                if 'cursor' in locals() and cursor:
+                    cursor.close()
+                connection.close()
+        
+        # Delete from database - try file_hash first if found, otherwise use file_id
+        identifier = file_hash if file_hash else file_id
+        db_result = delete_song(identifier) 
         print(f"Database deletion result: {db_result}")
         
         if db_result:

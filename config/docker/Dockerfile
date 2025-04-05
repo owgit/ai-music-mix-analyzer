@@ -36,8 +36,8 @@ ENV PYTHONUNBUFFERED=1 \
 # Expose port
 EXPOSE 5000
 
-# Run the application - no entrypoint
-CMD python -c "from app.core.database import initialize_database; initialize_database()" && \
+# Run the application - initialize database and start gunicorn
+CMD python -m app.core.database && \
     gunicorn --bind 0.0.0.0:5000 \
     --workers 2 \
     --threads 4 \

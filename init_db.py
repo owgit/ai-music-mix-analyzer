@@ -1,21 +1,52 @@
 import os
+import sys
 import mysql.connector
 from mysql.connector import Error
+
+# Add path to allow importing from app
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+try:
+    from app.core.db_utils import get_db_connection, get_db_config
+except ImportError:
+    print("Could not import from app.core.db_utils, falling back to local implementation")
+    
+    def get_db_config():
+        return {
+            'host': os.environ.get('MYSQL_HOST', 'localhost'),
+            'port': int(os.environ.get('MYSQL_PORT', 3306)),
+            'user': os.environ.get('MYSQL_USER', 'root'),
+            'password': os.environ.get('MYSQL_PASSWORD', 'root'),
+            'database': os.environ.get('MYSQL_DATABASE', 'music_analyzer')
+        }
+    
+    def get_db_connection(with_database=True):
+        try:
+            config = get_db_config()
+            connection_params = dict(config)
+            
+            if not with_database:
+                connection_params.pop('database', None)
+                
+            connection = mysql.connector.connect(**connection_params)
+            
+            if connection.is_connected():
+                return connection
+            else:
+                print("Failed to connect to MySQL database")
+                return None
+        except Error as e:
+            print(f"Error while connecting to MySQL: {e}")
+            return None
 
 def initialize_database():
     """Initialize database tables if they don't exist"""
     try:
-        # Get database connection parameters from environment variables
-        db_config = {
-            'host': os.environ.get('MYSQL_HOST', 'db'),
-            'port': int(os.environ.get('MYSQL_PORT', 3306)),
-            'user': os.environ.get('MYSQL_USER', 'mixanalytic_db'),
-            'password': os.environ.get('MYSQL_PASSWORD', ''),
-            'database': os.environ.get('MYSQL_DATABASE', 'music_analyzer')
-        }
+        # Get database config 
+        db_config = get_db_config()
         
         # Create connection
-        connection = mysql.connector.connect(**db_config)
+        connection = get_db_connection()
         
         if connection.is_connected():
             cursor = connection.cursor()
@@ -95,9 +126,11 @@ def initialize_database():
             cursor.close()
             connection.close()
             print("MySQL connection is closed")
+            return True
             
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
+        return False
 
 if __name__ == "__main__":
     initialize_database() 

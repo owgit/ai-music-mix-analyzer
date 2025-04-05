@@ -9,42 +9,7 @@ from mysql.connector import Error
 from flask import current_app
 import hashlib
 import json
-
-def get_db_connection():
-    """
-    Create a connection to the MySQL database
-    
-    Returns:
-        MySQL connection object
-    """
-    try:
-        # Get database configuration from environment variables
-        host = os.environ.get('MYSQL_HOST', 'localhost')
-        port = int(os.environ.get('MYSQL_PORT', 3307))  # Default to 3307 for MAMP
-        user = os.environ.get('MYSQL_USER', 'root')
-        password = os.environ.get('MYSQL_PASSWORD', 'root')
-        database = os.environ.get('MYSQL_DATABASE', 'music_analyzer')
-        
-        print(f"Connecting to MySQL at {host}:{port}")
-        
-        connection = mysql.connector.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=database
-        )
-        
-        if connection.is_connected():
-            db_info = connection.get_server_info()
-            print(f"Connected to MySQL Server version {db_info}")
-            return connection
-        else:
-            print("Failed to connect to MySQL database")
-            return None
-    except Error as e:
-        print(f"Error while connecting to MySQL: {e}")
-        return None
+from app.core.db_utils import get_db_connection, get_db_config
 
 def create_tables_if_not_exist():
     """
@@ -146,43 +111,26 @@ def save_song(filename, original_name, file_path, file_hash, is_instrumental, an
     
     cursor = connection.cursor()
     try:
-        # Try primary insertion method first
-        try:
-            sql = """
-            INSERT INTO songs (
-                filename, original_name, file_path, file_hash, is_instrumental, analysis_json
-            ) VALUES (%s, %s, %s, %s, %s, %s)
-            """
-            analysis_json_str = json.dumps(analysis_json) if analysis_json else None
-            values = (filename, original_name, file_path, file_hash, is_instrumental, analysis_json_str)
-            
-            cursor.execute(sql, values)
-            connection.commit()
-            
-            return cursor.lastrowid
-        except Error as e:
-            # If the first method fails, try alternative approach using analysis_data
-            print(f"Primary insert failed: {e}, trying alternative method...")
-            
-            # Check if error is about missing filename column
-            if "Unknown column 'filename'" in str(e):
-                # Try using column names from the schema defined in init_db.py
-                alt_sql = """
-                INSERT INTO songs (
-                    title, file_path, file_hash, analysis_data
-                ) VALUES (%s, %s, %s, %s)
-                """
-                # Use original_name as title
-                alt_values = (original_name, file_path, file_hash, json.dumps(analysis_json) if analysis_json else None)
-                
-                cursor.execute(alt_sql, alt_values)
-                connection.commit()
-                
-                print("Song saved using alternative schema")
-                return cursor.lastrowid
-            else:
-                # Re-raise if it's not the expected error
-                raise
+        # First check if song with this hash already exists
+        cursor.execute("SELECT id FROM songs WHERE file_hash = %s", (file_hash,))
+        existing_song = cursor.fetchone()
+        if existing_song:
+            print(f"Song with hash {file_hash} already exists in database with ID: {existing_song[0]}")
+            return None  # Return None to indicate no new record was created
+        
+        # Insert the song with standard schema
+        sql = """
+        INSERT INTO songs (
+            filename, original_name, file_path, file_hash, is_instrumental, analysis_json
+        ) VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        analysis_json_str = json.dumps(analysis_json) if analysis_json else None
+        values = (filename, original_name, file_path, file_hash, is_instrumental, analysis_json_str)
+        
+        cursor.execute(sql, values)
+        connection.commit()
+        
+        return cursor.lastrowid
     except Error as e:
         print(f"Error saving song: {e}")
         return None
@@ -197,12 +145,12 @@ def initialize_database():
     """
     return create_tables_if_not_exist()
 
-def delete_song_by_filename(filename):
+def delete_song(identifier):
     """
-    Delete a song from the database by its filename
+    Delete a song from the database by various identifiers
     
     Args:
-        filename: Unique filename in the system
+        identifier: Can be file_hash, filename, or original_name
         
     Returns:
         Boolean indicating success or failure
@@ -213,63 +161,64 @@ def delete_song_by_filename(filename):
     
     cursor = connection.cursor()
     try:
-        # First, try to find by file_hash (most reliable across schemas)
-        if len(filename) > 32:  # If it looks like a hash
-            print(f"Attempting to delete song with file_hash: {filename}")
-            cursor.execute("SELECT file_path FROM songs WHERE file_hash = %s", (filename,))
+        # First, try as a file_hash (most reliable)
+        if len(identifier) >= 32:  # If it looks like a hash
+            print(f"Attempting to delete song with file_hash: {identifier}")
+            cursor.execute("SELECT id, file_path FROM songs WHERE file_hash = %s", (identifier,))
             result = cursor.fetchone()
             
             if result:
-                print(f"Found song with file_hash, file path: {result[0]}")
-                cursor.execute("DELETE FROM songs WHERE file_hash = %s", (filename,))
+                print(f"Found song with file_hash, ID: {result[0]}, file path: {result[1]}")
+                cursor.execute("DELETE FROM songs WHERE file_hash = %s", (identifier,))
                 connection.commit()
                 deleted_rows = cursor.rowcount
                 print(f"Deleted {deleted_rows} rows from songs table using file_hash")
                 return deleted_rows > 0
         
-        # Next, try to find by filename
-        print(f"Attempting to delete song with filename: {filename}")
-        cursor.execute("SELECT file_path FROM songs WHERE filename = %s", (filename,))
+        # Next, try as a filename (exact match)
+        print(f"Attempting to delete song with filename: {identifier}")
+        cursor.execute("SELECT id, file_path FROM songs WHERE filename = %s", (identifier,))
         result = cursor.fetchone()
         
         if result:
-            print(f"Found song with file path: {result[0]}")
-            # Delete the song from the database
-            cursor.execute("DELETE FROM songs WHERE filename = %s", (filename,))
+            print(f"Found song with filename, ID: {result[0]}, file path: {result[1]}")
+            cursor.execute("DELETE FROM songs WHERE filename = %s", (identifier,))
             connection.commit()
             deleted_rows = cursor.rowcount
             print(f"Deleted {deleted_rows} rows from songs table using filename")
             return deleted_rows > 0
-        else:
-            print(f"No song found with filename: {filename}, trying title field...")
-            # Try alternative column name (title) that might exist in database schema
-            cursor.execute("SELECT file_path FROM songs WHERE title = %s", (filename,))
-            result = cursor.fetchone()
             
-            if result:
-                print(f"Found song with title, file path: {result[0]}")
-                # Delete using title field
-                cursor.execute("DELETE FROM songs WHERE title = %s", (filename,))
-                connection.commit()
-                deleted_rows = cursor.rowcount
-                print(f"Deleted {deleted_rows} rows from songs table using title")
-                return deleted_rows > 0
-            else:
-                # Try with original_name field
-                print(f"No song found with title: {filename}, trying original_name field...")
-                cursor.execute("SELECT file_path FROM songs WHERE original_name LIKE %s", (f"%{filename}%",))
-                result = cursor.fetchone()
-                
-                if result:
-                    print(f"Found song with original_name, file path: {result[0]}")
-                    cursor.execute("DELETE FROM songs WHERE original_name LIKE %s", (f"%{filename}%",))
-                    connection.commit()
-                    deleted_rows = cursor.rowcount
-                    print(f"Deleted {deleted_rows} rows from songs table using original_name")
-                    return deleted_rows > 0
-                else:
-                    print(f"No song found with any matching fields for: {filename}")
-                    return False
+        # Try with original_name (exact match)
+        print(f"Attempting to delete song with original_name: {identifier}")
+        cursor.execute("SELECT id, file_path FROM songs WHERE original_name = %s", (identifier,))
+        result = cursor.fetchone()
+        
+        if result:
+            print(f"Found song with original_name, ID: {result[0]}, file path: {result[1]}")
+            cursor.execute("DELETE FROM songs WHERE original_name = %s", (identifier,))
+            connection.commit()
+            deleted_rows = cursor.rowcount
+            print(f"Deleted {deleted_rows} rows from songs table using original_name")
+            return deleted_rows > 0
+            
+        # Try with LIKE for both filename and original_name (more permissive)
+        print(f"Attempting to find song with LIKE: %{identifier}%")
+        cursor.execute("SELECT id, file_path, file_hash FROM songs WHERE filename LIKE %s OR original_name LIKE %s", 
+                      (f"%{identifier}%", f"%{identifier}%"))
+        result = cursor.fetchone()
+        
+        if result:
+            file_hash = result[2]
+            print(f"Found song with LIKE search, ID: {result[0]}, file path: {result[1]}, hash: {file_hash}")
+            cursor.execute("DELETE FROM songs WHERE id = %s", (result[0],))
+            connection.commit()
+            deleted_rows = cursor.rowcount
+            print(f"Deleted {deleted_rows} rows from songs table using LIKE and ID")
+            return deleted_rows > 0
+        
+        # Not found with any method
+        print(f"No song found with any identifier matching: {identifier}")
+        return False
     except Error as e:
         print(f"Error deleting song: {e}")
         connection.rollback()
@@ -279,4 +228,12 @@ def delete_song_by_filename(filename):
         if cursor.with_rows:
             cursor.fetchall()
         cursor.close()
-        connection.close() 
+        connection.close()
+
+# Keep the old function name for backward compatibility
+def delete_song_by_filename(filename):
+    """
+    Legacy function for backward compatibility
+    Now delegates to the more versatile delete_song function
+    """
+    return delete_song(filename) 
