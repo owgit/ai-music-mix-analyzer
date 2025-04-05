@@ -1,12 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Add hreflang tags for international targeting -->
+    <link rel="alternate" hreflang="en" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="en-us" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="en-gb" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="en-in" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="x-default" href="{{ secure_url(request.url) }}">
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>About Mix Analyzer - AI Audio Analysis Technology</title>
+    <title>About Mix Analyzer - AI Audio Analysis Technology for Music Producers</title>
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Learn how Mix Analyzer uses AI to improve your music. Our tool analyzes frequency, dynamics, and stereo field to enhance your audio production.">
+    <!-- Improved SEO Meta Tags -->
+    <meta name="description" content="Mix Analyzer: AI-powered audio analysis for music producers worldwide. Get professional mix feedback on frequency balance, dynamics, stereo imaging (supports MP3/WAV/FLAC/AIFF).">
     <meta name="keywords" content="AI mixing, AI mastering, online mixing tool, free mastering assistant, music production AI, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, professional mixing, mastering online, AI audio analysis, mix improvement, AI mixing engineer, spectral analyzer, 3D audio visualization, harmonic distortion analysis, phase correlation, loudness metering, audio engineering tool, pro audio software">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Mix Analyzer">
@@ -16,17 +23,41 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Mix Analyzer">
     <meta property="og:url" content="{{ secure_url(request.url) }}">
-    <meta property="og:title" content="About Mix Analyzer - AI-Powered Audio Analysis Technology">
-    <meta property="og:description" content="Learn how our AI algorithms analyze your tracks for better mixes. Get insights into frequency balance, dynamics, and stereo imaging - all for free.">
+    <meta property="og:title" content="About Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="og:description" content="Professional AI audio analysis for music producers. Get insights into frequency balance, dynamics, and stereo imaging - supports all major audio formats.">
     <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ secure_url(request.url) }}">
-    <meta property="twitter:title" content="About Mix Analyzer - AI-Powered Audio Analysis Technology">
-    <meta property="twitter:description" content="Learn how our AI algorithms analyze your tracks for better mixes. Get insights into frequency balance, dynamics, and stereo imaging - all for free.">
+    <meta property="twitter:title" content="About Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="twitter:description" content="Professional AI audio analysis for music producers. Get insights into frequency balance, dynamics, and stereo imaging - supports all major audio formats.">
     <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "About Mix Analyzer",
+      "description": "AI-powered audio analysis technology for music producers worldwide",
+      "url": "{{ secure_url(request.url) }}",
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "keywords": "AI mixing, AI mastering, online mixing tool, free mastering assistant",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Mix Analyzer",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ secure_url(url_for('static', filename='img/logo.png', _external=True)) }}"
+        }
+      }
+    }
+    </script>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
