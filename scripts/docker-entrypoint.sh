@@ -69,6 +69,34 @@ PREPARE stmt FROM @add_file_path;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
+-- Check and fix title column
+SELECT COUNT(*) INTO @col_exists FROM information_schema.columns 
+WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'title';
+
+-- If title exists, update it to have default value
+SET @modify_title = IF(@col_exists > 0, 
+    'ALTER TABLE songs MODIFY COLUMN title VARCHAR(255) NOT NULL DEFAULT ""', 
+    'SELECT "title column does not exist - no modification needed"');
+
+PREPARE stmt FROM @modify_title;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- If title doesn't exist, create it with a default value
+SET @add_title = IF(@col_exists = 0, 
+    'ALTER TABLE songs ADD COLUMN title VARCHAR(255) NOT NULL DEFAULT ""', 
+    'SELECT "title column already exists"');
+
+PREPARE stmt FROM @add_title;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+-- Migrate data between columns if needed
+UPDATE songs SET title = original_name WHERE title = '' AND original_name != '';
+UPDATE songs SET title = filename WHERE title = '' AND filename != '' AND original_name = '';
+UPDATE songs SET filename = title WHERE filename = '' AND title != '';
+UPDATE songs SET original_name = title WHERE original_name = '' AND title != '';
+
 -- Migrate data from title column if needed
 SELECT COUNT(*) INTO @col_exists FROM information_schema.columns 
 WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'title';
@@ -135,6 +163,7 @@ CREATE TABLE IF NOT EXISTS songs (
     id INT AUTO_INCREMENT PRIMARY KEY,
     filename VARCHAR(255) NOT NULL DEFAULT '',
     original_name VARCHAR(255) NOT NULL DEFAULT '',
+    title VARCHAR(255) NOT NULL DEFAULT '',
     file_hash VARCHAR(64) NOT NULL,
     file_path VARCHAR(255) NOT NULL DEFAULT '',
     is_instrumental BOOLEAN DEFAULT FALSE,

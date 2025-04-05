@@ -89,7 +89,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --sql-mode="NO_ENGINE_SUBSTITUTION"
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE to avoid "mbind: Operation not permitted"
 
