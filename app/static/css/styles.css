@@ -309,11 +309,13 @@ header.scrolled {
     transition: all 0.3s ease;
     transform: scale(0);
     opacity: 0;
+    pointer-events: none;
 }
 
 .floating-feedback-button.visible {
     transform: scale(1);
     opacity: 1;
+    pointer-events: all;
 }
 
 .floating-feedback-button svg {
@@ -328,117 +330,7 @@ header.scrolled {
 }
 
 @media (max-width: 768px) {
-    .header-container {
-        padding: 0 15px;
-    }
-    
-    .nav-menu {
-        position: fixed;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        height: calc(100vh - 70px);
-        background-color: white;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        z-index: 100;
-    }
-    
-    .nav-menu.active {
-        transform: translateX(0);
-    }
-    
-    .nav-link {
-        margin: 15px 0;
-    }
-    
-    .menu-toggle {
-        display: block;
-    }
-    
-    .feedback-button {
-        display: none;
-    }
-    
     .floating-feedback-button {
-        display: flex;
-    }
-}
-
-/* Buy Me a Coffee Button - Modern Design */
-.coffee-button-container {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.3s ease;
-    transform: scale(1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    height: 38px;
-    flex-shrink: 0;
-}
-
-.coffee-button-container:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 16px rgba(255, 153, 0, 0.2);
-}
-
-.coffee-button-img {
-    position: relative;
-    z-index: 2;
-    display: block;
-    border-radius: 10px;
-}
-
-/* Floating coffee button (appears when scrolling) */
-.floating-coffee-button {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #ffffff;
-    color: #121212;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 40px;
-    padding: 10px 18px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    z-index: 999;
-    opacity: 0;
-    transform: translateY(20px);
-    pointer-events: none;
-}
-
-.floating-coffee-button.visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: all;
-}
-
-.floating-coffee-button svg {
-    margin-right: 8px;
-    width: 16px;
-    height: 16px;
-}
-
-.floating-coffee-button:hover {
-    background-color: #f5f5f5;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-@media (max-width: 768px) {
-    .floating-coffee-button {
         padding: 10px;
         border-radius: 50%;
         width: 44px;
@@ -447,11 +339,11 @@ header.scrolled {
         right: 20px;
     }
     
-    .floating-coffee-button span {
+    .floating-feedback-button span {
         display: none;
     }
     
-    .floating-coffee-button svg {
+    .floating-feedback-button svg {
         margin-right: 0;
     }
 }
@@ -499,12 +391,8 @@ header.scrolled .app-logo {
 }
 
 @keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    100% {
-        transform: scale(1.05);
-    }
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
 }
 
 @media (max-width: 768px) {
@@ -1051,7 +939,7 @@ header.scrolled .app-logo {
     margin-bottom: 15px;
     position: relative;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
     cursor: pointer;
     overflow: hidden;
 }
@@ -3005,7 +2893,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
         #e9ecef 100%
     );
     z-index: 0;
-    opacity: .3;
+    opacity: .0;
     transition: opacity 0.3s ease;
     box-shadow: 0 0 0 5px rgba(94, 96, 206, 0.05);
 }
@@ -3021,83 +2909,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     border-radius: 50%;
     background-color: #f8f9fa;
     z-index: 1;
-}
-
-/* Sound wave animation for dynamics score */
-.dynamics-wave {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 40px;
-    opacity: 0.15;
-    z-index: 0;
-    overflow: hidden;
-}
-
-.dynamics-wave::before,
-.dynamics-wave::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background-repeat: repeat-x;
-    height: 10px;
-    opacity: 0.4;
-    animation: wave 8s infinite linear;
-}
-
-.dynamics-wave::before {
-    background-image: url("data:image/svg+xml,%3Csvg width='80' height='10' viewBox='0 0 80 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 C 15 0, 35 0, 40 10 C 45 0, 65 0, 80 10' stroke='%235e60ce' fill='none'/%3E%3C/svg%3E");
-    animation-duration: 13s;
-}
-
-.dynamics-wave::after {
-    background-image: url("data:image/svg+xml,%3Csvg width='120' height='10' viewBox='0 0 120 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 10 C 30 0, 60 0, 70 10 C 80 0, 90 0, 120 10' stroke='%2348bfe3' fill='none'/%3E%3C/svg%3E");
-    animation-duration: 7s;
-}
-
-@keyframes wave {
-    0% { background-position: 0 0; }
-    100% { background-position: 100% 0; }
-}
-
-/* Different color schemes for dynamics meter */
-.dynamics-meter.excellent {
-    background: conic-gradient(
-        #4CAF50 0%, 
-        #4CAF50 var(--dynamics-percentage), 
-        #e9ecef var(--dynamics-percentage), 
-        #e9ecef 100%
-    );
-}
-
-.dynamics-meter.good {
-    background: conic-gradient(
-        #5e60ce 0%, 
-        #5e60ce var(--dynamics-percentage), 
-        #e9ecef var(--dynamics-percentage), 
-        #e9ecef 100%
-    );
-}
-
-.dynamics-meter.average {
-    background: conic-gradient(
-        #48bfe3 0%, 
-        #48bfe3 var(--dynamics-percentage), 
-        #e9ecef var(--dynamics-percentage), 
-        #e9ecef 100%
-    );
-}
-
-.dynamics-meter.poor {
-    background: conic-gradient(
-        #F44336 0%, 
-        #F44336 var(--dynamics-percentage), 
-        #e9ecef var(--dynamics-percentage), 
-        #e9ecef 100%
-    );
 }
 
 /* Stereo Width Score */
@@ -3220,8 +3031,8 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
     border-radius: 50%;
     background: conic-gradient(
         #5e60ce 0%, 
-        #5e60ce var(--phase-percentage, 0deg), 
-        #e9ecef var(--phase-percentage, 0deg), 
+        #5e60ce var(--phase-percentage), 
+        #e9ecef var(--phase-percentage), 
         #e9ecef 100%
     );
     z-index: 0;
@@ -3586,6 +3397,7 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
 
 /* Ad Banners */
 .ad-wrapper {
+    display: none;
     position: absolute;
     top: 0;
     height: 100%;
@@ -3930,9 +3742,9 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus, [tabindex]:foc
 
 .checkbox-container input[type="checkbox"] {
     margin-right: 10px;
+    cursor: pointer;
     width: 18px;
     height: 18px;
-    cursor: pointer;
 }
 
 .checkbox-text {
@@ -4248,4 +4060,45 @@ main {
 
 .notification.warning {
     background-color: #ff9800;
+}
+
+/* Enhanced progress styles */
+.progress-log-container {
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.03);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.analysis-summary {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.analysis-summary h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.analysis-summary pre {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 13px;
+}
+
+.log-active {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.log-completed {
+    color: #28a745;
+    font-weight: bold;
 }
