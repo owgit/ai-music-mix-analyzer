@@ -60,17 +60,55 @@ def create_tables_if_not_exist():
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS songs (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            filename VARCHAR(255) NOT NULL,
-            original_name VARCHAR(255) NOT NULL,
-            file_hash VARCHAR(64) NOT NULL UNIQUE,
+            filename VARCHAR(255) NOT NULL DEFAULT '',
+            original_name VARCHAR(255) NOT NULL DEFAULT '',
+            file_hash VARCHAR(64) NOT NULL,
             file_path VARCHAR(255) NOT NULL,
             is_instrumental BOOLEAN DEFAULT FALSE,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            analysis_json LONGTEXT,
+            analysis_json LONGTEXT NULL,
             INDEX(file_hash)
         )
         """)
         connection.commit()
+        
+        # Ensure all required columns exist
+        try:
+            # Add missing columns if needed
+            cursor.execute("""
+            SELECT COUNT(*) FROM information_schema.columns 
+            WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'filename'
+            """)
+            has_filename = cursor.fetchone()[0] > 0
+            
+            cursor.execute("""
+            SELECT COUNT(*) FROM information_schema.columns 
+            WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'original_name'
+            """)
+            has_original_name = cursor.fetchone()[0] > 0
+            
+            cursor.execute("""
+            SELECT COUNT(*) FROM information_schema.columns 
+            WHERE table_schema = DATABASE() AND table_name = 'songs' AND column_name = 'analysis_json'
+            """)
+            has_analysis_json = cursor.fetchone()[0] > 0
+            
+            # Add any missing columns
+            if not has_filename:
+                print("Adding missing 'filename' column to songs table")
+                cursor.execute("ALTER TABLE songs ADD COLUMN filename VARCHAR(255) NOT NULL DEFAULT ''")
+            
+            if not has_original_name:
+                print("Adding missing 'original_name' column to songs table")
+                cursor.execute("ALTER TABLE songs ADD COLUMN original_name VARCHAR(255) NOT NULL DEFAULT ''")
+            
+            if not has_analysis_json:
+                print("Adding missing 'analysis_json' column to songs table")
+                cursor.execute("ALTER TABLE songs ADD COLUMN analysis_json LONGTEXT NULL")
+            
+            connection.commit()
+        except Exception as e:
+            print(f"Warning: Error while checking/adding columns: {e}")
         
         # Validate schema after creation
         schema_valid = validate_schema()
