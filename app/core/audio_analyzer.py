@@ -1791,22 +1791,50 @@ def generate_dynamic_range_visualization(y, sr, vis_dir):
         print(f"Error in dynamic range visualization: {str(e)}")
         import traceback
         traceback.print_exc()
+        error_msg = str(e)
         
-        # Create a fallback simple visualization
+        # Create a custom error visualization instead of using a generic error image
         try:
-            plt.figure(figsize=(10, 4))
-            plt.text(0.5, 0.5, f'Dynamic Range Visualization Error: {str(e)}', 
-                    horizontalalignment='center', verticalalignment='center',
-                    transform=plt.gca().transAxes, fontsize=12)
+            plt.figure(figsize=(10, 6), facecolor='#f8f9fa')
+            ax = plt.subplot(111)
+            
+            # Add a red border
+            border = plt.Rectangle((0, 0), 1, 1, transform=ax.transAxes, 
+                                 fill=False, edgecolor='red', linewidth=3)
+            ax.add_patch(border)
+            
+            # Add error icon (using matplotlib's symbol)
+            plt.plot([0.2, 0.8], [0.8, 0.2], 'r-', linewidth=6, transform=ax.transAxes)
+            plt.plot([0.2, 0.8], [0.2, 0.8], 'r-', linewidth=6, transform=ax.transAxes)
+            
+            # Add error title
+            plt.text(0.5, 0.9, 'Dynamic Range Visualization Failed', 
+                    ha='center', va='center', fontsize=16, 
+                    weight='bold', color='#dc3545', transform=ax.transAxes)
+            
+            # Add error details
+            plt.text(0.5, 0.5, f"Error: {error_msg}", 
+                    ha='center', va='center', fontsize=12,
+                    transform=ax.transAxes, wrap=True)
+            
+            # Add troubleshooting hint
+            plt.text(0.5, 0.3, "This might be due to insufficient audio data or a processing issue.\n"
+                              "Try with a different audio file or check system resources.",
+                    ha='center', va='center', fontsize=10, 
+                    transform=ax.transAxes, color='#6c757d')
+            
             plt.axis('off')
+            
+            # Save the error visualization
             dynamics_path = os.path.join(vis_dir, 'dynamic_range.png')
-            plt.savefig(dynamics_path)
+            plt.savefig(dynamics_path, dpi=150, bbox_inches='tight')
             plt.close()
-            print(f"Generated dynamic range fallback: /static/uploads/{os.path.basename(vis_dir)}/dynamic_range.png")
+            
+            print(f"Generated error visualization for dynamic range at: /static/uploads/{os.path.basename(vis_dir)}/dynamic_range.png")
             return f"/static/uploads/{os.path.basename(vis_dir)}/dynamic_range.png"
-        except:
-            print("Failed to generate even the fallback dynamic range visualization")
-            return None
+        except Exception as fallback_error:
+            print(f"Failed to create error visualization: {str(fallback_error)}")
+            return "/static/img/error.png"  # Fall back to the default error image as last resort
 
 def generate_visualizations(file_path, y=None, sr=None, file_id=None):
     """Generate visualizations for the audio file and return their paths."""
