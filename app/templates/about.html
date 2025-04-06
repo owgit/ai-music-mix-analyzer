@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Add hreflang tags for international targeting -->
     <link rel="alternate" hreflang="en" href="{{ secure_url(request.url) }}">
@@ -7,36 +8,43 @@
     <link rel="alternate" hreflang="en-gb" href="{{ secure_url(request.url) }}">
     <link rel="alternate" hreflang="en-in" href="{{ secure_url(request.url) }}">
     <link rel="alternate" hreflang="x-default" href="{{ secure_url(request.url) }}">
-    
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>About Mix Analyzer - AI Audio Analysis Technology for Music Producers</title>
-    
+
     <!-- Improved SEO Meta Tags -->
-    <meta name="description" content="Mix Analyzer: AI-powered audio analysis for music producers worldwide. Get professional mix feedback on frequency balance, dynamics, stereo imaging (supports MP3/WAV/FLAC/AIFF).">
-    <meta name="keywords" content="AI mixing, AI mastering, online mixing tool, free mastering assistant, music production AI, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, professional mixing, mastering online, AI audio analysis, mix improvement, AI mixing engineer, spectral analyzer, 3D audio visualization, harmonic distortion analysis, phase correlation, loudness metering, audio engineering tool, pro audio software">
+    <meta name="description"
+        content="Mix Analyzer: AI-powered audio analysis for music producers worldwide. Get professional mix feedback on frequency balance, dynamics, stereo imaging (supports MP3/WAV/FLAC/AIFF).">
+    <meta name="keywords"
+        content="AI mixing, AI mastering, online mixing tool, free mastering assistant, music production AI, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, professional mixing, mastering online, AI audio analysis, mix improvement, AI mixing engineer, spectral analyzer, 3D audio visualization, harmonic distortion analysis, phase correlation, loudness metering, audio engineering tool, pro audio software">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Mix Analyzer">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ secure_url(request.url) }}">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:locale" content="en_US">
     <meta property="og:site_name" content="Mix Analyzer">
     <meta property="og:url" content="{{ secure_url(request.url) }}">
     <meta property="og:title" content="About Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
-    <meta property="og:description" content="Professional AI audio analysis for music producers. Get insights into frequency balance, dynamics, and stereo imaging - supports all major audio formats.">
-    <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
-    
+    <meta property="og:description"
+        content="Professional AI audio analysis for music producers. Get insights into frequency balance, dynamics, and stereo imaging - supports all major audio formats.">
+    <meta property="og:image"
+        content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ secure_url(request.url) }}">
-    <meta property="twitter:title" content="About Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
-    <meta property="twitter:description" content="Professional AI audio analysis for music producers. Get insights into frequency balance, dynamics, and stereo imaging - supports all major audio formats.">
-    <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
-    
+    <meta property="twitter:title"
+        content="About Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="twitter:description"
+        content="Professional AI audio analysis for music producers. Get insights into frequency balance, dynamics, and stereo imaging - supports all major audio formats.">
+    <meta property="twitter:image"
+        content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -58,17 +66,17 @@
       }
     }
     </script>
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
-    
+
     <!-- Organization Schema -->
     <script type="application/ld+json">
     {
@@ -98,7 +106,7 @@
         }
     }
     </script>
-    
+
     <!-- Page Article Schema -->
     <script type="application/ld+json">
     {
@@ -127,7 +135,7 @@
         "dateModified": "{{ current_timestamp }}"
     }
     </script>
-    
+
     <!-- BreadcrumbList Schema -->
     <script type="application/ld+json">
     {
@@ -149,7 +157,7 @@
         ]
     }
     </script>
-    
+
     <!-- Analysis Technology Schema -->
     <script type="application/ld+json">
     {
@@ -219,7 +227,7 @@
         ]
     }
     </script>
-    
+
     <!-- Software Application Schema -->
     <script type="application/ld+json">
     {
@@ -245,7 +253,7 @@
         ]
     }
     </script>
-    
+
     <!-- FAQ Schema -->
     <script type="application/ld+json">
     {
@@ -311,7 +319,7 @@
         ]
     }
     </script>
-    
+
     <!-- HowTo Schema for Analysis Workflow -->
     <script type="application/ld+json">
     {
@@ -369,23 +377,28 @@
         ]
     }
     </script>
-    
+
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
-    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
-    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}"
+        sizes="32x32">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}"
+        sizes="16x16">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
-    
+
     {% if config.ENABLE_ANALYTICS %}
-        {% include 'analytics.html' %}
+    {% include 'analytics.html' %}
     {% endif %}
 </head>
+
 <body>
     <div class="container">
         <header>
             <div class="header-container">
                 <div class="app-brand">
-                   <a href="{{ url_for('main.index') }}"><img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true"></a>
+                    <a href="{{ url_for('main.index') }}"><img
+                            src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}"
+                            alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true"></a>
                 </div>
                 <div class="header-right">
                     <div class="app-title">
@@ -393,15 +406,20 @@
                     </div>
                     <div class="header-actions">
                         <button id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z" fill="currentColor"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+                                aria-hidden="true">
+                                <path
+                                    d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"
+                                    fill="currentColor" />
                             </svg>
                             Beta Feedback
                         </button>
-                        <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" id="buy-coffee-btn" class="coffee-button-container" aria-label="Buy me a coffee">
+                        <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener"
+                            id="buy-coffee-btn" class="coffee-button-container" aria-label="Buy me a coffee">
                             <div class="coffee-button-blur"></div>
-                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="coffee-button-img" 
-                            onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'"/>
+                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
+                                alt="Buy Me A Coffee" class="coffee-button-img"
+                                onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'" />
                             <span class="heart-count">0</span>
                         </a>
                     </div>
@@ -413,26 +431,37 @@
             <section class="about-section">
                 <div class="about-title">
                     <h2>About Mix Analyzer for Musicians, Producers & Sound Engineers</h2>
-                    <p>Learn how our free tool uses advanced AI algorithms to analyze your tracks and provide professional mixing and mastering recommendations</p>
+                    <p>Learn how our free tool uses advanced AI algorithms to analyze your tracks and provide
+                        professional mixing and mastering recommendations</p>
                 </div>
                 <h3>Advanced AI-Powered Mixing and Mastering Analysis Technology</h3>
-                <p>Mix Analyzer is a free online tool that combines cutting-edge audio analysis algorithms with artificial intelligence to help musicians, producers, and sound engineers create professional-quality mixes and masters. Whether you're a bedroom producer, aspiring mixing engineer, or seasoned professional, our tool offers valuable insights that would traditionally require expensive equipment and years of trained ears.</p>
-                
+                <p>Mix Analyzer is a free online tool that combines cutting-edge audio analysis algorithms with
+                    artificial intelligence to help musicians, producers, and sound engineers create
+                    professional-quality mixes and masters. Whether you're a bedroom producer, aspiring mixing engineer,
+                    or seasoned professional, our tool offers valuable insights that would traditionally require
+                    expensive equipment and years of trained ears.</p>
+
                 <div class="analysis-tech-overview">
                     <h4>Our Analysis Technologies</h4>
-                    <p>Mix Analyzer employs several sophisticated technologies to analyze different aspects of your audio tracks:</p>
-                    
+                    <p>Mix Analyzer employs several sophisticated technologies to analyze different aspects of your
+                        audio tracks:</p>
+
                     <div class="tech-grid">
                         <div class="tech-card" data-tech="frequency">
                             <div class="tech-card-header">
                                 <h5>Frequency Spectrum Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed frequency analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Our AI analyzes your track's frequency content using Fast Fourier Transform (FFT) and advanced spectral processing to identify frequency imbalances, potential masking issues, and opportunities for more clarity in your mix.</p>
+                            <p class="tech-card-preview">Our AI analyzes your track's frequency content using Fast
+                                Fourier Transform (FFT) and advanced spectral processing to identify frequency
+                                imbalances, potential masking issues, and opportunities for more clarity in your mix.
+                            </p>
                             <div class="tech-card-details" hidden>
                                 <h6>Advanced Frequency Analysis Technology</h6>
                                 <div class="detail-section">
@@ -454,21 +483,25 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Frequency Spectrum</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's
+                                        Frequency Spectrum</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="tech-card" data-tech="dynamics">
                             <div class="tech-card-header">
                                 <h5>Dynamic Range Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed dynamics analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Using statistical analysis of peak levels, RMS values, and crest factors, we assess your track's dynamic range and compression characteristics.</p>
+                            <p class="tech-card-preview">Using statistical analysis of peak levels, RMS values, and
+                                crest factors, we assess your track's dynamic range and compression characteristics.</p>
                             <div class="tech-card-details" hidden>
                                 <h6>Professional Dynamic Range Analysis</h6>
                                 <div class="detail-section">
@@ -490,21 +523,25 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Dynamic Range</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's
+                                        Dynamic Range</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="tech-card" data-tech="stereo">
                             <div class="tech-card-header">
                                 <h5>Stereo Field Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed stereo analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Through mid-side processing and phase correlation measurement, we evaluate your mix's stereo width and mono compatibility.</p>
+                            <p class="tech-card-preview">Through mid-side processing and phase correlation measurement,
+                                we evaluate your mix's stereo width and mono compatibility.</p>
                             <div class="tech-card-details" hidden>
                                 <h6>Advanced Stereo Imaging Analysis</h6>
                                 <div class="detail-section">
@@ -526,21 +563,26 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Stereo Field</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's
+                                        Stereo Field</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="tech-card" data-tech="transients">
                             <div class="tech-card-header">
                                 <h5>Transient Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed transient analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Our percussion and transient detection algorithms measure attack sharpness, detect transient density, and analyze the impact of your drums and percussive elements.</p>
+                            <p class="tech-card-preview">Our percussion and transient detection algorithms measure
+                                attack sharpness, detect transient density, and analyze the impact of your drums and
+                                percussive elements.</p>
                             <div class="tech-card-details" hidden>
                                 <h6>Professional Transient Analysis</h6>
                                 <div class="detail-section">
@@ -562,21 +604,25 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Transients</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's
+                                        Transients</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="tech-card" data-tech="harmonic">
                             <div class="tech-card-header">
                                 <h5>Harmonic Content Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed harmonic analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Using chromagram analysis and harmonic detection, we identify the key of your track, assess harmonic complexity, and evaluate tonal balance.</p>
+                            <p class="tech-card-preview">Using chromagram analysis and harmonic detection, we identify
+                                the key of your track, assess harmonic complexity, and evaluate tonal balance.</p>
                             <div class="tech-card-details" hidden>
                                 <h6>Advanced Harmonic Analysis</h6>
                                 <div class="detail-section">
@@ -598,21 +644,25 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Harmonic Content</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's
+                                        Harmonic Content</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="tech-card" data-tech="clarity">
                             <div class="tech-card-header">
                                 <h5>Clarity and Spectral Balance</h5>
                                 <button class="expand-button" aria-label="Show detailed clarity analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Our algorithms measure spectral contrast, flatness, and centroid to assess how clear and balanced your mix sounds.</p>
+                            <p class="tech-card-preview">Our algorithms measure spectral contrast, flatness, and
+                                centroid to assess how clear and balanced your mix sounds.</p>
                             <div class="tech-card-details" hidden>
                                 <h6>Professional Clarity Analysis</h6>
                                 <div class="detail-section">
@@ -634,21 +684,26 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's Clarity</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's
+                                        Clarity</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="tech-card" data-tech="spatial">
                             <div class="tech-card-header">
                                 <h5>3D Spatial Mix Analysis</h5>
                                 <button class="expand-button" aria-label="Show detailed spatial analysis information">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M6 9l6 6 6-6"/>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M6 9l6 6 6-6" />
                                     </svg>
                                 </button>
                             </div>
-                            <p class="tech-card-preview">Our advanced algorithms analyze height, depth, and immersion cues in your audio to evaluate and improve spatial positioning and 3D sound field representation.</p>
+                            <p class="tech-card-preview">Our advanced algorithms analyze height, depth, and immersion
+                                cues in your audio to evaluate and improve spatial positioning and 3D sound field
+                                representation.</p>
                             <div class="tech-card-details" hidden>
                                 <h6>Immersive Spatial Analysis Technology</h6>
                                 <div class="detail-section">
@@ -672,48 +727,65 @@
                                     </ul>
                                 </div>
                                 <div class="tech-card-cta">
-                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's 3D Spatial Mix</a>
+                                    <a href="{{ url_for('main.index') }}" class="analyze-button">Analyze Your Track's 3D
+                                        Spatial Mix</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="ai-section">
                     <h4>The AI Behind Mix Analyzer</h4>
-                    <p>What sets Mix Analyzer apart is our integration of advanced artificial intelligence to interpret the raw data and provide actionable insights:</p>
-                    
+                    <p>What sets Mix Analyzer apart is our integration of advanced artificial intelligence to interpret
+                        the raw data and provide actionable insights:</p>
+
                     <div class="ai-features">
                         <div class="ai-feature">
                             <h5>GPT-4o Integration</h5>
-                            <p>We leverage OpenAI's GPT-4o to analyze the technical measurements of your track and translate them into clear, professional recommendations. This AI has been trained on thousands of professionally mixed and mastered tracks across various genres to recognize patterns and best practices in audio production.</p>
+                            <p>We leverage OpenAI's GPT-4o to analyze the technical measurements of your track and
+                                translate them into clear, professional recommendations. This AI has been trained on
+                                thousands of professionally mixed and mastered tracks across various genres to recognize
+                                patterns and best practices in audio production.</p>
                         </div>
-                        
+
                         <div class="ai-feature">
                             <h5>Genre-Specific Analysis</h5>
-                            <p>Our AI automatically detects the likely genre of your track and adjusts its recommendations accordingly. A hip-hop track requires different frequency balance and dynamic treatment than a classical recording, and our AI tailors its suggestions to match your musical context.</p>
+                            <p>Our AI automatically detects the likely genre of your track and adjusts its
+                                recommendations accordingly. A hip-hop track requires different frequency balance and
+                                dynamic treatment than a classical recording, and our AI tailors its suggestions to
+                                match your musical context.</p>
                         </div>
-                        
+
                         <div class="ai-feature">
                             <h5>Reference Track Comparison</h5>
-                            <p>The AI compares your track's characteristics with our database of reference tracks in similar genres, identifying specific areas where your mix might diverge from professional standards and suggesting targeted improvements.</p>
+                            <p>The AI compares your track's characteristics with our database of reference tracks in
+                                similar genres, identifying specific areas where your mix might diverge from
+                                professional standards and suggesting targeted improvements.</p>
                         </div>
-                        
+
                         <div class="ai-feature">
                             <h5>System-Specific Recommendations</h5>
-                            <p>Our AI provides recommendations for how your mix will translate to different playback systems, from studio monitors to earbuds, helping you create mixes that sound great everywhere.</p>
+                            <p>Our AI provides recommendations for how your mix will translate to different playback
+                                systems, from studio monitors to earbuds, helping you create mixes that sound great
+                                everywhere.</p>
                         </div>
-                        
+
                         <div class="ai-feature">
                             <h5>3D Spatial Audio Intelligence</h5>
-                            <p>Our AI evaluates the immersive qualities of your mix, analyzing how elements are positioned in the three-dimensional sound field. It identifies issues like spatial collapse, phantom image instability, and excessive diffusion while recommending specific techniques to enhance height perception, depth consistency, and overall immersion factor for modern spatial audio formats.</p>
+                            <p>Our AI evaluates the immersive qualities of your mix, analyzing how elements are
+                                positioned in the three-dimensional sound field. It identifies issues like spatial
+                                collapse, phantom image instability, and excessive diffusion while recommending specific
+                                techniques to enhance height perception, depth consistency, and overall immersion factor
+                                for modern spatial audio formats.</p>
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="library-section">
                     <h4>Technical Foundation</h4>
-                    <p>Mix Analyzer is built on a foundation of proven open-source audio analysis libraries and custom algorithms:</p>
+                    <p>Mix Analyzer is built on a foundation of proven open-source audio analysis libraries and custom
+                        algorithms:</p>
                     <ul>
                         <li><strong>Librosa:</strong> For advanced audio signal processing and feature extraction</li>
                         <li><strong>NumPy and SciPy:</strong> For mathematical operations and signal processing</li>
@@ -722,26 +794,34 @@
                         <li><strong>OpenAI API:</strong> For generating human-like insights and recommendations</li>
                     </ul>
                 </div>
-                
+
                 <div class="workflow-section">
                     <h4>How Your Track Gets Analyzed</h4>
                     <ol>
-                        <li><strong>Upload Processing:</strong> Your audio file is securely uploaded and processed to ensure compatibility</li>
-                        <li><strong>Audio Analysis:</strong> Our algorithms extract over 50 different audio features and measurements from your track</li>
-                        <li><strong>Visualization Generation:</strong> We create detailed visual representations of your audio's characteristics</li>
-                        <li><strong>AI Processing:</strong> Our AI interprets the measurements, identifies patterns, and generates custom recommendations</li>
-                        <li><strong>Results Presentation:</strong> All insights are organized into an easy-to-understand interface with clear actionable suggestions</li>
+                        <li><strong>Upload Processing:</strong> Your audio file is securely uploaded and processed to
+                            ensure compatibility</li>
+                        <li><strong>Audio Analysis:</strong> Our algorithms extract over 50 different audio features and
+                            measurements from your track</li>
+                        <li><strong>Visualization Generation:</strong> We create detailed visual representations of your
+                            audio's characteristics</li>
+                        <li><strong>AI Processing:</strong> Our AI interprets the measurements, identifies patterns, and
+                            generates custom recommendations</li>
+                        <li><strong>Results Presentation:</strong> All insights are organized into an easy-to-understand
+                            interface with clear actionable suggestions</li>
                     </ol>
                 </div>
-                
+
                 <div class="privacy-section">
                     <h4>Your Audio, Your Privacy</h4>
-                    <p>We respect your creative work and privacy. Your uploaded audio files are processed securely and are not shared with third parties. Files are temporarily stored for analysis purposes only and can be removed upon request.</p>
+                    <p>We respect your creative work and privacy. Your uploaded audio files are processed securely and
+                        are not shared with third parties. Files are temporarily stored for analysis purposes only and
+                        can be removed upon request.</p>
                 </div>
-                
+
                 <div class="cta-section">
                     <h4>Experience AI-Powered Mixing and Mastering Analysis</h4>
-                    <p>Ready to see how our AI can help improve your mixes? Return to the main page to upload your track and get a free professional analysis with actionable insights.</p>
+                    <p>Ready to see how our AI can help improve your mixes? Return to the main page to upload your track
+                        and get a free professional analysis with actionable insights.</p>
                     <a href="{{ url_for('main.index') }}" class="cta-button">Analyze Your Track Now</a>
                 </div>
             </section>
@@ -751,9 +831,12 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <span class="footer-title">AI-Powered Audio Analysis Tool</span>
-                    <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
+                    <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and
+                        sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis,
+                        dynamic range measurement, stereo field visualization, and AI-powered EQ improvement
+                        suggestions.</p>
                 </div>
-                
+
                 <div class="footer-section">
                     <span class="footer-title">Audio Production Knowledge</span>
                     <ul class="footer-links">
@@ -765,26 +848,31 @@
                         <li><a href="#" id="open-spatial-guide">3D Spatial Mix Analysis Guide</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-section">
                     <span class="footer-title">Free Resources</span>
                     <ul class="footer-links">
                         <li><a href="{{ url_for('main.about') }}">About Mix Analyzer Technology</a></li>
                         <li><a href="#" id="open-faq">FAQ</a></li>
-                        <li><a href="https://librosa.org/" target="_blank" rel="noopener">Librosa Audio Analysis Library</a></li>
-                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" rel="noopener">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" rel="noopener">GitHub Repository</a></li>
+                        <li><a href="https://librosa.org/" target="_blank" rel="noopener">Librosa Audio Analysis
+                                Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank"
+                                rel="noopener">OpenAI API for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank"
+                                rel="noopener">GitHub Repository</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial intelligence and spectral analysis tools</p>
-                <p class="footer-support">Love this tool? 
+                <p>&copy; 2025 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial
+                    intelligence and spectral analysis tools</p>
+                <p class="footer-support">Love this tool?
                     <span class="footer-coffee-container">
                         <span class="footer-coffee-blur"></span>
                         <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener">
-                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="footer-coffee-img"
-                            onerror="this.onerror=null; this.parentNode.innerHTML='☕ Buy me a coffee'"/>
+                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
+                                alt="Buy Me A Coffee" class="footer-coffee-img"
+                                onerror="this.onerror=null; this.parentNode.innerHTML='☕ Buy me a coffee'" />
                         </a>
                     </span>
                 </p>
@@ -798,22 +886,22 @@
     <script src="{{ versioned_asset(url_for('static', filename='js/mobile.js')) }}"></script>
     <script src="{{ versioned_asset(url_for('static', filename='js/feedback.js')) }}"></script>
     <script src="{{ versioned_asset(url_for('static', filename='js/faq-data.js')) }}"></script>
-    
-   
+
+
 
     <!-- Feedback Beta Modal -->
     <div id="feedback-modal" class="modal-overlay">
         <div class="modal-content feedback-modal-content">
             <div class="modal-title">Beta Feedback</div>
             <button class="close-button" id="close-feedback-modal">&times;</button>
-            
+
             <div class="feedback-form-container">
                 <form id="feedback-form">
                     <div class="feedback-field">
                         <label for="feedback-email">Email (optional)</label>
                         <input type="email" id="feedback-email" name="email" placeholder="Your email address">
                     </div>
-                    
+
                     <div class="feedback-field">
                         <label for="feedback-rating">Rating</label>
                         <div class="star-rating">
@@ -829,7 +917,7 @@
                             <label for="star1" title="1 star">★</label>
                         </div>
                     </div>
-                    
+
                     <div class="feedback-field">
                         <label for="feedback-type">Feedback Type</label>
                         <select id="feedback-type" name="feedback_type" required>
@@ -840,19 +928,22 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="feedback-field">
                         <label for="feedback-message">Your Feedback</label>
-                        <textarea id="feedback-message" name="message" rows="4" placeholder="Please share your thoughts, suggestions, or report issues..." required></textarea>
+                        <textarea id="feedback-message" name="message" rows="4"
+                            placeholder="Please share your thoughts, suggestions, or report issues..."
+                            required></textarea>
                     </div>
-                    
+
                     <div class="feedback-field checkbox-field">
                         <label class="checkbox-container">
                             <input type="checkbox" id="feedback-consent" name="consent" required>
-                            <span class="checkbox-text">I consent to having this feedback stored for product improvement purposes</span>
+                            <span class="checkbox-text">I consent to having this feedback stored for product improvement
+                                purposes</span>
                         </label>
                     </div>
-                    
+
                     <div class="feedback-submit">
                         <button type="submit" id="submit-feedback" class="feedback-submit-btn">Submit Feedback</button>
                         <div id="feedback-status" class="feedback-status"></div>
@@ -864,117 +955,130 @@
 
     <!-- Add style for the animated blur effect -->
     <style>
-    .coffee-button-container, .floating-coffee-button-container {
-        position: relative;
-        border-radius: 8px;
-        overflow: hidden;
-        display: inline-block;
-        transition: all 0.3s ease;
-    }
-    
-    .coffee-button-img, .floating-coffee-img {
-        position: relative;
-        z-index: 2;
-        display: block;
-    }
-    
-    .coffee-button-blur, .floating-coffee-blur {
-        position: absolute;
-        inset: -5px;
-        z-index: 1;
-        background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
-        background-size: 400% 400%;
-        filter: blur(8px);
-        opacity: 0.7;
-        animation: gradient 5s ease infinite;
-    }
-    
-    .floating-coffee-button-container {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 1000;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    
-    .floating-coffee-button-container.visible {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    
-    @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    .coffee-button-container:hover .coffee-button-blur,
-    .floating-coffee-button-container:hover .floating-coffee-blur {
-        animation: gradient 3s ease infinite;
-        opacity: 0.85;
-    }
-    
-    .footer-coffee-container {
-        position: relative;
-        display: inline-block;
-        border-radius: 8px;
-        overflow: hidden;
-        vertical-align: middle;
-        margin-left: 5px;
-    }
-    
-    .footer-coffee-img {
-        position: relative;
-        z-index: 2;
-        height: 30px;
-        display: block;
-    }
-    
-    .footer-coffee-blur {
-        position: absolute;
-        inset: -5px;
-        z-index: 1;
-        background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
-        background-size: 400% 400%;
-        filter: blur(8px);
-        opacity: 0.7;
-        animation: gradient 5s ease infinite;
-    }
-    
-    .footer-coffee-container:hover .footer-coffee-blur {
-        animation: gradient 3s ease infinite;
-        opacity: 0.85;
-    }
-    
-    /* Fallback button styles */
-    .coffee-button-text, .floating-coffee-text {
-        background-color: #FFDD00;
-        color: #000000;
-        font-weight: bold;
-        padding: 8px 12px;
-        border-radius: 5px;
-        font-family: 'Lato', sans-serif;
-        white-space: nowrap;
-        text-align: center;
-        border: 1px solid #000000;
-    }
-    
-    .floating-coffee-text {
-        display: block;
-        padding: 10px 15px;
-    }
-    
-    /* Footer title style */
-    .footer-title {
-        display: block;
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: var(--primary-color, #333);
-    }
+        .coffee-button-container,
+        .floating-coffee-button-container {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .coffee-button-img,
+        .floating-coffee-img {
+            position: relative;
+            z-index: 2;
+            display: block;
+        }
+
+        .coffee-button-blur,
+        .floating-coffee-blur {
+            position: absolute;
+            inset: -5px;
+            z-index: 1;
+            background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
+            background-size: 400% 400%;
+            filter: blur(8px);
+            opacity: 0.7;
+            animation: gradient 5s ease infinite;
+        }
+
+        .floating-coffee-button-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .floating-coffee-button-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .coffee-button-container:hover .coffee-button-blur,
+        .floating-coffee-button-container:hover .floating-coffee-blur {
+            animation: gradient 3s ease infinite;
+            opacity: 0.85;
+        }
+
+        .footer-coffee-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 8px;
+            overflow: hidden;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        .footer-coffee-img {
+            position: relative;
+            z-index: 2;
+            height: 30px;
+            display: block;
+        }
+
+        .footer-coffee-blur {
+            position: absolute;
+            inset: -5px;
+            z-index: 1;
+            background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
+            background-size: 400% 400%;
+            filter: blur(8px);
+            opacity: 0.7;
+            animation: gradient 5s ease infinite;
+        }
+
+        .footer-coffee-container:hover .footer-coffee-blur {
+            animation: gradient 3s ease infinite;
+            opacity: 0.85;
+        }
+
+        /* Fallback button styles */
+        .coffee-button-text,
+        .floating-coffee-text {
+            background-color: #FFDD00;
+            color: #000000;
+            font-weight: bold;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-family: 'Lato', sans-serif;
+            white-space: nowrap;
+            text-align: center;
+            border: 1px solid #000000;
+        }
+
+        .floating-coffee-text {
+            display: block;
+            padding: 10px 15px;
+        }
+
+        /* Footer title style */
+        .footer-title {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary-color, #333);
+        }
     </style>
 </body>
+
 </html>

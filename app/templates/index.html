@@ -1,44 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Add hreflang tags for international targeting -->
+    <link rel="alternate" hreflang="en" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="en-us" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="en-gb" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="en-in" href="{{ secure_url(request.url) }}">
+    <link rel="alternate" hreflang="x-default" href="{{ secure_url(request.url) }}">
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>3D Audio & Spatial Mix Analysis | AI-Powered Music Production Tool</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Free 3D audio analysis tool with AI-powered spatial mix analysis. Get frequency analysis, dynamic range measurement, 3D visualization, and mix suggestions to improve your music tracks.">
-    <meta name="keywords" content="3D audio analysis, spatial audio mixing, AI mix analyzer, Dolby Atmos mixing, immersive audio, surround sound analysis, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions, spatial audio production">
+    <title>Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide</title>
+
+    <!-- Improved SEO Meta Tags -->
+    <meta name="description"
+        content="Professional AI audio analysis for music producers worldwide. Analyze frequency spectrum, dynamics, stereo imaging (supports MP3/WAV/FLAC/AIFF) and get mix improvement suggestions.">
+    <meta name="keywords"
+        content="3D audio analysis, spatial audio mixing, AI mix analyzer, Dolby Atmos mixing, immersive audio, surround sound analysis, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions, spatial audio production">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Mix Analyzer">
-    
+
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ secure_url(request.url) }}">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Mix Analyzer">
     <meta property="og:url" content="{{ secure_url(request.url) }}">
-    <meta property="og:title" content="  AI-Powered Audio Analysis & Mastering Assistant Tool">
-    <meta property="og:description" content="Upload tracks for FREE to analyze frequency spectrum, dynamic range, stereo imaging, and get AI-powered suggestions for better audio production.">
-    <meta property="og:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
-    
+    <meta property="og:title" content="Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="og:description"
+        content="Professional AI audio analysis for music producers. Analyze frequency spectrum, dynamics, stereo imaging and get mix improvement suggestions.">
+    <meta property="og:image"
+        content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ secure_url(request.url) }}">
-    <meta property="twitter:title" content="  AI-Powered Audio Analysis & Mastering Assistant Tool">
-    <meta property="twitter:description" content="Upload tracks for FREE to analyze frequency spectrum, dynamic range, stereo imaging, and get AI-powered suggestions for better audio production.">
-    <meta property="twitter:image" content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
-    
+    <meta property="twitter:title" content="Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="twitter:description"
+        content="Professional AI audio analysis for music producers. Analyze frequency spectrum, dynamics, stereo imaging and get mix improvement suggestions.">
+    <meta property="twitter:image"
+        content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+
+    <!-- Update WebApplication Schema with international context -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Mix Analyzer",
+        "url": "{{ secure_url(request.url_root) }}",
+        "description": "Professional AI audio analysis for music producers worldwide. Analyze frequency spectrum, dynamics, stereo imaging and get mix improvement suggestions.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "dateModified": "{{ config.get('LAST_UPDATED', '2023-11-15') }}",
+        "inLanguage": "en",
+        "availableCountry": "Worldwide",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availableAtOrFrom": {
+                "@type": "WebSite",
+                "url": "{{ secure_url(request.url_root) }}",
+                "name": "Mix Analyzer"
+            }
+        },
+        "featureList": [
+            "3D spatial audio analysis",
+            "Dolby Atmos mix visualization",
+            "Immersive audio measurement",
+            "Free frequency spectrum analysis",
+            "AI-powered dynamic range measurement",
+            "Stereo field visualization",
+            "Artificial intelligence harmonic content analysis",
+            "Transient detection",
+            "EQ recommendations",
+            "Spectral flatness measurement",
+            "AI-powered mix suggestions at no cost"
+        ]
+    }
+    </script>
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/modal.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/progress-feedback.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
-    
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/styles.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/modal.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/responsive.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/progress-feedback.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
@@ -70,7 +129,7 @@
         ]
     }
     </script>
-    
+
     <!-- Enhanced Structured Data for Analysis Sections -->
     <script type="application/ld+json">
     {
@@ -140,7 +199,7 @@
         ]
     }
     </script>
-    
+
     <!-- BreadcrumbList Schema -->
     <script type="application/ld+json">
     {
@@ -162,7 +221,7 @@
         ]
     }
     </script>
-    
+
     <!-- Organization Schema -->
     <script type="application/ld+json">
     {
@@ -182,7 +241,7 @@
         }
     }
     </script>
-    
+
     <!-- HowTo Schema for Audio Analysis Process -->
     <script type="application/ld+json">
     {
@@ -224,7 +283,7 @@
         ]
     }
     </script>
-    
+
     <!-- Improved SoftwareApplication Schema -->
     <script type="application/ld+json">
     {
@@ -259,17 +318,19 @@
         ]
     }
     </script>
-    
+
     <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
-    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}" sizes="32x32">
-    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}" sizes="16x16">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}"
+        sizes="32x32">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}"
+        sizes="16x16">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
-    
+
     {% if config.ENABLE_ANALYTICS %}
-        {% include 'analytics.html' %}
+    {% include 'analytics.html' %}
     {% endif %}
-    
+
     <!-- FAQ Schema -->
     <script type="application/ld+json">
     {
@@ -320,12 +381,14 @@
     }
     </script>
 </head>
+
 <body>
     <div class="container">
         <header>
             <div class="header-container">
                 <div class="app-brand">
-                    <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo" class="app-logo" aria-hidden="true">
+                    <img src="{{ url_for('static', filename='img/music-analyzer-icon.svg') }}" alt="Mix Analyzer Logo"
+                        class="app-logo" aria-hidden="true">
                 </div>
                 <div class="header-right">
                     <div class="app-title">
@@ -333,15 +396,20 @@
                     </div>
                     <div class="header-actions">
                         <button id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V8h2v3zm0-4h-2V6h2v1z" fill="currentColor"/>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
+                                aria-hidden="true">
+                                <path
+                                    d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V8h2v3zm0-4h-2V6h2v1z"
+                                    fill="currentColor" />
                             </svg>
                             Share Feedback
                         </button>
-                        <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener" id="buy-coffee-btn" class="coffee-button-container" aria-label="Buy me a coffee">
+                        <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener"
+                            id="buy-coffee-btn" class="coffee-button-container" aria-label="Buy me a coffee">
                             <div class="coffee-button-blur"></div>
-                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="coffee-button-img" 
-                            onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'"/>
+                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
+                                alt="Buy Me A Coffee" class="coffee-button-img"
+                                onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'coffee-button-text\'>☕ Buy me a coffee</div>'" />
                             <span class="heart-count">0</span>
                         </a>
                     </div>
@@ -361,12 +429,15 @@
                         <div class="info-tooltip">
                             <span class="info-icon" aria-hidden="true">i</span>
                             <div class="tooltip-content" role="tooltip">
-                                Select this if your track has no vocals. It helps our audio analysis provide more relevant frequency analysis and EQ recommendations for musicians, producers and sound engineers for free.
+                                Select this if your track has no vocals. It helps our audio analysis provide more
+                                relevant frequency analysis and EQ recommendations for musicians, producers and sound
+                                engineers for free.
                             </div>
                         </div>
                     </div>
                     <div class="instrument-hint-arrow">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"></circle>
                             <line x1="12" y1="8" x2="12" y2="16"></line>
                             <line x1="8" y1="12" x2="16" y2="12"></line>
@@ -374,40 +445,53 @@
                         <span>Important setting</span>
                     </div>
                 </div>
-                
+
                 <div class="upload-container" id="upload-container">
                     <!-- Ad banner placeholders - initially hidden, shown during analysis -->
                     <div class="ad-wrapper left">
                         <div class="ad-container left" id="left-ad-banner">
                             <div class="ad-placeholder">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                                 <div class="ad-placeholder-text">Advertisement Space</div>
                                 <p>Your ad could be here!</p>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="ad-wrapper right">
                         <div class="ad-container right" id="right-ad-banner">
                             <div class="ad-placeholder">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                                 <div class="ad-placeholder-text">Advertisement Space</div>
                                 <p>Your ad could be here!</p>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="upload-area" id="upload-area" role="button" tabindex="0" aria-label="Drag and drop audio file here or click to select file">
+
+                    <div class="upload-area" id="upload-area" role="button" tabindex="0"
+                        aria-label="Drag and drop audio file here or click to select file">
                         <div class="upload-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="17 8 12 3 7 8"></polyline>
                                 <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -415,11 +499,14 @@
                         </div>
                         <h2 class="upload-title">Drag & Drop your audio file</h2>
                         <p class="upload-subtitle">or click to browse your files</p>
-                        
-                        <input type="file" id="file-input" accept="audio/*" aria-label="Upload audio file" class="visually-hidden">
+
+                        <input type="file" id="file-input" accept="audio/*" aria-label="Upload audio file"
+                            class="visually-hidden">
                         <div class="button-wrapper">
                             <button class="upload-button" id="upload-button">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px;">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="17 8 12 3 7 8"></polyline>
                                     <line x1="12" y1="3" x2="12" y2="15"></line>
@@ -429,18 +516,22 @@
                             <p class="upload-help-text">MP3, WAV, FLAC, AIFF supported up to 100MB</p>
                         </div>
                     </div>
-                    
+
                     <div class="processing-indicator" id="processing-indicator" style="display: none;">
                         <div class="processing-indicator-dot"></div>
                         <div class="processing-indicator-text" id="processing-status">Loading audio...</div>
                     </div>
-                    
+
                     <div class="progress-container" id="progress-container" style="display: none;">
                         <div class="progress-header">
                             <div class="progress-status">
                                 <svg class="progress-icon" viewBox="0 0 24 24" width="24" height="24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
-                                    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" fill="currentColor" class="spinner"/>
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                                        fill="currentColor" />
+                                    <path
+                                        d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+                                        fill="currentColor" class="spinner" />
                                 </svg>
                                 <span id="progress-stage">Uploading</span>
                             </div>
@@ -450,14 +541,19 @@
                             <div class="progress-bar" id="progress-bar"></div>
                         </div>
                         <p id="progress-text">Preparing your audio file...</p>
-                        
+
                         <!-- Mobile Ad Banner - Only visible on mobile devices -->
                         <div class="mobile-ad-banner" id="mobile-ad-banner">
                             <div class="mobile-ad-placeholder">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
-                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                                 <div class="mobile-ad-text">
                                     <div class="mobile-ad-title">Advertisement Space</div>
@@ -465,7 +561,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="progress-steps">
                             <div class="progress-step active" id="step-upload">
                                 <div class="step-indicator"></div>
@@ -492,48 +588,58 @@
                 <div class="results-actions">
                     <button id="analyze-new-btn" class="action-button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
-                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+                            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor" />
                         </svg>
                         Analyze New Track
                     </button>
                     <button id="delete-track-btn" class="action-button delete-button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" fill="currentColor"/>
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
+                                fill="currentColor" />
                         </svg>
                         Delete Track
                     </button>
                 </div>
-                
+
                 <h2>Analysis Results for <span id="filename"></span></h2>
-                
+
                 <div class="overall-score">
                     <div class="score-circle">
                         <!-- Animated arcs -->
                         <div class="score-arc"></div>
                         <div class="score-arc"></div>
                         <div class="score-arc"></div>
-                        
+
                         <!-- Progress marks that will be populated by JS -->
                         <div class="score-circle-marks"></div>
-                        
+
                         <!-- Particles container for score animations -->
                         <div class="score-particles"></div>
-                        
+
                         <span id="overall-score">0</span>
                     </div>
                     <p>Overall Mix Score</p>
                 </div>
 
                 <div class="tabs" role="tablist">
-                    <button class="tab-button active" data-tab="frequency" role="tab" aria-label="Frequency Balance" aria-selected="true">Frequency Balance</button>
-                    <button class="tab-button" data-tab="dynamics" role="tab" aria-label="Dynamics" aria-selected="false">Dynamics</button>
-                    <button class="tab-button" data-tab="stereo" role="tab" aria-label="Stereo Field" aria-selected="false">Stereo Field</button>
-                    <button class="tab-button" data-tab="clarity" role="tab" aria-label="Clarity" aria-selected="false">Clarity</button>
-                    <button class="tab-button" data-tab="harmonic" role="tab" aria-label="Harmonic" aria-selected="false">Harmonic</button>
-                    <button class="tab-button" data-tab="transients" role="tab" aria-label="Transients" aria-selected="false">Transients</button>
-                    <button class="tab-button" data-tab="spatial" role="tab" aria-label="3D Spatial" aria-selected="false">3D Spatial</button>
-                    <button class="tab-button" data-tab="visualizations" role="tab" aria-label="Visualizations" aria-selected="false">Visualizations</button>
-                    <button class="tab-button" data-tab="ai-insights" role="tab" aria-label="AI Insights" aria-selected="false">AI Insights</button>
+                    <button class="tab-button active" data-tab="frequency" role="tab" aria-label="Frequency Balance"
+                        aria-selected="true">Frequency Balance</button>
+                    <button class="tab-button" data-tab="dynamics" role="tab" aria-label="Dynamics"
+                        aria-selected="false">Dynamics</button>
+                    <button class="tab-button" data-tab="stereo" role="tab" aria-label="Stereo Field"
+                        aria-selected="false">Stereo Field</button>
+                    <button class="tab-button" data-tab="clarity" role="tab" aria-label="Clarity"
+                        aria-selected="false">Clarity</button>
+                    <button class="tab-button" data-tab="harmonic" role="tab" aria-label="Harmonic"
+                        aria-selected="false">Harmonic</button>
+                    <button class="tab-button" data-tab="transients" role="tab" aria-label="Transients"
+                        aria-selected="false">Transients</button>
+                    <button class="tab-button" data-tab="spatial" role="tab" aria-label="3D Spatial"
+                        aria-selected="false">3D Spatial</button>
+                    <button class="tab-button" data-tab="visualizations" role="tab" aria-label="Visualizations"
+                        aria-selected="false">Visualizations</button>
+                    <button class="tab-button" data-tab="ai-insights" role="tab" aria-label="AI Insights"
+                        aria-selected="false">AI Insights</button>
                 </div>
 
                 <div class="tab-content">
@@ -544,7 +650,7 @@
                             <!-- <div class="frequency-meter"></div> -->
                             <!-- Particle container for animated effects -->
                             <div class="frequency-particles"></div>
-                            
+
                             <h3>Frequency Balance Score</h3>
                             <div class="score-value" id="frequency-score" data-label="/100">0</div>
                         </div>
@@ -569,7 +675,8 @@
                                 <p>AI frequency analysis is not available.</p>
                             </div>
                             <div class="ai-description">
-                                <p>Our advanced AI analyzes your mix's frequency spectrum to identify specific EQ issues and provide targeted recommendations for better frequency balance.</p>
+                                <p>Our advanced AI analyzes your mix's frequency spectrum to identify specific EQ issues
+                                    and provide targeted recommendations for better frequency balance.</p>
                             </div>
                         </div>
                         <div class="chart-container">
@@ -583,13 +690,13 @@
                         <div class="score-card">
                             <!-- Dynamic range meter element -->
                             <!-- <div class="dynamics-meter"></div> -->
-                            
+
                             <!-- Particle container for animated effects -->
                             <div class="dynamics-particles"></div>
-                            
+
                             <!-- Sound wave visualization -->
                             <div class="dynamics-wave"></div>
-                            
+
                             <h3>Dynamic Range Score</h3>
                             <div class="score-value" id="dynamics-score" data-label="/100">0</div>
                         </div>
@@ -619,23 +726,23 @@
                             <div class="score-card">
                                 <!-- Width meter element -->
                                 <!-- <div class="stereo-width-meter"></div> -->
-                                
+
                                 <!-- Particle container for animated effects -->
                                 <div class="stereo-width-particles"></div>
-                                
+
                                 <h3>Width Score</h3>
                                 <div class="score-value" id="width-score" data-label="/100">0</div>
                             </div>
                             <div class="score-card">
                                 <!-- Phase meter element -->
                                 <!-- <div class="stereo-phase-meter"></div> -->
-                                
+
                                 <!-- Particle container for animated effects -->
                                 <div class="stereo-phase-particles"></div>
-                                
+
                                 <!-- Phase wave visualization -->
                                 <div class="stereo-phase-wave"></div>
-                                
+
                                 <h3>Phase Score</h3>
                                 <div class="score-value" id="phase-score" data-label="/100">0</div>
                             </div>
@@ -663,23 +770,29 @@
                             <div class="score-value" id="clarity-score">0</div>
                         </div>
                         <div class="analysis-description">
-                            <p>Clarity analysis measures how distinct and well-defined the elements in your mix sound. A clear mix allows each instrument and vocal to be heard without being masked by other elements, creating a professional sound with proper separation and definition across the frequency spectrum.</p>
+                            <p>Clarity analysis measures how distinct and well-defined the elements in your mix sound. A
+                                clear mix allows each instrument and vocal to be heard without being masked by other
+                                elements, creating a professional sound with proper separation and definition across the
+                                frequency spectrum.</p>
                         </div>
                         <div class="metrics-container">
                             <div class="metric">
                                 <h4>Spectral Contrast</h4>
                                 <div class="metric-value" id="spectral-contrast">0</div>
-                                <p class="metric-description">Measures the distinction between peaks and valleys in the frequency spectrum</p>
+                                <p class="metric-description">Measures the distinction between peaks and valleys in the
+                                    frequency spectrum</p>
                             </div>
                             <div class="metric">
                                 <h4>Spectral Flatness</h4>
                                 <div class="metric-value" id="spectral-flatness">0</div>
-                                <p class="metric-description">Indicates how noise-like or tone-like your mix is, affecting perceived clarity</p>
+                                <p class="metric-description">Indicates how noise-like or tone-like your mix is,
+                                    affecting perceived clarity</p>
                             </div>
                             <div class="metric">
                                 <h4>Spectral Centroid</h4>
                                 <div class="metric-value" id="spectral-centroid">0 Hz</div>
-                                <p class="metric-description">The "center of gravity" of your sound's frequency spectrum</p>
+                                <p class="metric-description">The "center of gravity" of your sound's frequency spectrum
+                                </p>
                             </div>
                         </div>
                         <div class="analysis-card">
@@ -731,7 +844,8 @@
                             <ul id="harmonic-analysis"></ul>
                         </div>
                         <div class="visualization-container" title="Click to enlarge">
-                            <img id="chromagram-img" src="" alt="Chromagram visualization showing harmonic content and key distribution">
+                            <img id="chromagram-img" src=""
+                                alt="Chromagram visualization showing harmonic content and key distribution">
                         </div>
                     </div>
 
@@ -770,53 +884,73 @@
                         <div class="score-card">
                             <h3>3D Spatial Score</h3>
                             <div class="score-value" id="spatial-score">0</div>
-                            <p class="score-description">Overall rating of your mix's three-dimensional spatial characteristics and immersive qualities</p>
+                            <p class="score-description">Overall rating of your mix's three-dimensional spatial
+                                characteristics and immersive qualities</p>
                         </div>
                         <div class="metrics-container">
-                            <div class="metric" title="Measures how well your mix utilizes the vertical space through frequency distribution and harmonic content">
+                            <div class="metric"
+                                title="Measures how well your mix utilizes the vertical space through frequency distribution and harmonic content">
                                 <h4>Height Perception</h4>
                                 <div class="metric-value" id="height-score">0%</div>
-                                <p class="metric-description">High-frequency presence and vertical space utilization for enhanced listening experience</p>
+                                <p class="metric-description">High-frequency presence and vertical space utilization for
+                                    enhanced listening experience</p>
                             </div>
-                            <div class="metric" title="Evaluates the perceived front-to-back dimension of your mix through phase relationships and reverb">
+                            <div class="metric"
+                                title="Evaluates the perceived front-to-back dimension of your mix through phase relationships and reverb">
                                 <h4>Depth Perception</h4>
                                 <div class="metric-value" id="depth-score">0%</div>
-                                <p class="metric-description">Front-to-back layering and spatial positioning for immersive soundstage</p>
+                                <p class="metric-description">Front-to-back layering and spatial positioning for
+                                    immersive soundstage</p>
                             </div>
-                            <div class="metric" title="Analyzes the stability and consistency of the stereo field across frequencies">
+                            <div class="metric"
+                                title="Analyzes the stability and consistency of the stereo field across frequencies">
                                 <h4>Width Consistency</h4>
                                 <div class="metric-value" id="width-consistency">0%</div>
-                                <p class="metric-description">Stereo field stability and balance across the frequency spectrum</p>
+                                <p class="metric-description">Stereo field stability and balance across the frequency
+                                    spectrum</p>
                             </div>
                         </div>
                         <div class="analysis-card">
                             <h3>Spatial Analysis</h3>
                             <div class="analysis-description">
-                                <p>This innovative analysis evaluates how your mix utilizes three-dimensional space, crucial for creating an immersive listening experience on modern playback systems including headphones, speakers, and surround environments.</p>
+                                <p>This innovative analysis evaluates how your mix utilizes three-dimensional space,
+                                    crucial for creating an immersive listening experience on modern playback systems
+                                    including headphones, speakers, and surround environments.</p>
                             </div>
                             <ul id="spatial-analysis"></ul>
                         </div>
                         <h3>3D Spatial Field</h3>
-                            <p class="visualization-help">This advanced visualization shows how your mix utilizes the full three-dimensional space:</p>
+                        <p class="visualization-help">This advanced visualization shows how your mix utilizes the full
+                            three-dimensional space:</p>
 
-                        <div class="visualization-container" title="Interactive 3D visualization of your mix's spatial characteristics">
-                                                        <ul class="visualization-legend">
+                        <div class="visualization-container"
+                            title="Interactive 3D visualization of your mix's spatial characteristics">
+                            <ul class="visualization-legend">
                                 <li><strong>X-axis:</strong> Left-right stereo positioning</li>
                                 <li><strong>Y-axis:</strong> Front-back depth perception</li>
                                 <li><strong>Z-axis:</strong> Vertical frequency distribution</li>
                                 <li><strong>Color intensity:</strong> Energy distribution in the stereo field</li>
                             </ul>
                             <div id="spatial-field-container" class="visualization-3d-container">
-                                <img id="spatial-field-img" src="" alt="3D spatial field visualization showing height, depth, and width characteristics" style="display: none;">
+                                <img id="spatial-field-img" src=""
+                                    alt="3D spatial field visualization showing height, depth, and width characteristics"
+                                    style="display: none;">
                                 <!-- Direct iframe to interactive 3D visualization -->
-                                <iframe id="spatial-field-iframe" src="" style="width: 100%; height: 700px; border: none; display: block;" title="Interactive 3D spatial audio visualization"></iframe>
+                                <iframe id="spatial-field-iframe" src=""
+                                    style="width: 100%; height: 700px; border: none; display: block;"
+                                    title="Interactive 3D spatial audio visualization"></iframe>
                                 <div class="interactive-controls">
-                                    <p class="interactive-tip">Tip: Use your mouse to rotate and zoom the 3D visualization</p>
+                                    <p class="interactive-tip">Tip: Use your mouse to rotate and zoom the 3D
+                                        visualization</p>
                                 </div>
                             </div>
-                            <button id="regenerate-spatial-btn" class="regenerate-btn" title="Regenerate with enhanced detection" onclick="regenerateSpatialField(document.getElementById('filename').textContent.trim())">
+                            <button id="regenerate-spatial-btn" class="regenerate-btn"
+                                title="Regenerate with enhanced detection"
+                                onclick="regenerateSpatialField(document.getElementById('filename').textContent.trim())">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
-                                    <path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" fill="currentColor"/>
+                                    <path
+                                        d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"
+                                        fill="currentColor" />
                                 </svg>
                                 Regenerate Visualization
                             </button>
@@ -829,34 +963,46 @@
                             <div class="visualization-card">
                                 <h3>Waveform</h3>
                                 <div class="visualization-container" title="Click to enlarge">
-                                    <img id="waveform-img" src="" alt="Audio waveform visualization showing amplitude over time" data-track-name="Waveform">
+                                    <img id="waveform-img" src=""
+                                        alt="Audio waveform visualization showing amplitude over time"
+                                        data-track-name="Waveform">
                                 </div>
                             </div>
                             <div class="visualization-card">
                                 <h3>Spectrogram</h3>
                                 <div class="visualization-container" title="Click to enlarge">
-                                    <img id="spectrogram-img" src="" alt="Spectrogram visualization showing frequency content over time">
+                                    <img id="spectrogram-img" src=""
+                                        alt="Spectrogram visualization showing frequency content over time">
                                 </div>
                             </div>
                             <div class="visualization-card">
                                 <h3>Frequency Spectrum</h3>
                                 <div class="visualization-container" title="Click to enlarge">
-                                    <img id="spectrum-img" src="" alt="Frequency spectrum visualization showing energy distribution across frequencies">
+                                    <img id="spectrum-img" src=""
+                                        alt="Frequency spectrum visualization showing energy distribution across frequencies">
                                 </div>
                             </div>
                             <div class="visualization-card">
                                 <h3>Chromagram</h3>
                                 <div class="visualization-container" title="Click to enlarge">
-                                    <img id="chromagram-img" src="" alt="Chromagram visualization showing harmonic content and key distribution">
+                                    <img id="chromagram-img" src=""
+                                        alt="Chromagram visualization showing harmonic content and key distribution">
                                 </div>
                             </div>
                             <div class="visualization-card">
                                 <h3>Stereo Field</h3>
-                                <div id="stereo-field-container" class="visualization-container" title="Click to enlarge">
-                                    <img id="stereo-field-img" src="" alt="Stereo field visualization showing spatial distribution between left and right channels">
-                                    <button id="regenerate-stereo-btn" class="regenerate-btn" title="Regenerate with enhanced detection" onclick="regenerateStereoField(document.getElementById('filename').textContent.trim())">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                                <div id="stereo-field-container" class="visualization-container"
+                                    title="Click to enlarge">
+                                    <img id="stereo-field-img" src=""
+                                        alt="Stereo field visualization showing spatial distribution between left and right channels">
+                                    <button id="regenerate-stereo-btn" class="regenerate-btn"
+                                        title="Regenerate with enhanced detection"
+                                        onclick="regenerateStereoField(document.getElementById('filename').textContent.trim())">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path
+                                                d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
                                         </svg>
                                         <span class="sr-only">Regenerate stereo field visualization</span>
                                     </button>
@@ -864,21 +1010,22 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- AI Insights Tab -->
                     <div class="tab-pane" id="ai-insights-tab">
                         <div class="ai-insights-container">
                             <div class="ai-header">
                                 <h3>AI-Powered Mix Analysis</h3>
                                 <p class="ai-powered-by">Powered by <span id="ai-model-used">AI Model</span></p>
-                                <p class="ai-description">Comprehensive audio analysis powered by advanced AI models that provide professional mixing and mastering insights tailored to your track</p>
+                                <p class="ai-description">Comprehensive audio analysis powered by advanced AI models
+                                    that provide professional mixing and mastering insights tailored to your track</p>
                             </div>
-                            
+
                             <div class="ai-summary-card">
                                 <h4>Summary</h4>
                                 <p id="ai-summary">Loading AI analysis...</p>
                             </div>
-                            
+
                             <div class="ai-genre-card">
                                 <h4>Genre Context</h4>
                                 <p id="ai-genre-context">Loading genre analysis...</p>
@@ -894,13 +1041,13 @@
                                     <h4>Strengths</h4>
                                     <ul id="ai-strengths"></ul>
                                 </div>
-                                
+
                                 <div class="ai-section-card">
                                     <h4>Areas for Improvement</h4>
                                     <ul id="ai-weaknesses"></ul>
                                 </div>
                             </div>
-                            
+
                             <div class="ai-suggestions-card">
                                 <h4>Suggestions</h4>
                                 <ul id="ai-suggestions"></ul>
@@ -915,12 +1062,12 @@
                                 <h4>Processing Recommendations</h4>
                                 <ul id="ai-processing-recommendations"></ul>
                             </div>
-                            
+
                             <div class="ai-translation-card">
                                 <h4>Mix Translation Recommendations</h4>
                                 <ul id="ai-translation-recommendations"></ul>
                             </div>
-                            
+
                             <div id="ai-error" class="ai-error" style="display: none;">
                                 <p>AI analysis is not available. Please check your OpenAI API key.</p>
                             </div>
@@ -931,7 +1078,11 @@
             <section class="intro-section">
                 <div class="intro-content">
                     <h2>Professional Audio Analysis with AI</h2>
-                    <p>Transform your mix with our advanced AI-powered audio analysis tool. Our intelligent engine analyzes frequency spectrum, spatial imaging, dynamics, and harmonic content to deliver precise, actionable insights. Upload your audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to get instant professional-grade feedback tailored to your track. Perfect for producers, engineers, and musicians seeking studio-quality results without the guesswork.</p>
+                    <p>Transform your mix with our advanced AI-powered audio analysis tool. Our intelligent engine
+                        analyzes frequency spectrum, spatial imaging, dynamics, and harmonic content to deliver precise,
+                        actionable insights. Upload your audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to get instant
+                        professional-grade feedback tailored to your track. Perfect for producers, engineers, and
+                        musicians seeking studio-quality results without the guesswork.</p>
                 </div>
             </section>
         </main>
@@ -940,40 +1091,65 @@
             <div class="footer-content">
                 <div class="footer-section">
                     <h3>AI-Powered Audio Analysis Tool</h3>
-                    <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis, dynamic range measurement, stereo field visualization, and AI-powered EQ improvement suggestions.</p>
+                    <p>Free professional audio analysis tool with artificial intelligence for musicians, producers, and
+                        sound engineers. Upload your tracks at no cost to get detailed frequency spectrum analysis,
+                        dynamic range measurement, stereo field visualization, and AI-powered EQ improvement
+                        suggestions.</p>
                 </div>
-                
+
                 <div class="footer-section">
                     <span class="footer-title">Audio Production Knowledge</span>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('main.index') }}#frequency-guide" id="open-frequency-guide" aria-label="Read AI-Powered Frequency Spectrum Analysis Guide">AI-Powered Frequency Spectrum Analysis Guide</a></li>
-                        <li><a href="{{ url_for('main.index') }}#dynamics-guide" id="open-dynamics-guide" aria-label="Read Dynamic Range & Compression Explained">Dynamic Range & Compression Explained</a></li>
-                        <li><a href="{{ url_for('main.index') }}#harmonic-guide" id="open-harmonic-guide" aria-label="Read AI Harmonic Analysis & EQ Techniques">AI Harmonic Analysis & EQ Techniques</a></li>
-                        <li><a href="{{ url_for('main.index') }}#stereo-guide" id="open-stereo-guide" aria-label="Read Understanding Stereo Field & Imaging">Understanding Stereo Field & Imaging</a></li>
-                        <li><a href="{{ url_for('main.index') }}#transients-guide" id="open-transients-guide" aria-label="Read AI Transient Analysis & Detection">AI Transient Analysis & Detection</a></li>
-                        <li><a href="{{ url_for('main.index') }}#spatial-guide" id="open-spatial-guide" aria-label="Read 3D Spatial Mix Analysis Guide">3D Spatial Mix Analysis Guide</a></li>
+                        <li><a href="{{ url_for('main.index') }}#frequency-guide" id="open-frequency-guide"
+                                aria-label="Read AI-Powered Frequency Spectrum Analysis Guide">AI-Powered Frequency
+                                Spectrum Analysis Guide</a></li>
+                        <li><a href="{{ url_for('main.index') }}#dynamics-guide" id="open-dynamics-guide"
+                                aria-label="Read Dynamic Range & Compression Explained">Dynamic Range & Compression
+                                Explained</a></li>
+                        <li><a href="{{ url_for('main.index') }}#harmonic-guide" id="open-harmonic-guide"
+                                aria-label="Read AI Harmonic Analysis & EQ Techniques">AI Harmonic Analysis & EQ
+                                Techniques</a></li>
+                        <li><a href="{{ url_for('main.index') }}#stereo-guide" id="open-stereo-guide"
+                                aria-label="Read Understanding Stereo Field & Imaging">Understanding Stereo Field &
+                                Imaging</a></li>
+                        <li><a href="{{ url_for('main.index') }}#transients-guide" id="open-transients-guide"
+                                aria-label="Read AI Transient Analysis & Detection">AI Transient Analysis &
+                                Detection</a></li>
+                        <li><a href="{{ url_for('main.index') }}#spatial-guide" id="open-spatial-guide"
+                                aria-label="Read 3D Spatial Mix Analysis Guide">3D Spatial Mix Analysis Guide</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="footer-section">
                     <span class="footer-title">Free Resources</span>
                     <ul class="footer-links">
-                        <li><a href="{{ url_for('main.about') }}" data-track-download="About Mix Analyzer Technology" aria-label="Learn about Mix Analyzer Technology">About Mix Analyzer Technology</a></li>
-                        <li><a href="{{ url_for('main.index') }}#faq" id="open-faq" data-track-download="FAQ" aria-label="Read Frequently Asked Questions">FAQ</a></li>
-                        <li><a href="https://librosa.org/" target="_blank" rel="noopener" data-track-download="Librosa Docs" aria-label="Visit Librosa Audio Analysis Library website">Librosa Audio Analysis Library</a></li>
-                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" rel="noopener" data-track-download="OpenAI Docs" aria-label="Visit OpenAI API documentation">OpenAI API for AI Mix Analysis</a></li>
-                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" rel="noopener" data-track-download="GitHub Repo" aria-label="Visit GitHub Repository">GitHub Repository</a></li>
+                        <li><a href="{{ url_for('main.about') }}" data-track-download="About Mix Analyzer Technology"
+                                aria-label="Learn about Mix Analyzer Technology">About Mix Analyzer Technology</a></li>
+                        <li><a href="{{ url_for('main.index') }}#faq" id="open-faq" data-track-download="FAQ"
+                                aria-label="Read Frequently Asked Questions">FAQ</a></li>
+                        <li><a href="https://librosa.org/" target="_blank" rel="noopener"
+                                data-track-download="Librosa Docs"
+                                aria-label="Visit Librosa Audio Analysis Library website">Librosa Audio Analysis
+                                Library</a></li>
+                        <li><a href="https://platform.openai.com/docs/introduction" target="_blank" rel="noopener"
+                                data-track-download="OpenAI Docs" aria-label="Visit OpenAI API documentation">OpenAI API
+                                for AI Mix Analysis</a></li>
+                        <li><a href="https://github.com/owgit/ai-music-mix-analyzer" target="_blank" rel="noopener"
+                                data-track-download="GitHub Repo" aria-label="Visit GitHub Repository">GitHub
+                                Repository</a></li>
                     </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial intelligence and spectral analysis tools</p>
-                <p class="footer-support">Love this tool? 
+                <p>&copy; 2025 Mix Analyzer | Free tool created with professional audio analysis libraries, artificial
+                    intelligence and spectral analysis tools</p>
+                <p class="footer-support">Love this tool?
                     <span class="footer-coffee-container">
                         <span class="footer-coffee-blur"></span>
                         <a href="https://www.buymeacoffee.com/uygarduzgun" target="_blank" rel="noopener">
-                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" alt="Buy Me A Coffee" class="footer-coffee-img"
-                            onerror="this.onerror=null; this.parentNode.innerHTML='☕ Buy me a coffee'"/>
+                            <img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=uygarduzgun&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff"
+                                alt="Buy Me A Coffee" class="footer-coffee-img"
+                                onerror="this.onerror=null; this.parentNode.innerHTML='☕ Buy me a coffee'" />
                         </a>
                     </span>
                 </p>
@@ -986,14 +1162,15 @@
         <div class="modal-content feedback-modal-content">
             <div class="modal-title">Beta Feedback</div>
             <button class="close-button" id="close-feedback-modal">&times;</button>
-            
+
             <div class="feedback-form-container">
                 <form id="feedback-form">
                     <div class="feedback-field">
                         <label for="feedback-email">Email (optional)</label>
-                        <input type="email" id="feedback-email" name="email" placeholder="Your email for follow-up (optional)">
+                        <input type="email" id="feedback-email" name="email"
+                            placeholder="Your email for follow-up (optional)">
                     </div>
-                    
+
                     <div class="feedback-field">
                         <label for="feedback-rating">How would you rate your experience?</label>
                         <div class="star-rating">
@@ -1009,7 +1186,7 @@
                             <label for="star1" title="1 star - Poor">★</label>
                         </div>
                     </div>
-                    
+
                     <div class="feedback-field">
                         <label for="feedback-type">What type of feedback do you have?</label>
                         <select id="feedback-type" name="feedback_type" required>
@@ -1022,25 +1199,28 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    
+
                     <div class="feedback-field">
                         <label for="feedback-message">Your Feedback</label>
-                        <textarea id="feedback-message" name="message" rows="5" placeholder="Please share your thoughts, suggestions, or report issues... Your feedback helps us improve!" required></textarea>
+                        <textarea id="feedback-message" name="message" rows="5"
+                            placeholder="Please share your thoughts, suggestions, or report issues... Your feedback helps us improve!"
+                            required></textarea>
                     </div>
-                    
+
                     <div class="feedback-field checkbox-field">
                         <label class="checkbox-container">
                             <input type="checkbox" id="feedback-consent" name="consent" required>
-                            <span class="checkbox-text">I consent to having this feedback stored for product improvement purposes</span>
+                            <span class="checkbox-text">I consent to having this feedback stored for product improvement
+                                purposes</span>
                         </label>
                     </div>
-                    
+
                     <div class="feedback-submit">
                         <button type="submit" id="submit-feedback" class="feedback-submit-btn">Submit Feedback</button>
                         <div id="feedback-status" class="feedback-status"></div>
                     </div>
                 </form>
-                
+
                 <!-- Success animation (shown when feedback is successfully submitted) -->
                 <div class="feedback-success-animation">
                     <div class="checkmark-circle">
@@ -1057,7 +1237,7 @@
         <div class="modal-content">
             <div class="modal-title">Confirm Deletion</div>
             <button class="close-button" id="close-delete-modal">&times;</button>
-            
+
             <p>Are you sure you want to delete this track from the database? This action cannot be undone.</p>
             <div class="delete-confirmation-buttons">
                 <button id="cancel-delete-btn" class="cancel-delete-btn">Cancel</button>
@@ -1075,109 +1255,120 @@
     <script src="{{ versioned_asset(url_for('static', filename='js/faq-data.js')) }}"></script>
     <script src="{{ versioned_asset(url_for('static', filename='js/score-animations.js')) }}"></script>
     <script src="{{ versioned_asset(url_for('static', filename='js/score-effects.js')) }}"></script>
-    
+
     <!-- Floating feedback button for mobile -->
     <div class="floating-feedback-button" id="floating-feedback-btn">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V8h2v3zm0-4h-2V6h2v1z" fill="currentColor"/>
+            <path
+                d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V8h2v3zm0-4h-2V6h2v1z"
+                fill="currentColor" />
         </svg>
     </div>
-    
+
     <!-- Add style for the animated blur effect -->
     <style>
-    .coffee-button-container {
-        position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        display: inline-block;
-        transition: all 0.3s ease;
-    }
-    
-    .coffee-button-img {
-        position: relative;
-        z-index: 2;
-      
-        display: block;
-        border-radius: 10px;
-    }
-    
-    .coffee-button-blur {
-        position: absolute;
-        inset: -5px;
-        z-index: 1;
-        background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
-        background-size: 400% 400%;
-        filter: blur(10px);
-        opacity: 0.6;
-        animation: gradient 6s ease infinite;
-    }
-    
-    @keyframes gradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    .coffee-button-container:hover .coffee-button-blur {
-        animation: gradient 3s ease infinite;
-        opacity: 0.8;
-        transform: scale(1.05);
-    }
-    
-    .footer-coffee-container {
-        position: relative;
-        display: inline-block;
-        border-radius: 10px;
-        overflow: hidden;
-        vertical-align: middle;
-        margin-left: 5px;
-    }
-    
-    .footer-coffee-img {
-        position: relative;
-        z-index: 2;
-        height: 30px;
-        display: block;
-    }
-    
-    .footer-coffee-blur {
-        position: absolute;
-        inset: -5px;
-        z-index: 1;
-        background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
-        background-size: 400% 400%;
-        filter: blur(8px);
-        opacity: 0.7;
-        animation: gradient 5s ease infinite;
-    }
-    
-    .footer-coffee-container:hover .footer-coffee-blur {
-        animation: gradient 3s ease infinite;
-        opacity: 0.85;
-    }
-    
-    /* Fallback button styles */
-    .coffee-button-text {
-        background-color: #FFDD00;
-        color: #000000;
-        font-weight: bold;
-        padding: 10px 16px;
-        border-radius: 10px;
-        font-family: var(--font-family, 'Inter', sans-serif);
-        white-space: nowrap;
-        text-align: center;
-        border: none;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Footer title style */
-    .footer-title {
-        display: block;
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: var(--primary-color, #333);
-    }
+        .coffee-button-container {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .coffee-button-img {
+            position: relative;
+            z-index: 2;
+
+            display: block;
+            border-radius: 10px;
+        }
+
+        .coffee-button-blur {
+            position: absolute;
+            inset: -5px;
+            z-index: 1;
+            background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
+            background-size: 400% 400%;
+            filter: blur(10px);
+            opacity: 0.6;
+            animation: gradient 6s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .coffee-button-container:hover .coffee-button-blur {
+            animation: gradient 3s ease infinite;
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .footer-coffee-container {
+            position: relative;
+            display: inline-block;
+            border-radius: 10px;
+            overflow: hidden;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        .footer-coffee-img {
+            position: relative;
+            z-index: 2;
+            height: 30px;
+            display: block;
+        }
+
+        .footer-coffee-blur {
+            position: absolute;
+            inset: -5px;
+            z-index: 1;
+            background: linear-gradient(45deg, #ff7b00, #ff006a, #8000ff, #0082ff);
+            background-size: 400% 400%;
+            filter: blur(8px);
+            opacity: 0.7;
+            animation: gradient 5s ease infinite;
+        }
+
+        .footer-coffee-container:hover .footer-coffee-blur {
+            animation: gradient 3s ease infinite;
+            opacity: 0.85;
+        }
+
+        /* Fallback button styles */
+        .coffee-button-text {
+            background-color: #FFDD00;
+            color: #000000;
+            font-weight: bold;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-family: var(--font-family, 'Inter', sans-serif);
+            white-space: nowrap;
+            text-align: center;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Footer title style */
+        .footer-title {
+            display: block;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary-color, #333);
+        }
     </style>
 </body>
-</html> 
+
+</html>
