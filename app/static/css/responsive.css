@@ -3,7 +3,7 @@
 /* Base Mobile Adjustments */
 @media (max-width: 768px) {
     .container {
-        padding: 10px;
+        padding: 5px;
     }
     
     .results-section {
@@ -249,6 +249,13 @@
 
 /* Visualizations Mobile Adjustments */
 @media (max-width: 768px) {
+    .container {
+        padding: 0 1.5rem;
+        grid-template-columns: 
+            [full-start] minmax(0rem, 1fr) 
+            [main-start] minmax(0, 100%) [main-end]
+            minmax(0rem, 1fr) [full-end];
+    }
     .visualization-grid {
         grid-template-columns: 1fr;
     }
@@ -720,10 +727,6 @@
 
 /* Further optimize mobile content density */
 @media (max-width: 480px) {
-    /* Maximize content space */
-    .container {
-        padding: 8px;
-    }
     
     .tabs {
         margin-bottom: 15px;
