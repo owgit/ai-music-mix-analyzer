@@ -416,13 +416,24 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 console.error("Upload failed. Status:", xhr.status, xhr.statusText);
                 console.error("Response text:", xhr.responseText);
-                handleError('Upload failed: ' + xhr.statusText);
+                
+                // Try to parse error message if available
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    if (errorResponse && errorResponse.error) {
+                        handleError('Upload failed: ' + errorResponse.error);
+                    } else {
+                        handleError('Upload failed: ' + xhr.statusText);
+                    }
+                } catch (e) {
+                    handleError('Upload failed: ' + xhr.statusText);
+                }
             }
         });
         
         xhr.addEventListener('error', function(e) {
             console.error("XHR error event:", e);
-            handleError('Network error occurred');
+            handleError('Network error occurred. Please check your connection and try again.');
         });
         
         xhr.addEventListener('abort', function() {
@@ -2180,18 +2191,36 @@ document.addEventListener('DOMContentLoaded', function() {
         if (progressText) progressText.textContent = message;
         if (progressBar) progressBar.style.backgroundColor = 'var(--danger-color)';
         
-        // Show alert for better visibility
-        alert('Error: ' + message);
+        // Log more detailed error for debugging
+        console.error("Detailed upload error:", {
+            message: message,
+            userAgent: navigator.userAgent,
+            isMobile: window.matchMedia('(max-width: 768px)').matches,
+            timestamp: new Date().toISOString()
+        });
         
-        // Reset after 3 seconds
-        setTimeout(function() {
+        // Show alert for better visibility with more detail
+        alert('Error: ' + message + '\nPlease try again or use a different audio file.');
+        
+        // Reset UI immediately on mobile
+        if (window.matchMedia('(max-width: 768px)').matches) {
             if (uploadArea) uploadArea.style.display = 'flex';
             if (progressContainer) progressContainer.style.display = 'none';
             if (progressBar) {
                 progressBar.style.width = '0%';
                 progressBar.style.backgroundColor = 'var(--primary-color)';
             }
-        }, 3000);
+        } else {
+            // Desktop behavior - reset after delay
+            setTimeout(function() {
+                if (uploadArea) uploadArea.style.display = 'flex';
+                if (progressContainer) progressContainer.style.display = 'none';
+                if (progressBar) {
+                    progressBar.style.width = '0%';
+                    progressBar.style.backgroundColor = 'var(--primary-color)';
+                }
+            }, 3000);
+        }
     }
     
     // Reset button functionality

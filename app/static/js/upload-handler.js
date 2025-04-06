@@ -29,7 +29,7 @@ function handleFileUpload(file) {
     
     // Create FormData for the file upload
     const formData = new FormData();
-    formData.append('audio_file', file);
+    formData.append('file', file); // Changed field name from 'audio_file' to 'file' to match server
     
     // Get the instrumental track status
     const isInstrumental = document.getElementById('instrumental-checkbox')?.checked || false;

@@ -250,7 +250,7 @@
 /* Visualizations Mobile Adjustments */
 @media (max-width: 768px) {
     .container {
-        padding: 0 1.5rem;
+        padding: 0;
         grid-template-columns: 
             [full-start] minmax(0rem, 1fr) 
             [main-start] minmax(0, 100%) [main-end]
