@@ -98,61 +98,139 @@
     .tabs {
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding-bottom: 5px;
+        padding: 12px 10px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
         background-color: white;
-        padding: 10px 5px;
-        border-radius: 10px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-radius: 12px;
+        margin: 0 0 15px 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         position: sticky;
         top: 0;
         z-index: 10;
+        scrollbar-width: none; /* Hide scrollbar Firefox */
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Scrollbar hiding for Webkit */
+    .tabs::-webkit-scrollbar {
+        height: 0;
+        width: 0;
+        display: none;
+    }
+    
+    /* Start with the first tab visible by default */
+    .tabs {
+        scroll-padding-left: 10px;
     }
     
     .tab-button {
-        padding: 12px 18px;
+        padding: 12px 16px;
         white-space: nowrap;
         scroll-snap-align: start;
         flex: 0 0 auto;
         font-size: 16px;
-        border-radius: 8px;
+        font-weight: 500;
+        border-radius: 10px;
         margin-right: 8px;
         transition: all 0.2s ease;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+        border: 1px solid transparent;
+    }
+    
+    /* Indicate tabs are clickable with visual cue */
+    .tab-button:not(.active) {
+        background-color: #f5f7ff;
+        border: 1px solid rgba(67, 97, 238, 0.1);
     }
     
     .tab-button.active {
         background-color: var(--primary-color);
         color: white;
-        box-shadow: 0 2px 8px rgba(67, 97, 238, 0.25);
-        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+        transform: translateY(-2px) scale(1.05);
     }
     
-    /* Add visual indicator for horizontal scrolling */
+    /* Visual tap feedback */
+    .tab-button:active {
+        transform: scale(0.95);
+    }
+    
+    .tab-button.active:active {
+        transform: translateY(-2px) scale(0.98);
+    }
+    
+    /* Tap indicator for first tab */
+    .tab-button.tap-indicator {
+        position: relative;
+        animation: pulse-highlight 2s infinite;
+    }
+    
+    .tab-button.tap-indicator::after {
+        content: '';
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 12px;
+        height: 12px;
+        background-color: #ff5555;
+        border-radius: 50%;
+        box-shadow: 0 0 0 rgba(255, 85, 85, 0.4);
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(255, 85, 85, 0.7);
+        }
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 10px rgba(255, 85, 85, 0);
+        }
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(255, 85, 85, 0);
+        }
+    }
+    
+    @keyframes pulse-highlight {
+        0%, 100% { background-color: #f5f7ff; }
+        50% { background-color: #e8eeff; }
+    }
+    
+    /* Add label for tabs */
+    .tabs::before {
+        content: 'Tabs:';
+        font-size: 14px;
+        font-weight: 500;
+        color: #888;
+        margin-right: 10px;
+        flex-shrink: 0;
+        display: block;
+    }
+    
+    /* Add more visible indicator for horizontal scrolling */
     .tabs::after {
-        content: '→';
-        padding: 0 15px;
-        display: flex;
-        align-items: center;
-        color: #aaa;
-        font-size: 20px;
-        animation: pulse-arrow 1.5s infinite;
+        content: '';
+        padding: 0 5px;
+        flex-shrink: 0;
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234361ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        opacity: 0.6;
+        animation: bounce-horizontal 1.5s infinite;
     }
     
-    @keyframes pulse-arrow {
-        0%, 100% { opacity: 0.6; }
-        50% { opacity: 1; }
-    }
-    
-    /* Hide scrollbar aesthetically without removing functionality */
-    .tabs::-webkit-scrollbar {
-        height: 4px;
-    }
-    
-    .tabs::-webkit-scrollbar-thumb {
-        background-color: var(--primary-color);
-        border-radius: 10px;
+    @keyframes bounce-horizontal {
+        0%, 100% { transform: translateX(0); }
+        50% { transform: translateX(5px); }
     }
 }
 
