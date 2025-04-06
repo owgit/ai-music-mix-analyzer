@@ -297,12 +297,19 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("handleFileUpload called with file:", file.name, file.type, file.size);
         
         // Check if file is a supported audio format
-        const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
+        const supportedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
                                'audio/aiff', 'audio/x-aiff', 'audio/m4a', 'audio/x-m4a', 'audio/pcm'];
         const supportedExtensions = ['.mp3', '.wav', '.flac', '.aiff', '.aif', '.m4a', '.pcm'];
         
+        // Get file extension
+        const fileExt = file.name.split('.').pop().toLowerCase();
+        console.log("File extension detected:", fileExt);
+        
         const isValidType = supportedTypes.some(type => file.type.includes(type));
-        const isValidExtension = supportedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+        const isValidExtension = supportedExtensions.some(ext => file.name.toLowerCase().endsWith(ext)) || 
+                               supportedExtensions.some(ext => ext.substring(1) === fileExt);
+        
+        console.log("File validation - Valid type:", isValidType, "Valid extension:", isValidExtension);
         
         if (!isValidType && !isValidExtension) {
             alert('Please upload a supported audio file (MP3, WAV, FLAC, AIFF, M4A, PCM).');

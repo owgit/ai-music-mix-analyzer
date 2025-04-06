@@ -44,6 +44,25 @@
         text-align: center;
     }
     
+    /* Make upload button more prominent on mobile */
+    .upload-button {
+        width: 100%;
+        padding: 15px;
+        margin-top: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.25);
+    }
+    
+    .upload-help-text {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+    
     /* Track Type Selector */
     .track-type-selector {
         padding: 15px 10px;

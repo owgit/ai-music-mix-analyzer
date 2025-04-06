@@ -20,7 +20,14 @@ main_bp = Blueprint('main', __name__)
 
 def allowed_file(filename):
     """Check if the file has an allowed extension"""
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'mp3', 'wav', 'flac', 'aiff', 'ogg'}
+    ALLOWED_EXTENSIONS = {'mp3', 'wav', 'flac', 'aiff', 'aif', 'm4a', 'pcm', 'ogg'}
+    
+    # Handle files without extension but with valid content type
+    if '.' not in filename:
+        return False
+    
+    extension = filename.rsplit('.', 1)[1].lower()
+    return extension in ALLOWED_EXTENSIONS
 
 @main_bp.route('/')
 def index():
