@@ -297,19 +297,14 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("handleFileUpload called with file:", file.name, file.type, file.size);
         
         // Check if file is a supported audio format
-        const supportedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
+        const supportedTypes = ['audio/mpeg', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
                                'audio/aiff', 'audio/x-aiff', 'audio/m4a', 'audio/x-m4a', 'audio/pcm'];
         const supportedExtensions = ['.mp3', '.wav', '.flac', '.aiff', '.aif', '.m4a', '.pcm'];
         
-        // Improved validation for mobile devices where MIME types may not be reliable
-        const fileName = file.name.toLowerCase();
         const isValidType = supportedTypes.some(type => file.type.includes(type));
-        const isValidExtension = supportedExtensions.some(ext => fileName.endsWith(ext));
+        const isValidExtension = supportedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
         
-        // Special check for MP3 files on mobile where type might be empty or incorrect
-        const isMobileMP3 = (file.type === '' || file.type === 'audio/octet-stream') && fileName.endsWith('.mp3');
-        
-        if (!isValidType && !isValidExtension && !isMobileMP3) {
+        if (!isValidType && !isValidExtension) {
             alert('Please upload a supported audio file (MP3, WAV, FLAC, AIFF, M4A, PCM).');
             return;
         }
@@ -970,6 +965,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const spectrogramImg = document.getElementById('spectrogram-img');
             const spectrumImg = document.getElementById('spectrum-img');
             const chromagramImg = document.getElementById('chromagram-img');
+            const chromagramVizImg = document.getElementById('chromagram-viz-img');
             const stereoFieldImg = document.getElementById('stereo-field-img');
             const stereoFieldContainer = document.getElementById('stereo-field-container');
             
@@ -978,6 +974,7 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Spectrogram element:", spectrogramImg ? "Found" : "Not found");
             console.log("Spectrum element:", spectrumImg ? "Found" : "Not found");
             console.log("Chromagram element:", chromagramImg ? "Found" : "Not found");
+            console.log("Chromagram viz element:", chromagramVizImg ? "Found" : "Not found");
             console.log("Stereo Field element:", stereoFieldImg ? "Found" : "Not found");
             console.log("Stereo Field container:", stereoFieldContainer ? "Found" : "Not found");
             
@@ -986,15 +983,41 @@ document.addEventListener('DOMContentLoaded', function() {
             setImageWithFallback(spectrogramImg, data.results.visualizations.spectrogram, 'Spectrogram visualization');
             setImageWithFallback(spectrumImg, data.results.visualizations.spectrum, 'Frequency spectrum visualization');
             
-            // Handle chromagram visualization with extra error checking
-            if (data.results.visualizations.chromagram && chromagramImg) {
-                console.log("Setting chromagram image:", data.results.visualizations.chromagram);
-                setImageWithFallback(chromagramImg, data.results.visualizations.chromagram, 'Chromagram visualization');
+            // Handle chromagram visualization with extra error checking - for both elements
+            const chromagramSrc = data.results.visualizations.chromagram;
+            if (chromagramSrc) {
+                // Add cache-busting parameter to URL
+                const cacheBuster = `?t=${new Date().getTime()}`;
+                const chromagramUrl = `${chromagramSrc}${cacheBuster}`;
+                
+                // Set the main chromagram image
+                if (chromagramImg) {
+                    console.log("Setting main chromagram image:", chromagramUrl);
+                    setImageWithFallback(chromagramImg, chromagramUrl, 'Chromagram visualization');
+                    
+                    // Add detailed debug logging for chromagram
+                    console.log("Main chromagram debug:");
+                    console.log("- Image element:", chromagramImg);
+                    console.log("- Parent element:", chromagramImg.parentElement);
+                    console.log("- Image complete:", chromagramImg.complete);
+                }
+                
+                // Set the visualization tab chromagram image
+                if (chromagramVizImg) {
+                    console.log("Setting visualization tab chromagram image:", chromagramUrl);
+                    setImageWithFallback(chromagramVizImg, chromagramUrl, 'Chromagram visualization (viz tab)');
+                }
             } else {
-                console.log("Chromagram visualization not available or element not found");
+                console.log("Chromagram visualization not available");
+                // Set fallback for main chromagram
                 if (chromagramImg) {
                     chromagramImg.src = '/static/img/error.png';
                     chromagramImg.alt = 'Chromagram visualization not available';
+                }
+                // Set fallback for visualization tab chromagram
+                if (chromagramVizImg) {
+                    chromagramVizImg.src = '/static/img/error.png';
+                    chromagramVizImg.alt = 'Chromagram visualization not available';
                 }
             }
             

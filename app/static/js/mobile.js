@@ -108,8 +108,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function enhanceTouchForUpload() {
         const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('file-input');
-        const uploadButton = document.getElementById('upload-button');
         
         if (!uploadArea) return;
         
@@ -120,32 +118,17 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.backgroundColor = '#f0f4ff';
         }, { passive: true });
         
-        uploadArea.addEventListener('touchend', function(e) {
+        uploadArea.addEventListener('touchend', function() {
             this.style.transform = 'scale(1)';
             this.style.borderColor = 'rgba(67, 97, 238, 0.3)';
             this.style.backgroundColor = 'var(--card-bg)';
-            
-            // Critical fix: Trigger file selection on touchend
-            if (fileInput) {
-                fileInput.click();
-            }
         }, { passive: true });
-        
-        // Make sure the upload button works correctly on mobile
-        if (uploadButton) {
-            uploadButton.addEventListener('touchend', function(e) {
-                e.stopPropagation(); // Prevent double triggering
-                
-                if (fileInput) {
-                    fileInput.click();
-                }
-            }, { passive: false });
-        }
         
         // Make keyboard accessible
         uploadArea.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
+                const fileInput = document.getElementById('file-input');
                 if (fileInput) {
                     fileInput.click();
                 }

@@ -395,12 +395,15 @@
                         <h1>AI-Powered Audio Analysis Tool</h1>
                     </div>
                     <div class="header-actions">
-                        <button id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
+                        <button type="button" id="open-feedback-btn" class="feedback-button" aria-label="Open feedback form">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"
                                 aria-hidden="true">
                                 <path
-                                    d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V8h2v3zm0-4h-2V6h2v1z"
+                                    d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
                                     fill="currentColor" />
+                                <path
+                                    d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+                                    fill="currentColor" class="spinner" />
                             </svg>
                             Share Feedback
                         </button>
@@ -503,7 +506,7 @@
                         <input type="file" id="file-input" accept="audio/*" aria-label="Upload audio file"
                             class="visually-hidden">
                         <div class="button-wrapper">
-                            <button class="upload-button" id="upload-button">
+                            <button type="button" class="upload-button" id="upload-button">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                     stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px;">
@@ -586,13 +589,13 @@
 
             <section class="results-section" id="results-section" style="display: none;">
                 <div class="results-actions">
-                    <button id="analyze-new-btn" class="action-button">
+                    <button type="button" id="analyze-new-btn" class="action-button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
                             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor" />
                         </svg>
                         Analyze New Track
                     </button>
-                    <button id="delete-track-btn" class="action-button delete-button">
+                    <button type="button" id="delete-track-btn" class="action-button delete-button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18">
                             <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
                                 fill="currentColor" />
@@ -622,23 +625,23 @@
                 </div>
 
                 <div class="tabs" role="tablist">
-                    <button class="tab-button active" data-tab="frequency" role="tab" aria-label="Frequency Balance"
+                    <button type="button" class="tab-button active" data-tab="frequency" role="tab" aria-label="Frequency Balance"
                         aria-selected="true">Frequency Balance</button>
-                    <button class="tab-button" data-tab="dynamics" role="tab" aria-label="Dynamics"
+                    <button type="button" class="tab-button" data-tab="dynamics" role="tab" aria-label="Dynamics"
                         aria-selected="false">Dynamics</button>
-                    <button class="tab-button" data-tab="stereo" role="tab" aria-label="Stereo Field"
+                    <button type="button" class="tab-button" data-tab="stereo" role="tab" aria-label="Stereo Field"
                         aria-selected="false">Stereo Field</button>
-                    <button class="tab-button" data-tab="clarity" role="tab" aria-label="Clarity"
+                    <button type="button" class="tab-button" data-tab="clarity" role="tab" aria-label="Clarity"
                         aria-selected="false">Clarity</button>
-                    <button class="tab-button" data-tab="harmonic" role="tab" aria-label="Harmonic"
+                    <button type="button" class="tab-button" data-tab="harmonic" role="tab" aria-label="Harmonic"
                         aria-selected="false">Harmonic</button>
-                    <button class="tab-button" data-tab="transients" role="tab" aria-label="Transients"
+                    <button type="button" class="tab-button" data-tab="transients" role="tab" aria-label="Transients"
                         aria-selected="false">Transients</button>
-                    <button class="tab-button" data-tab="spatial" role="tab" aria-label="3D Spatial"
+                    <button type="button" class="tab-button" data-tab="spatial" role="tab" aria-label="3D Spatial"
                         aria-selected="false">3D Spatial</button>
-                    <button class="tab-button" data-tab="visualizations" role="tab" aria-label="Visualizations"
+                    <button type="button" class="tab-button" data-tab="visualizations" role="tab" aria-label="Visualizations"
                         aria-selected="false">Visualizations</button>
-                    <button class="tab-button" data-tab="ai-insights" role="tab" aria-label="AI Insights"
+                    <button type="button" class="tab-button" data-tab="ai-insights" role="tab" aria-label="AI Insights"
                         aria-selected="false">AI Insights</button>
                 </div>
 
@@ -803,15 +806,15 @@
                             <h3>Clarity Factors Visualization</h3>
                             <div class="clarity-legend">
                                 <div class="legend-item">
-                                    <span class="legend-color" style="background: rgba(74, 107, 255, 0.7);"></span>
+                                    <span class="legend-color legend-color-blue"></span>
                                     <span>Spectral Contrast: Separation between elements</span>
                                 </div>
                                 <div class="legend-item">
-                                    <span class="legend-color" style="background: rgba(255, 99, 132, 0.7);"></span>
+                                    <span class="legend-color legend-color-red"></span>
                                     <span>Tonal Focus: Musical content vs. noise</span>
                                 </div>
                                 <div class="legend-item">
-                                    <span class="legend-color" style="background: rgba(75, 192, 192, 0.7);"></span>
+                                    <span class="legend-color legend-color-green"></span>
                                     <span>Frequency Balance: Distribution across spectrum</span>
                                 </div>
                             </div>
@@ -844,7 +847,7 @@
                             <ul id="harmonic-analysis"></ul>
                         </div>
                         <div class="visualization-container" title="Click to enlarge">
-                            <img id="chromagram-img" src=""
+                            <img id="chromagram-img" src=" "
                                 alt="Chromagram visualization showing harmonic content and key distribution">
                         </div>
                     </div>
@@ -944,7 +947,7 @@
                                         visualization</p>
                                 </div>
                             </div>
-                            <button id="regenerate-spatial-btn" class="regenerate-btn"
+                            <button type="button" id="regenerate-spatial-btn" class="regenerate-btn"
                                 title="Regenerate with enhanced detection"
                                 onclick="regenerateSpatialField(document.getElementById('filename').textContent.trim())">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
@@ -985,7 +988,7 @@
                             <div class="visualization-card">
                                 <h3>Chromagram</h3>
                                 <div class="visualization-container" title="Click to enlarge">
-                                    <img id="chromagram-img" src=""
+                                    <img id="chromagram-viz-img" src=""
                                         alt="Chromagram visualization showing harmonic content and key distribution">
                                 </div>
                             </div>
@@ -995,7 +998,7 @@
                                     title="Click to enlarge">
                                     <img id="stereo-field-img" src=""
                                         alt="Stereo field visualization showing spatial distribution between left and right channels">
-                                    <button id="regenerate-stereo-btn" class="regenerate-btn"
+                                    <button type="button" id="regenerate-stereo-btn" class="regenerate-btn"
                                         title="Regenerate with enhanced detection"
                                         onclick="regenerateStereoField(document.getElementById('filename').textContent.trim())">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
@@ -1082,7 +1085,7 @@
                         analyzes frequency spectrum, spatial imaging, dynamics, and harmonic content to deliver precise,
                         actionable insights. Upload your audio file (MP3, WAV, FLAC, AIFF, M4A, PCM) to get instant
                         professional-grade feedback tailored to your track. Perfect for producers, engineers, and
-                        musicians seeking studio-quality results without the guesswork.</p>
+                        musicians worldwide seeking studio-quality results without the guesswork.</p>
                 </div>
             </section>
         </main>
@@ -1161,7 +1164,7 @@
     <div id="feedback-modal" class="modal-overlay">
         <div class="modal-content feedback-modal-content">
             <div class="modal-title">Beta Feedback</div>
-            <button class="close-button" id="close-feedback-modal">&times;</button>
+            <button type="button" class="close-button" id="close-feedback-modal">&times;</button>
 
             <div class="feedback-form-container">
                 <form id="feedback-form">
@@ -1236,12 +1239,12 @@
     <div id="delete-confirmation-modal" class="modal-overlay delete-confirmation-modal">
         <div class="modal-content">
             <div class="modal-title">Confirm Deletion</div>
-            <button class="close-button" id="close-delete-modal">&times;</button>
+            <button type="button" class="close-button" id="close-delete-modal">&times;</button>
 
             <p>Are you sure you want to delete this track from the database? This action cannot be undone.</p>
             <div class="delete-confirmation-buttons">
-                <button id="cancel-delete-btn" class="cancel-delete-btn">Cancel</button>
-                <button id="confirm-delete-btn" class="confirm-delete-btn">Delete Permanently</button>
+                <button type="button" id="cancel-delete-btn" class="cancel-delete-btn">Cancel</button>
+                <button type="button" id="confirm-delete-btn" class="confirm-delete-btn">Delete Permanently</button>
             </div>
         </div>
     </div>
@@ -1260,7 +1263,7 @@
     <div class="floating-feedback-button" id="floating-feedback-btn">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
             <path
-                d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V8h2v3zm0-4h-2V6h2v1z"
+                d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
                 fill="currentColor" />
         </svg>
     </div>
@@ -1367,6 +1370,38 @@
             font-weight: 600;
             margin-bottom: 12px;
             color: var(--primary-color, #333);
+        }
+
+        .inline-svg-style {
+            margin-right: 8px;
+            vertical-align: -3px;
+        }
+
+        .legend-color {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .legend-color-blue {
+            background-color: rgba(74, 107, 255, 0.7);
+        }
+
+        .legend-color-red {
+            background-color: rgba(255, 99, 132, 0.7);
+        }
+
+        .legend-color-green {
+            background-color: rgba(75, 192, 192, 0.7);
+        }
+
+        .full-width-iframe {
+            width: 100%;
+            height: 700px;
+            border: none;
+            display: block;
         }
     </style>
 </body>

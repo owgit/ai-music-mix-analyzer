@@ -6,19 +6,7 @@ function handleFileUpload(file) {
     if (!file) return;
     
     // Check if the file is an audio file
-    // Improved validation for mobile devices where MIME types may not be reliable
-    const fileName = file.name.toLowerCase();
-    const supportedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/wave', 'audio/x-wav', 'audio/flac', 
-                         'audio/aiff', 'audio/x-aiff', 'audio/m4a', 'audio/x-m4a', 'audio/pcm'];
-    const supportedExtensions = ['.mp3', '.wav', '.flac', '.aiff', '.aif', '.m4a', '.pcm'];
-    
-    // Check for valid type, extension, or special mobile MP3 case
-    const isValidType = supportedTypes.some(type => file.type.includes(type));
-    const isValidExtension = supportedExtensions.some(ext => fileName.endsWith(ext));
-    // Special check for MP3 files on mobile where type might be empty or incorrect
-    const isMobileMP3 = (file.type === '' || file.type === 'audio/octet-stream') && fileName.endsWith('.mp3');
-    
-    if (!isValidType && !isValidExtension && !isMobileMP3) {
+    if (!file.type.startsWith('audio/')) {
         showError('Please select an audio file (MP3, WAV, FLAC, etc.)');
         return;
     }
