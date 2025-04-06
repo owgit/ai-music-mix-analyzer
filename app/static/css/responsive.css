@@ -6,6 +6,10 @@
         padding: 10px;
     }
     
+    .results-section {
+        padding: 10px;
+    }
+    
     header h1 {
         font-size: 1.8rem;
     }
@@ -97,25 +101,53 @@
         padding-bottom: 5px;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
+        background-color: white;
+        padding: 10px 5px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 10;
     }
     
     .tab-button {
-        padding: 8px 15px;
+        padding: 12px 18px;
         white-space: nowrap;
         scroll-snap-align: start;
         flex: 0 0 auto;
-        font-size: 0.9rem;
+        font-size: 16px;
+        border-radius: 8px;
+        margin-right: 8px;
+        transition: all 0.2s ease;
     }
     
-    /* Make an indicator to show there's more content */
+    .tab-button.active {
+        background-color: var(--primary-color);
+        color: white;
+        box-shadow: 0 2px 8px rgba(67, 97, 238, 0.25);
+        transform: translateY(-2px);
+    }
+    
+    /* Add visual indicator for horizontal scrolling */
     .tabs::after {
-        content: '';
-        padding-right: 10px;
+        content: '→';
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+        color: #aaa;
+        font-size: 20px;
+        animation: pulse-arrow 1.5s infinite;
+    }
+    
+    @keyframes pulse-arrow {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
     }
     
     /* Hide scrollbar aesthetically without removing functionality */
     .tabs::-webkit-scrollbar {
-        height: 3px;
+        height: 4px;
     }
     
     .tabs::-webkit-scrollbar-thumb {
@@ -132,7 +164,7 @@
     
     .score-container .score-card {
         width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
     
     .metrics-container {
@@ -141,7 +173,31 @@
     
     .metric {
         width: 100%;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
+        padding: 15px;
+    }
+    
+    /* Analysis content improvements */
+    .analysis-card {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .analysis-card h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    
+    .analysis-card ul {
+        padding-left: 0;
+        margin: 0;
+    }
+    
+    .analysis-card li {
+        padding: 8px 0;
+        line-height: 1.4;
+        font-size: 16px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
     }
     
     /* AI Insights Tab */
@@ -152,6 +208,42 @@
     .ai-section-card {
         width: 100%;
         margin-bottom: 15px;
+        padding: 15px;
+    }
+    
+    .ai-section-card h4 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+    
+    .ai-section-card ul {
+        padding-left: 0;
+        margin: 0;
+    }
+    
+    .ai-section-card li {
+        padding: 6px 0;
+        margin-bottom: 8px;
+        line-height: 1.4;
+        font-size: 16px;
+        display: flex;
+    }
+    
+    .ai-section-card li:before {
+        content: "•";
+        margin-right: 8px;
+        color: var(--primary-color);
+    }
+    
+    /* Score display improvements */
+    .score-value {
+        font-size: 32px;
+        margin: 10px 0;
+    }
+    
+    /* Tab improvements */
+    .tab-pane {
+        padding: 15px 12px;
     }
 }
 
@@ -248,9 +340,9 @@
 
 /* Touch feedback styles */
 .touch-active {
-    transform: scale(0.97) !important;
+    transform: scale(0.98) !important;
     opacity: 0.9;
-    transition: transform 0.1s ease-out !important;
+    transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .visualization-container.touched {
@@ -523,5 +615,159 @@
     .header-right {
         margin-left: 8px;
         max-width: calc(100% - 50px);
+    }
+}
+
+/* Add ripple effect for mobile touch */
+.tap-ripple {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    transform: scale(0);
+    pointer-events: none;
+    width: 100px;
+    height: 100px;
+    animation: ripple-animation 0.6s ease-out;
+}
+
+@keyframes ripple-animation {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+/* Improve mobile analysis elements */
+@media (max-width: 768px) {
+    /* Make cards look more like actual cards with shadow and rounded corners */
+    .score-card, .analysis-card, .ai-section-card, .metric, .chart-container {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Add hover/touch effect */
+    .score-card:active, .analysis-card:active, .ai-section-card:active, .metric:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Improve lists for touch */
+    .analysis-card li, .ai-section-card li {
+        position: relative;
+        padding-left: 5px;
+    }
+    
+    /* Enhance score display */
+    .overall-score {
+        margin: 30px auto;
+    }
+    
+    .score-value {
+        color: var(--primary-color);
+        font-weight: 700;
+    }
+    
+    /* AI Frequency Analysis specific improvements */
+    .ai-frequency-card, .ai-description {
+        padding: 12px !important;
+    }
+    
+    .ai-header {
+        margin-bottom: 10px;
+    }
+    
+    .ai-header h3 {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+    
+    .ai-powered-by {
+        font-size: 12px;
+        margin: 0 0 5px 0;
+    }
+    
+    /* Numbered items in frequency issues */
+    .ai-section-card li {
+        padding-left: 0;
+    }
+    
+    /* Increase content vs padding ratio */
+    #frequency-tab, #dynamics-tab, #stereo-tab, #clarity-tab, 
+    #harmonic-tab, #transients-tab, #spatial-tab, 
+    #visualizations-tab, #ai-insights-tab {
+        padding: 12px 10px;
+    }
+    
+    /* Remove excessive margins and paddings */
+    .ai-frequency-issues, .ai-frequency-recommendations {
+        margin-bottom: 10px;
+    }
+    
+    /* Numbered list style for frequency issues */
+    #ai-frequency-issues li, #ai-frequency-recommendations li {
+        padding-left: 0;
+        position: relative;
+        counter-increment: item;
+    }
+}
+
+/* Further optimize mobile content density */
+@media (max-width: 480px) {
+    /* Maximize content space */
+    .container {
+        padding: 8px;
+    }
+    
+    .tabs {
+        margin-bottom: 15px;
+    }
+    
+    /* Make list items more efficient */
+    .analysis-card li, .ai-section-card li {
+        font-size: 15px;
+        padding: 6px 0;
+        line-height: 1.3;
+    }
+    
+    /* Further reduce card padding */
+    .analysis-card, .ai-section-card, .metric, .chart-container {
+        padding: 12px !important;
+        margin-bottom: 12px;
+    }
+    
+    /* Make headings more compact */
+    .analysis-card h3, .ai-section-card h4 {
+        font-size: 17px;
+        margin-bottom: 8px;
+    }
+    
+    /* Reduce spacing between elements */
+    .ai-section-card + .ai-section-card {
+        margin-top: 10px;
+    }
+    
+    /* Make bullet points more compact */
+    .ai-section-card li:before {
+        margin-right: 6px;
+    }
+    
+    /* Increase touch targets while reducing visual space */
+    .tab-button {
+        padding: 10px 15px;
+        font-size: 15px;
+    }
+    
+    /* Make tab content full width */
+    .tab-pane {
+        padding: 10px 8px;
+        width: 100%;
+        box-sizing: border-box;
     }
 } 

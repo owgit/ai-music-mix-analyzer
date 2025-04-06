@@ -32,6 +32,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add visual feedback for touch interactions
         addTouchFeedback();
+        
+        // Enhance analysis results view for mobile
+        enhanceAnalysisForMobile();
     }
     
     function enhanceTabsForMobile() {
@@ -181,6 +184,69 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.blur();
                 }, 150);
             }, { passive: true });
+        });
+    }
+    
+    function enhanceAnalysisForMobile() {
+        // Get all analysis cards and enhance them
+        const analysisCards = document.querySelectorAll('.analysis-card, .ai-section-card, .metrics-container');
+        
+        analysisCards.forEach(card => {
+            // Add tap ripple effect for better feedback
+            card.addEventListener('touchstart', function(e) {
+                const ripple = document.createElement('div');
+                ripple.className = 'tap-ripple';
+                
+                // Position ripple at tap location
+                const rect = this.getBoundingClientRect();
+                const x = e.touches[0].clientX - rect.left;
+                const y = e.touches[0].clientY - rect.top;
+                
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                this.appendChild(ripple);
+                
+                // Remove ripple after animation
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            }, {passive: true});
+        });
+        
+        // Improve scrolling in analysis tabs
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        tabPanes.forEach(pane => {
+            pane.style.overscrollBehavior = 'contain';
+            
+            // Add slight padding at bottom for better scroll experience
+            pane.style.paddingBottom = '30px';
+        });
+        
+        // Make analysis list items more space-efficient
+        const analysisItems = document.querySelectorAll('.analysis-card li, .ai-section-card li');
+        analysisItems.forEach(item => {
+            item.style.minHeight = '36px';
+            item.style.display = 'flex';
+            item.style.alignItems = 'flex-start';
+            
+            // Remove any default bullet points (we handle these with CSS)
+            item.style.listStyleType = 'none';
+        });
+        
+        // Optimize headers for better space usage
+        const sectionHeaders = document.querySelectorAll('.ai-section-card h4, .analysis-card h3');
+        sectionHeaders.forEach(header => {
+            header.style.marginTop = '0';
+            header.style.marginBottom = '8px';
+        });
+        
+        // Make sure the content spans the full width
+        const contentSections = document.querySelectorAll('.ai-frequency-card, .ai-section-card');
+        contentSections.forEach(section => {
+            section.style.width = '100%';
+            section.style.boxSizing = 'border-box';
+            section.style.maxWidth = '100%';
         });
     }
 }); 
