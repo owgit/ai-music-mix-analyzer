@@ -108,30 +108,29 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function enhanceTouchForUpload() {
         const uploadArea = document.getElementById('upload-area');
-        
-        if (!uploadArea) return;
-        
+        const fileInput = document.getElementById('file-input');
+
+        if (!uploadArea || !fileInput) return;
+
         // Add better touch feedback
         uploadArea.addEventListener('touchstart', function() {
             this.style.transform = 'scale(0.98)';
             this.style.borderColor = 'var(--primary-color)';
             this.style.backgroundColor = '#f0f4ff';
         }, { passive: true });
-        
+
         uploadArea.addEventListener('touchend', function() {
             this.style.transform = 'scale(1)';
             this.style.borderColor = 'rgba(67, 97, 238, 0.3)';
             this.style.backgroundColor = 'var(--card-bg)';
+            fileInput.click();
         }, { passive: true });
-        
+
         // Make keyboard accessible
         uploadArea.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                const fileInput = document.getElementById('file-input');
-                if (fileInput) {
-                    fileInput.click();
-                }
+                fileInput.click();
             }
         });
     }
