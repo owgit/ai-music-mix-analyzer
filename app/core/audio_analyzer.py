@@ -1543,13 +1543,270 @@ def generate_3d_spatial_visualization(y, sr, vis_dir):
             plt.close()
             
             print(f"Successfully generated static 3D visualization at: {spatial_path}")
+            
+            # Return the path
             return f"/static/uploads/{os.path.basename(vis_dir)}/spatial_field.png"
-        
     except Exception as e:
-        print(f"Error generating 3D spatial visualization: {str(e)}")
+        print(f"Error in 3D spatial visualization: {str(e)}")
         import traceback
         traceback.print_exc()
         return None
+
+def generate_vectorscope(y, sr, vis_dir):
+    """Generate a professional vectorscope/goniometer visualization for phase correlation.
+    
+    Args:
+        y: Audio time series (stereo)
+        sr: Sample rate
+        vis_dir: Directory to save the visualization
+        
+    Returns:
+        Path to the saved visualization
+    """
+    try:
+        print("Generating vectorscope/goniometer visualization...")
+        
+        # Ensure stereo audio
+        if y.ndim == 1:
+            y = np.vstack((y, y))
+            
+        # Get left and right channels
+        left_channel = y[0]
+        right_channel = y[1]
+        
+        # Calculate mid and side signals
+        mid = (left_channel + right_channel) / 2
+        side = (left_channel - right_channel) / 2
+        
+        # Calculate correlation
+        correlation = np.corrcoef(left_channel, right_channel)[0, 1]
+        print(f"Channel correlation: {correlation:.4f}")
+        
+        # Create figure with dark background
+        plt.figure(figsize=(8, 8), facecolor='#1E1E1E')
+        ax = plt.subplot(111, aspect='equal')
+        ax.set_facecolor('#1E1E1E')
+        
+        # Sample points for visualization (use more points for better density visualization)
+        num_points = min(5000, y.shape[1])
+        step = max(1, y.shape[1] // num_points)
+        
+        # Sample at regular intervals - first 5 seconds of audio for better visualization
+        sample_length = min(5 * sr, y.shape[1])
+        samples_left = left_channel[:sample_length:step]
+        samples_right = right_channel[:sample_length:step]
+        
+        # Create a time-dependent color to see signal evolution
+        time_array = np.linspace(0, 1, len(samples_left))
+        
+        # Function to reduce density based on signal level to make more visual pop
+        def reduce_density(x, y, max_points=5000):
+            xy = np.vstack([x, y]).T
+            
+            # If we have too many points, reduce density based on distance from origin
+            if len(xy) > max_points:
+                # Calculate distance from origin for each point
+                distances = np.sqrt(x**2 + y**2)
+                
+                # Normalize distances to [0, 1]
+                distances_norm = distances / np.max(distances) if np.max(distances) > 0 else distances
+                
+                # Higher probability of keeping points farther from origin
+                probs = np.minimum(1.0, distances_norm + 0.1)
+                
+                # Randomly select points based on probabilities
+                indices = np.random.choice(len(xy), max_points, replace=False, p=probs/sum(probs))
+                return xy[indices, 0], xy[indices, 1], time_array[indices]
+            
+            return x, y, time_array
+            
+        # Apply density reduction
+        x, y, t = reduce_density(samples_left, samples_right)
+        
+        # Create a scatter plot with time-based coloring
+        scatter = ax.scatter(x, y, c=t, cmap='viridis', alpha=0.6, s=5)
+        
+        # Add reference circle and grid lines
+        theta = np.linspace(0, 2*np.pi, 100)
+        circle_x = np.cos(theta)
+        circle_y = np.sin(theta)
+        
+        # Draw outer reference circle
+        ax.plot(circle_x, circle_y, color='#FFFFFF', alpha=0.5, linestyle='-', linewidth=1)
+        
+        # Draw inner reference circles
+        for radius in [0.25, 0.5, 0.75]:
+            ax.plot(circle_x * radius, circle_y * radius, color='#FFFFFF', alpha=0.3, linestyle='-', linewidth=0.5)
+        
+        # Draw cross lines
+        ax.axhline(y=0, color='#FFFFFF', alpha=0.5, linestyle='-', linewidth=0.5)
+        ax.axvline(x=0, color='#FFFFFF', alpha=0.5, linestyle='-', linewidth=0.5)
+        
+        # Draw diagonal lines for mono and anti-phase reference
+        ax.plot([-1, 1], [-1, 1], color='#00FF00', alpha=0.7, linestyle='--', linewidth=1)  # Mono (45 degree line)
+        ax.plot([-1, 1], [1, -1], color='#FF0000', alpha=0.7, linestyle='--', linewidth=1)  # Anti-phase (135 degree line)
+        
+        # Add labels for main axes
+        ax.text(1.05, 0, 'R+L', color='white', ha='left', va='center', fontsize=10)
+        ax.text(-1.05, 0, 'R+L', color='white', ha='right', va='center', fontsize=10)
+        ax.text(0, 1.05, 'L-R', color='white', ha='center', va='bottom', fontsize=10)
+        ax.text(0, -1.05, 'L-R', color='white', ha='center', va='top', fontsize=10)
+        
+        # Set axis limits
+        ax.set_xlim(-1.1, 1.1)
+        ax.set_ylim(-1.1, 1.1)
+        
+        # Remove axis ticks and labels
+        ax.set_xticks([])
+        ax.set_yticks([])
+        
+        # Add correlation coefficient display in the corner
+        correlation_text = f"Correlation: {correlation:.2f}"
+        phase_status = "In Phase" if correlation > 0.5 else "Mixed Phase" if correlation > -0.5 else "Out of Phase"
+        phase_color = "#00FF00" if correlation > 0.5 else "#FFFF00" if correlation > -0.5 else "#FF0000"
+        
+        ax.text(0.95, 0.95, correlation_text, color='white', 
+                ha='right', va='top', fontsize=12, 
+                bbox=dict(facecolor='#1E1E1E', alpha=0.7, edgecolor='none', pad=5))
+        
+        ax.text(0.95, 0.88, phase_status, color=phase_color, 
+                ha='right', va='top', fontsize=12, weight='bold',
+                bbox=dict(facecolor='#1E1E1E', alpha=0.7, edgecolor='none', pad=5))
+                
+        # Title
+        plt.title('Vectorscope / Goniometer', color='white', fontsize=14)
+        
+        # Ensure tight layout
+        plt.tight_layout()
+        
+        # Save with high DPI and tight layout
+        vectorscope_path = os.path.join(vis_dir, 'vectorscope.png')
+        plt.savefig(vectorscope_path, dpi=150, bbox_inches='tight', facecolor='#1E1E1E')
+        plt.close()
+        
+        print(f"Successfully generated vectorscope at: {vectorscope_path}")
+        
+        # Return the path
+        return f"/static/uploads/{os.path.basename(vis_dir)}/vectorscope.png"
+        
+    except Exception as e:
+        print(f"Error in vectorscope visualization: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+def generate_dynamic_range_visualization(y, sr, vis_dir):
+    """Generate a visualization showing dynamic range over time as a heatmap.
+    
+    Args:
+        y: Audio time series
+        sr: Sample rate
+        vis_dir: Directory to save the visualization
+        
+    Returns:
+        Path to the saved visualization
+    """
+    try:
+        print("Generating dynamic range visualization...")
+        
+        # Convert to mono for analysis
+        y_mono = np.mean(y, axis=0) if y.ndim > 1 else y
+        
+        # Calculate RMS in frames
+        hop_length = 512
+        frame_length = 2048
+        rms = librosa.feature.rms(y=y_mono, frame_length=frame_length, hop_length=hop_length)[0]
+        
+        # Convert to dB
+        rms_db = 20 * np.log10(np.maximum(rms, 1e-8))  # Avoid log(0)
+        
+        # Calculate time axis
+        times = librosa.times_like(rms, sr=sr, hop_length=hop_length)
+        
+        # Calculate the dynamic range for each frame using a simple method
+        # Dynamic range as the difference between peak and RMS
+        # We'll use a rolling window to estimate the dynamic range
+        window_size = 10  # frames
+        dynamic_range = np.zeros_like(rms)
+        
+        # Compute a simplified version of dynamic range
+        for i in range(len(rms)):
+            # Get the window
+            start = max(0, i - window_size//2)
+            end = min(len(rms), i + window_size//2)
+            window = rms_db[start:end]
+            
+            # Calculate peak and average
+            if len(window) > 0:
+                peak = np.max(window)
+                avg = np.mean(window)
+                dynamic_range[i] = max(0, peak - avg)  # Simple crest factor
+        
+        # Create a figure with two subplots
+        plt.figure(figsize=(10, 6))
+        
+        # Plot 1: RMS over time
+        ax1 = plt.subplot(211)
+        ax1.plot(times, rms_db, color='#1f77b4')
+        ax1.set_ylabel('Level (dB)')
+        ax1.set_title('Audio Level Over Time')
+        ax1.grid(True, alpha=0.3)
+        ax1.set_xlim(0, times[-1])
+        
+        # Add louder line for level reference
+        ax1.axhline(y=-6, color='#FF0000', linestyle='--', alpha=0.5, label='Loud (-6dB)')
+        ax1.axhline(y=-18, color='#FFA500', linestyle='--', alpha=0.5, label='Moderate (-18dB)')
+        ax1.axhline(y=-30, color='#00FF00', linestyle='--', alpha=0.5, label='Quiet (-30dB)')
+        ax1.legend(loc='lower right')
+        
+        # Plot 2: Dynamic Range over time
+        ax2 = plt.subplot(212, sharex=ax1)
+        ax2.plot(times, dynamic_range, color='#ff7f0e')
+        ax2.set_ylabel('Dynamic Range (dB)')
+        ax2.set_xlabel('Time (s)')
+        ax2.set_title('Dynamic Range Over Time')
+        ax2.grid(True, alpha=0.3)
+        ax2.set_xlim(0, times[-1])
+        
+        # Add reference lines for typical compression levels
+        ax2.axhline(y=6, color='#FF0000', linestyle='--', alpha=0.5, label='Heavily Compressed (6dB)')
+        ax2.axhline(y=12, color='#FFA500', linestyle='--', alpha=0.5, label='Moderately Compressed (12dB)')
+        ax2.axhline(y=20, color='#00FF00', linestyle='--', alpha=0.5, label='Dynamic (20dB)')
+        ax2.legend(loc='lower right')
+        
+        # Tight layout
+        plt.tight_layout()
+        
+        # Save the plot
+        dynamics_path = os.path.join(vis_dir, 'dynamic_range.png')
+        plt.savefig(dynamics_path, dpi=150, bbox_inches='tight')
+        plt.close()
+        
+        print(f"Successfully generated dynamic range visualization at: {dynamics_path}")
+        
+        # Return the path
+        return f"/static/uploads/{os.path.basename(vis_dir)}/dynamic_range.png"
+    
+    except Exception as e:
+        print(f"Error in dynamic range visualization: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        
+        # Create a fallback simple visualization
+        try:
+            plt.figure(figsize=(10, 4))
+            plt.text(0.5, 0.5, f'Dynamic Range Visualization Error: {str(e)}', 
+                    horizontalalignment='center', verticalalignment='center',
+                    transform=plt.gca().transAxes, fontsize=12)
+            plt.axis('off')
+            dynamics_path = os.path.join(vis_dir, 'dynamic_range.png')
+            plt.savefig(dynamics_path)
+            plt.close()
+            print(f"Generated dynamic range fallback: /static/uploads/{os.path.basename(vis_dir)}/dynamic_range.png")
+            return f"/static/uploads/{os.path.basename(vis_dir)}/dynamic_range.png"
+        except:
+            print("Failed to generate even the fallback dynamic range visualization")
+            return None
 
 def generate_visualizations(file_path, y=None, sr=None, file_id=None):
     """Generate visualizations for the audio file and return their paths."""
@@ -1739,7 +1996,83 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
             print(f"Error generating stereo field: {str(e)}")
             visualizations['stereo_field'] = "/static/img/error.png"
         
-        # 6. 3D Spatial Field - This is the problematic visualization
+        # 6. Vectorscope
+        try:
+            print("Generating vectorscope visualization...")
+            
+            # Enhanced stereo detection
+            is_stereo = y.ndim > 1 and y.shape[0] >= 2
+            channels_identical = False
+            
+            if is_stereo:
+                # Check if channels are identical
+                sample_size = min(10000, y.shape[1])
+                left_samples = y[0, :sample_size]
+                right_samples = y[1, :sample_size]
+                
+                # Use correlation for comparison
+                correlation = np.corrcoef(left_samples, right_samples)[0, 1]
+                channels_identical = correlation > 0.999  # Allow for tiny differences
+                
+                print(f"Stereo detection for vectorscope:")
+                print(f"- Is stereo format: {is_stereo}")
+                print(f"- Channels identical: {channels_identical}")
+                print(f"- Channel correlation: {correlation:.4f}")
+            
+            if is_stereo and not channels_identical:
+                # Use the vectorscope generator function
+                vectorscope_result = generate_vectorscope(y, sr, vis_dir)
+                if vectorscope_result:
+                    visualizations['vectorscope'] = vectorscope_result
+                    print(f"Generated vectorscope: {vectorscope_result}")
+                else:
+                    raise ValueError("Vectorscope generation failed")
+            else:
+                # Create a placeholder for mono audio
+                plt.figure(figsize=(8, 8), facecolor='#1E1E1E')
+                ax = plt.subplot(111, aspect='equal')
+                ax.set_facecolor('#1E1E1E')
+                
+                # Draw reference circle
+                theta = np.linspace(0, 2*np.pi, 100)
+                circle_x = np.cos(theta)
+                circle_y = np.sin(theta)
+                ax.plot(circle_x, circle_y, color='#FFFFFF', alpha=0.5, linestyle='-', linewidth=1)
+                
+                # Draw cross lines
+                ax.axhline(y=0, color='#FFFFFF', alpha=0.5, linestyle='-', linewidth=0.5)
+                ax.axvline(x=0, color='#FFFFFF', alpha=0.5, linestyle='-', linewidth=0.5)
+                
+                # Add mono line
+                ax.plot([-1, 1], [-1, 1], color='#00FF00', alpha=0.7, linestyle='--', linewidth=1)
+                
+                # Add mono indicator in the center
+                message = 'Identical Channels - Effectively Mono' if (is_stereo and channels_identical) else 'Mono Audio'
+                ax.text(0, 0, message, color='white', 
+                        ha='center', va='center', fontsize=12,
+                        bbox=dict(facecolor='#1E1E1E', alpha=0.7, edgecolor='none', pad=5))
+                
+                # Set axis limits and remove ticks
+                ax.set_xlim(-1.1, 1.1)
+                ax.set_ylim(-1.1, 1.1)
+                ax.set_xticks([])
+                ax.set_yticks([])
+                
+                # Title
+                plt.title('Vectorscope / Goniometer', color='white', fontsize=14)
+                
+                # Save
+                vectorscope_path = os.path.join(vis_dir, 'vectorscope.png')
+                plt.savefig(vectorscope_path, dpi=150, bbox_inches='tight', facecolor='#1E1E1E')
+                plt.close()
+                
+                visualizations['vectorscope'] = f"/static/uploads/{file_id}/vectorscope.png"
+                print(f"Generated mono vectorscope placeholder: /static/uploads/{file_id}/vectorscope.png")
+        except Exception as e:
+            print(f"Error generating vectorscope: {str(e)}")
+            visualizations['vectorscope'] = "/static/img/error.png"
+        
+        # 7. 3D Spatial Field - This is the problematic visualization
         # Make this the last visualization and wrap it in its own try/except
         try:
             print("Generating 3D spatial field visualization...")
@@ -1816,6 +2149,18 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
                 print(f"Failed to generate placeholder for 3D visualization: {str(placeholder_error)}")
                 visualizations['spatial_field'] = "/static/img/error.png"
         
+        # 8. Dynamic Range Visualization
+        try:
+            dynamics_result = generate_dynamic_range_visualization(y, sr, vis_dir)
+            if dynamics_result:
+                visualizations['dynamic_range'] = dynamics_result
+                print(f"Generated dynamic range visualization: {dynamics_result}")
+            else:
+                raise ValueError("Dynamic range visualization generation failed")
+        except Exception as e:
+            print(f"Error generating dynamic range visualization: {str(e)}")
+            visualizations['dynamic_range'] = "/static/img/error.png"
+        
         # Return all visualization paths
         start_time = time.time()
         visualizations_generated_in = time.time() - start_time
@@ -1836,7 +2181,8 @@ def generate_visualizations(file_path, y=None, sr=None, file_id=None):
                 'spectrum': "/static/img/error.png",
                 'chromagram': "/static/img/error.png",
                 'stereo_field': "/static/img/error.png",
-                'spatial_field': "/static/img/error.png"
+                'spatial_field': "/static/img/error.png",
+                'dynamic_range': "/static/img/error.png"
             }
         
         return visualizations
@@ -1849,7 +2195,9 @@ def generate_error_visualizations(file_id=None):
         "spectrogram": f"{static_prefix}/img/error.png",
         "spectrum": f"{static_prefix}/img/error.png",
         "chromagram": f"{static_prefix}/img/error.png",
-        "stereo_field": f"{static_prefix}/img/error.png"
+        "stereo_field": f"{static_prefix}/img/error.png",
+        "spatial_field": f"{static_prefix}/img/error.png",
+        "dynamic_range": f"{static_prefix}/img/error.png"
     }
 
 def calculate_overall_score(results):

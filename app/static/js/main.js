@@ -968,6 +968,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const chromagramVizImg = document.getElementById('chromagram-viz-img');
             const stereoFieldImg = document.getElementById('stereo-field-img');
             const stereoFieldContainer = document.getElementById('stereo-field-container');
+            const vectorscopeImg = document.getElementById('vectorscope-img');
+            const vectorscopeContainer = document.getElementById('vectorscope-container');
+            const dynamicRangeImg = document.getElementById('dynamic-range-img');
+            const dynamicRangeContainer = document.getElementById('dynamic-range-container');
             
             console.log("Image elements found:");
             console.log("Waveform element:", waveformImg ? "Found" : "Not found");
@@ -977,6 +981,10 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log("Chromagram viz element:", chromagramVizImg ? "Found" : "Not found");
             console.log("Stereo Field element:", stereoFieldImg ? "Found" : "Not found");
             console.log("Stereo Field container:", stereoFieldContainer ? "Found" : "Not found");
+            console.log("Vectorscope element:", vectorscopeImg ? "Found" : "Not found");
+            console.log("Vectorscope container:", vectorscopeContainer ? "Found" : "Not found");
+            console.log("Dynamic range element:", dynamicRangeImg ? "Found" : "Not found");
+            console.log("Dynamic range container:", dynamicRangeContainer ? "Found" : "Not found");
             
             // Set waveform, spectrogram, and spectrum
             setImageWithFallback(waveformImg, data.results.visualizations.waveform, 'Waveform visualization');
@@ -1030,6 +1038,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log("Hiding stereo field container - No visualization available");
                 if (stereoFieldContainer) {
                     stereoFieldContainer.style.display = 'none';
+                }
+            }
+            
+            // Handle vectorscope visualization
+            if (data.results.visualizations.vectorscope && vectorscopeContainer && vectorscopeImg) {
+                console.log("Setting vectorscope image:", data.results.visualizations.vectorscope);
+                vectorscopeContainer.style.display = 'block';
+                setImageWithFallback(vectorscopeImg, data.results.visualizations.vectorscope, 'Vectorscope/Goniometer visualization');
+            } else {
+                console.log("Hiding vectorscope container - No visualization available");
+                if (vectorscopeContainer) {
+                    vectorscopeContainer.style.display = 'none';
+                }
+            }
+            
+            // Handle dynamic range visualization
+            if (data.results.visualizations.dynamic_range && dynamicRangeContainer && dynamicRangeImg) {
+                console.log("Setting dynamic range image:", data.results.visualizations.dynamic_range);
+                dynamicRangeContainer.style.display = 'block';
+                setImageWithFallback(dynamicRangeImg, data.results.visualizations.dynamic_range, 'Dynamic range visualization');
+            } else {
+                console.log("Hiding dynamic range container - No visualization available");
+                if (dynamicRangeContainer) {
+                    dynamicRangeContainer.style.display = 'none';
                 }
             }
             

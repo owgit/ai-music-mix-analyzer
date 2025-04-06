@@ -7,7 +7,6 @@
     <link rel="alternate" hreflang="en-us" href="{{ secure_url(request.url) }}">
     <link rel="alternate" hreflang="en-gb" href="{{ secure_url(request.url) }}">
     <link rel="alternate" hreflang="en-in" href="{{ secure_url(request.url) }}">
-    <link rel="alternate" hreflang="x-default" href="{{ secure_url(request.url) }}">
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
@@ -1009,6 +1008,22 @@
                                         </svg>
                                         <span class="sr-only">Regenerate stereo field visualization</span>
                                     </button>
+                                </div>
+                            </div>
+                            <div class="visualization-card">
+                                <h3>Vectorscope</h3>
+                                <div id="vectorscope-container" class="visualization-container"
+                                    title="Click to enlarge">
+                                    <img id="vectorscope-img" src=""
+                                        alt="Vectorscope/Goniometer visualization showing phase correlation between left and right channels">
+                                </div>
+                            </div>
+                            <div class="visualization-card">
+                                <h3>Dynamic Range</h3>
+                                <div id="dynamic-range-container" class="visualization-container"
+                                    title="Click to enlarge">
+                                    <img id="dynamic-range-img" src=""
+                                        alt="Dynamic range visualization showing compression over time and frequency">
                                 </div>
                             </div>
                         </div>
