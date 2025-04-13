@@ -4,6 +4,7 @@ WSGI entry point for the Music Mix Analyzer application
 
 import os
 import sys
+import stat
 from dotenv import load_dotenv
 
 # Try to load environment variables if not already loaded
@@ -26,6 +27,14 @@ app = create_app()
 if __name__ == '__main__':
     # Create error image directory if it doesn't exist
     os.makedirs('app/static/img', exist_ok=True)
+    
+    # Ensure upload directory exists with correct permissions
+    upload_folder = app.config['UPLOAD_FOLDER']
+    os.makedirs(upload_folder, exist_ok=True)
+    
+    # Set permissions for upload directory (775 = user+group read/write/execute, others read/execute)
+    os.chmod(upload_folder, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
+    print(f"Set permissions for upload directory: {upload_folder}")
     
     # In Docker, we need to listen on 0.0.0.0
     app.run(host='0.0.0.0', port=5005, debug=False)
