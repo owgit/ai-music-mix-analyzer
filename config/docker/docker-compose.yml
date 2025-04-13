@@ -7,6 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: music-analyzer
     restart: unless-stopped
+    user: "${HOST_UID:-501}:${HOST_GID:-20}"
     ports:
       - "127.0.0.1:5001:5000"
     environment:
@@ -44,6 +45,9 @@ services:
       - OPENROUTER_TIMEOUT_THRESHOLD=${OPENROUTER_TIMEOUT_THRESHOLD:-30}
       # Visualization settings
       - SKIP_3D_VISUALIZATION=false
+      # Add user ID variables
+      - HOST_UID=${HOST_UID:-501}
+      - HOST_GID=${HOST_GID:-20}
     volumes:
       - .:/app
       - ./uploads:/app/uploads

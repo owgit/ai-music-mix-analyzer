@@ -20,11 +20,10 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 # Copy application code
 COPY . .
 
-# Create necessary directories and set permissions
-# Don't hardcode user ID, use environment variables at runtime instead
+# Create necessary directories with permissive permissions for mounted volumes
 RUN mkdir -p /app/uploads \
-    && chmod -R 755 /app \
-    && chmod -R 775 /app/uploads
+    && chmod -R 777 /app/uploads \
+    && chmod -R 755 /app
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
@@ -38,8 +37,6 @@ EXPOSE 5000
 
 # Run the application - initialize database and start gunicorn
 CMD python -m app.core.database && \
-    # Set proper permissions for uploads directory using current process UID/GID
-    chown -R $(id -u):$(id -g) /app/uploads && \
     gunicorn --bind 0.0.0.0:5000 \
     --workers 2 \
     --threads 4 \

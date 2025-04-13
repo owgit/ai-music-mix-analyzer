@@ -128,15 +128,6 @@ def upload_file():
         file_path = os.path.join(upload_dir, f"{file_id}.mp3")
         file.save(file_path)
         
-        # Set proper file permissions (660 = owner and group can read/write, others nothing)
-        try:
-            import stat
-            os.chmod(file_path, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IWGRP)
-            os.chmod(upload_dir, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH | stat.S_IXOTH)
-            print(f"Set permissions for uploaded file and directory: {file_path}")
-        except Exception as e:
-            print(f"Warning: Failed to set file permissions: {str(e)}")
-        
         try:
             # Calculate file hash
             file_hash = calculate_file_hash(file_path)
