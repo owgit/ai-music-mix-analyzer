@@ -20,10 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt gunicorn
 # Copy application code
 COPY . .
 
-# Create necessary directories with permissive permissions for mounted volumes
+# Create necessary directories and set permissions
 RUN mkdir -p /app/uploads \
-    && chmod -R 777 /app/uploads \
-    && chmod -R 755 /app
+    && chown -R 1000:1000 /app \
+    && chmod -R 755 /app \
+    && chmod -R 775 /app/uploads
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1 \
