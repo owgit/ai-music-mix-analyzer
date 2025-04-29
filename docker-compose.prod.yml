@@ -6,7 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: music-analyzer
-    restart: unless-stopped
+    restart: always
+    ports:
+      - "127.0.0.1:5001:5000"
     environment:
       - PYTHONUNBUFFERED=1
       - FLASK_APP=wsgi.py
@@ -23,12 +25,20 @@ services:
       # Database connection for production
       - MYSQL_HOST=db
       - MYSQL_PORT=3306
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_USER=mixanalytic_db
+      - MYSQL_PASSWORD=FH[@q#Z4YzQq1@8#
       - MYSQL_DATABASE=music_analyzer
+      # Analytics
+      - ENABLE_ANALYTICS=true
+      - MATOMO_URL=https://seo.optagonen.se
+      - MATOMO_SITE_ID=3
+      # Fix for Matplotlib and numba caching issues
+      - MPLCONFIGDIR=/tmp/matplotlib
+      - NUMBA_CACHE_DIR=/tmp/numba_cache
     volumes:
       - ./uploads:/app/uploads
       - ./config:/app/config
+      - ./logs:/app/logs
     tmpfs:
       - /tmp:exec,size=1G
       - /dev/shm:size=2G
@@ -54,9 +64,9 @@ services:
       retries: 3
       start_period: 40s
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "20m"
+        max-size: 20m
         max-file: "5"
     # For nginx-proxy integration
     labels:
@@ -67,7 +77,7 @@ services:
   db:
     image: mysql:8.0
     container_name: music-analyzer-db
-    restart: unless-stopped
+    restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=music_analyzer
@@ -83,7 +93,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    command: --default-authentication-plugin=mysql_native_password
+    command: --default-authentication-plugin=mysql_native_password --sql-mode="NO_ENGINE_SUBSTITUTION"
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE to avoid "mbind: Operation not permitted"
 

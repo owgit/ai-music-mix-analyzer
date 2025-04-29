@@ -1,5 +1,6 @@
 #!/bin/bash
 # Mix Analyzer - Docker Update Script
+set -e
 
 # Function to detect environment
 detect_environment() {
@@ -122,4 +123,24 @@ else
     echo "Error: Failed to start containers. Check logs for details."
     docker-compose logs
     exit 1
-fi 
+fi
+
+# Stop and rebuild containers
+echo "Stopping and rebuilding containers..."
+docker-compose down
+docker-compose build
+
+# Start containers with environment variables fixes
+echo "Starting containers with fixes for caching issues..."
+docker-compose up -d
+
+# Create cache directories with proper permissions
+echo "Creating cache directories with proper permissions..."
+docker exec music-analyzer mkdir -p /tmp/matplotlib /tmp/numba_cache
+docker exec music-analyzer chmod 777 /tmp/matplotlib /tmp/numba_cache
+
+# Check status
+echo "Container status:"
+docker-compose ps
+
+echo "Update completed!" 
