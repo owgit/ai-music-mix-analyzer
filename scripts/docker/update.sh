@@ -139,11 +139,6 @@ echo "Creating cache directories with proper permissions..."
 docker exec music-analyzer mkdir -p /tmp/matplotlib /tmp/numba_cache
 docker exec music-analyzer chmod 777 /tmp/matplotlib /tmp/numba_cache
 
-# Set proper permissions for uploads directory
-echo "Setting proper permissions for uploads directory..."
-docker exec music-analyzer mkdir -p /app/uploads
-docker exec music-analyzer chmod -R 777 /app/uploads
-
 # Check status
 echo "Container status:"
 docker-compose ps
