@@ -88,46 +88,9 @@ fi
 # Ensure config directory exists
 mkdir -p config/docker
 
-# Ensure .dockerignore is in root
-if [[ ! -f ".dockerignore" ]] && [[ -f "config/docker/.dockerignore" ]]; then
-    echo "Moving .dockerignore to root..."
-    cp config/docker/.dockerignore .
-    sed -i '' '/Dockerfile/d' .dockerignore 2>/dev/null || sed -i '/Dockerfile/d' .dockerignore
-    sed -i '' '/docker-compose.yml/d' .dockerignore 2>/dev/null || sed -i '/docker-compose.yml/d' .dockerignore
-fi
-
-echo "Rebuilding Docker containers..."
-
-# Stop and remove existing containers first
-echo "Stopping and removing existing containers..."
-docker-compose down --remove-orphans
-
-# Remove existing container if it exists
-if docker ps -a | grep -q "music-analyzer"; then
-    echo "Removing existing music-analyzer container..."
-    docker rm -f music-analyzer
-fi
-
-# Build and start containers
-echo "Building fresh containers..."
-docker-compose build --no-cache
-
-echo "Starting containers..."
-docker-compose up -d
-
-# Check if containers started successfully
-if docker ps | grep -q "music-analyzer"; then
-    echo "Update completed successfully!"
-    echo "To view logs, run: docker-compose logs -f"
-else
-    echo "Error: Failed to start containers. Check logs for details."
-    docker-compose logs
-    exit 1
-fi
-
 # Stop and rebuild containers
 echo "Stopping and rebuilding containers..."
-docker-compose down
+docker-compose down --remove-orphans
 docker-compose build
 
 # Start containers with environment variables fixes

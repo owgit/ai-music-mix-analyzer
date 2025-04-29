@@ -44,13 +44,6 @@ services:
       - /dev/shm:size=2G
     depends_on:
       - db
-    # Expose to nginx-proxy, not directly to host
-    expose:
-      - "5000"
-    # Network for nginx-proxy
-    networks:
-      - proxy-network
-      - internal-network
     deploy:
       resources:
         limits:
@@ -68,11 +61,6 @@ services:
       options:
         max-size: 20m
         max-file: "5"
-    # For nginx-proxy integration
-    labels:
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.virtual_host=${VIRTUAL_HOST}"
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.letsencrypt_host=${LETSENCRYPT_HOST}"
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.letsencrypt_email=${LETSENCRYPT_EMAIL}"
 
   db:
     image: mysql:8.0
@@ -85,9 +73,6 @@ services:
       - MYSQL_PASSWORD=${DB_USER_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-    # Only expose to internal network
-    networks:
-      - internal-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
       interval: 10s
@@ -97,46 +82,6 @@ services:
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE to avoid "mbind: Operation not permitted"
 
-  # Nginx proxy for handling HTTPS
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-    networks:
-      - proxy-network
-    labels:
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy"
-
-  # Let's Encrypt companion for nginx-proxy
-  letsencrypt-nginx-proxy-companion:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: letsencrypt-companion
-    restart: unless-stopped
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - certs:/etc/nginx/certs
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-    depends_on:
-      - nginx-proxy
-    networks:
-      - proxy-network
-
 volumes:
   mysql_data:
-    driver: local
-  certs:
-  vhost:
-  html:
-
-networks:
-  proxy-network:
-  internal-network: 
+    driver: local 
