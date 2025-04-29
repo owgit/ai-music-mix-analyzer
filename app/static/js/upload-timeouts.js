@@ -1,43 +1,12 @@
 /**
  * Upload Timeout Extensions
- * Extends the default AJAX timeout for file uploads to handle large files
+ * Extends timeout handling for file uploads to handle large files
  * and long processing times.
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Increase the default timeout for AJAX requests
-    if (typeof $.ajaxSetup === 'function') {
-        $.ajaxSetup({
-            timeout: 600000, // 10 minutes in milliseconds
-            cache: false
-        });
-    }
-
-    // Add a global AJAX error handler for timeout errors
-    $(document).ajaxError(function(event, jqXHR, settings, thrownError) {
-        if (jqXHR.status === 0 && thrownError === 'timeout') {
-            console.error('Request timed out:', settings.url);
-            
-            // Check if it's an upload request
-            if (settings.url.includes('/upload') || settings.url.includes('/analyze')) {
-                // Show improved user feedback
-                const uploadStatus = document.getElementById('upload-status');
-                if (uploadStatus) {
-                    uploadStatus.innerHTML = `
-                        <div class="timeout-message">
-                            <p><strong>Analysis is continuing in the background</strong></p>
-                            <p>Your file is being analyzed even though the connection timed out. Please check back in a few minutes.</p>
-                            <p>Refresh the page and look for your track in the recent analyses section.</p>
-                        </div>
-                    `;
-                    uploadStatus.style.display = 'block';
-                } else {
-                    alert('Your upload is taking longer than expected. The analysis is continuing in the background. Please check the results page in a few minutes.');
-                }
-            }
-        }
-    });
-
+    // We'll use vanilla JS for error handling instead of jQuery's ajaxSetup
+    
     // For the upload form specifically
     const uploadForm = document.getElementById('upload-form');
     if (uploadForm) {
@@ -106,13 +75,48 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// If using Fetch API for uploads, increase the timeout there too
+// If using Fetch API for uploads, add timeout handling
 if (typeof window.fetch === 'function') {
     const originalFetch = window.fetch;
     window.fetch = function(url, options = {}) {
         // For upload endpoints, use extended timeout
         if ((url.includes('/upload') || url.includes('/analyze')) && !options.timeout) {
             options.timeout = 600000; // 10 minutes
+            
+            // Add error handling for timeouts
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), options.timeout);
+            
+            options.signal = controller.signal;
+            
+            return originalFetch(url, options)
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    return response;
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    if (error.name === 'AbortError') {
+                        // Handle timeout
+                        console.error('Request timed out:', url);
+                        
+                        // Show improved user feedback
+                        const uploadStatus = document.getElementById('upload-status');
+                        if (uploadStatus) {
+                            uploadStatus.innerHTML = `
+                                <div class="timeout-message">
+                                    <p><strong>Analysis is continuing in the background</strong></p>
+                                    <p>Your file is being analyzed even though the connection timed out. Please check back in a few minutes.</p>
+                                    <p>Refresh the page and look for your track in the recent analyses section.</p>
+                                </div>
+                            `;
+                            uploadStatus.style.display = 'block';
+                        }
+                        // Create a more specific error for timeouts
+                        throw new Error('Request timed out');
+                    }
+                    throw error;
+                });
         }
         return originalFetch(url, options);
     };
