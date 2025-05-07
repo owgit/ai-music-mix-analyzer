@@ -479,7 +479,7 @@ def delete_track():
         filename = data.get('filename') or data.get('fileId')
         
         if not filename:
-            return jsonify({'error': 'Filename is required'}), 400
+            return jsonify({'error': 'Filename is required', 'success': False}), 400
             
         # Sanitize filename
         filename = secure_filename(filename)
@@ -494,12 +494,12 @@ def delete_track():
                 import shutil
                 shutil.rmtree(upload_dir)
             
-            return jsonify({'message': 'Track deleted successfully'})
+            return jsonify({'message': 'Track deleted successfully', 'success': True})
         else:
-            return jsonify({'error': 'Failed to delete track'}), 500
+            return jsonify({'error': 'Failed to delete track', 'success': False}), 500
             
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e), 'success': False}), 500
 
 @main_bp.route('/admin/ai-stats')
 @auth.login_required
