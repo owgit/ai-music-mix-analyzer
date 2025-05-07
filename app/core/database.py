@@ -70,6 +70,21 @@ def create_tables_if_not_exist():
             INDEX(file_hash)
         )
         """)
+        
+        # Create AI usage stats table
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS ai_usage_stats (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            provider VARCHAR(50) NOT NULL,
+            model VARCHAR(100) NOT NULL,
+            is_fallback BOOLEAN DEFAULT FALSE,
+            timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            response_time FLOAT,
+            INDEX(provider),
+            INDEX(timestamp)
+        )
+        """)
+        
         connection.commit()
         
         # Ensure all required columns exist
@@ -332,4 +347,111 @@ def delete_song_by_filename(filename):
     Legacy function for backward compatibility
     Now delegates to the more versatile delete_song function
     """
-    return delete_song(filename) 
+    return delete_song(filename)
+
+def save_ai_usage_stat(provider, model, is_fallback=False, response_time=None):
+    """
+    Save AI usage statistics to the database
+    
+    Args:
+        provider: AI provider name (e.g., 'openai', 'openrouter')
+        model: Model name used
+        is_fallback: Whether this was a fallback request
+        response_time: Response time in seconds
+        
+    Returns:
+        ID of the inserted record, or None on failure
+    """
+    connection = get_db_connection()
+    if not connection:
+        return None
+    
+    cursor = connection.cursor()
+    try:
+        sql = """
+        INSERT INTO ai_usage_stats (
+            provider, model, is_fallback, response_time
+        ) VALUES (%s, %s, %s, %s)
+        """
+        values = (provider, model, is_fallback, response_time)
+        
+        cursor.execute(sql, values)
+        connection.commit()
+        
+        return cursor.lastrowid
+    except Error as e:
+        print(f"Error saving AI usage stats: {e}")
+        return None
+    finally:
+        cursor.close()
+        connection.close()
+
+def get_ai_usage_stats(days=30):
+    """
+    Get AI usage statistics from the database
+    
+    Args:
+        days: Number of days to look back (default: 30)
+        
+    Returns:
+        Dictionary with usage statistics
+    """
+    connection = get_db_connection()
+    if not connection:
+        return None
+    
+    cursor = connection.cursor(dictionary=True)
+    try:
+        # Get total usage by provider
+        cursor.execute("""
+        SELECT 
+            provider, 
+            COUNT(*) as count,
+            COUNT(CASE WHEN is_fallback = 1 THEN 1 END) as fallback_count,
+            AVG(response_time) as avg_response_time
+        FROM ai_usage_stats
+        WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
+        GROUP BY provider
+        """, (days,))
+        
+        by_provider = cursor.fetchall()
+        
+        # Get usage by model
+        cursor.execute("""
+        SELECT 
+            provider,
+            model, 
+            COUNT(*) as count,
+            AVG(response_time) as avg_response_time
+        FROM ai_usage_stats
+        WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
+        GROUP BY provider, model
+        """, (days,))
+        
+        by_model = cursor.fetchall()
+        
+        # Get daily usage
+        cursor.execute("""
+        SELECT 
+            DATE(timestamp) as date,
+            provider,
+            COUNT(*) as count
+        FROM ai_usage_stats
+        WHERE timestamp >= DATE_SUB(NOW(), INTERVAL %s DAY)
+        GROUP BY DATE(timestamp), provider
+        ORDER BY date
+        """, (days,))
+        
+        daily = cursor.fetchall()
+        
+        return {
+            "by_provider": by_provider,
+            "by_model": by_model,
+            "daily": daily
+        }
+    except Error as e:
+        print(f"Error getting AI usage stats: {e}")
+        return None
+    finally:
+        cursor.close()
+        connection.close() 

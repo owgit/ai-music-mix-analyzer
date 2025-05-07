@@ -10,13 +10,24 @@ import traceback
 import json
 from datetime import datetime
 from pathlib import Path
+from flask_httpauth import HTTPBasicAuth
 
 from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types, generate_3d_spatial_visualization
 from app.core.openai_analyzer import analyze_with_gpt
-from app.core.database import calculate_file_hash, find_song_by_hash, save_song, delete_song, get_db_connection
+from app.core.database import calculate_file_hash, find_song_by_hash, save_song, delete_song, get_db_connection, get_ai_usage_stats
 
 # Create a Blueprint for the main routes
 main_bp = Blueprint('main', __name__)
+
+auth = HTTPBasicAuth()
+
+@auth.verify_password
+def verify_password(username, password):
+    admin_user = os.environ.get('ADMIN_USERNAME')
+    admin_pass = os.environ.get('ADMIN_PASSWORD')
+    if username == admin_user and password == admin_pass:
+        return username
+    return None
 
 def allowed_file(filename):
     """Check if the file has an allowed extension"""
@@ -459,106 +470,65 @@ def regenerate_spatial_field_api(file_id):
 
 @main_bp.route('/api/delete-track', methods=['POST'])
 def delete_track():
-    """Delete a track from the database and file system"""
+    """Delete a track by filename"""
     try:
-        # Get the file ID from the request
+        # Get the filename from the request
         data = request.get_json()
-        if not data or 'fileId' not in data:
-            print("No file ID provided in request")
-            return jsonify({'success': False, 'message': 'No file ID provided'}), 400
         
-        file_id = data['fileId']
-        print(f"Received delete request for file ID: {file_id}")
+        # Support both filename and fileId parameters
+        filename = data.get('filename') or data.get('fileId')
         
-        # First try to find the song to get its file_hash (more reliable)
-        connection = get_db_connection()
-        file_hash = None
+        if not filename:
+            return jsonify({'error': 'Filename is required'}), 400
+            
+        # Sanitize filename
+        filename = secure_filename(filename)
         
-        if connection:
-            try:
-                cursor = connection.cursor(dictionary=True)
-                # Try different ways to match the song
-                cursor.execute("""
-                    SELECT file_hash FROM songs 
-                    WHERE filename = %s 
-                    OR original_name = %s 
-                    OR filename LIKE %s 
-                    OR original_name LIKE %s
-                """, (file_id, file_id, f"%{file_id}%", f"%{file_id}%"))
-                
-                result = cursor.fetchone()
-                if result and result.get('file_hash'):
-                    file_hash = result['file_hash']
-                    print(f"Found file_hash for deletion: {file_hash}")
-            except Exception as db_err:
-                print(f"Error looking up file_hash: {db_err}")
-            finally:
-                if 'cursor' in locals() and cursor:
-                    cursor.close()
-                connection.close()
+        # Delete the song from the database
+        success = delete_song(filename)
         
-        # Delete from database - try file_hash first if found, otherwise use file_id
-        identifier = file_hash if file_hash else file_id
-        db_result = delete_song(identifier) 
-        print(f"Database deletion result: {db_result}")
-        
-        if db_result:
-            # If database deletion successful, also delete files
-            try:
-                # Get the upload directory for this file
-                upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], file_id)
-                print(f"Checking upload directory: {upload_dir}")
-                
-                if not os.path.exists(upload_dir):
-                    print(f"Upload directory does not exist: {upload_dir}")
-                    return jsonify({
-                        'success': True, 
-                        'message': 'Track deleted from database, but no files found to delete'
-                    })
-                
-                # Delete the audio file
-                audio_file = os.path.join(upload_dir, f"{file_id}.mp3")
-                deleted_files = []
-                
-                if os.path.exists(audio_file):
-                    os.remove(audio_file)
-                    deleted_files.append(audio_file)
-                    print(f"Deleted audio file: {audio_file}")
-                
-                # Delete all visualization files (common extensions)
-                for ext in ['.png', '.jpg', '.jpeg', '.html']:
-                    for f in Path(upload_dir).glob(f"*{ext}"):
-                        os.remove(f)
-                        deleted_files.append(str(f))
-                        print(f"Deleted file: {f}")
-                
-                # Try to remove the directory
-                try:
-                    os.rmdir(upload_dir)
-                    print(f"Removed directory: {upload_dir}")
-                except OSError as e:
-                    print(f"Could not remove directory: {e}")
-                    # Directory might not be empty, that's okay
-                    pass
-                
-                return jsonify({
-                    'success': True, 
-                    'message': f'Track deleted successfully. Removed {len(deleted_files)} files'
-                })
-            except Exception as e:
-                # Database deletion succeeded but file deletion failed
-                print(f"Error deleting files for {file_id}: {str(e)}")
-                return jsonify({
-                    'success': True, 
-                    'message': 'Track deleted from database but some files may remain',
-                    'error': str(e)
-                })
-        
-        # Database deletion failed
-        print(f"Database deletion failed for file ID: {file_id}")
-        return jsonify({'success': False, 'message': 'Failed to delete track from database'})
-        
+        if success:
+            # Also delete the upload folder
+            upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            if os.path.exists(upload_dir):
+                import shutil
+                shutil.rmtree(upload_dir)
+            
+            return jsonify({'message': 'Track deleted successfully'})
+        else:
+            return jsonify({'error': 'Failed to delete track'}), 500
+            
     except Exception as e:
-        print(f"Error deleting track: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@main_bp.route('/admin/ai-stats')
+@auth.login_required
+def admin_ai_stats():
+    """Admin page for viewing AI usage statistics"""
+    try:
+        # Get days parameter from query string, default to 30
+        days = request.args.get('days', default=30, type=int)
+        
+        # Limit days to reasonable range (1-365)
+        days = max(1, min(days, 365))
+        
+        # Get stats from database
+        stats = get_ai_usage_stats(days)
+        
+        if stats is None:
+            return render_template('admin/ai_stats.html', 
+                                  error="Failed to retrieve AI usage statistics",
+                                  days=days,
+                                  stats={})
+        
+        return render_template('admin/ai_stats.html',
+                              days=days,
+                              stats=stats,
+                              error=None)
+    except Exception as e:
+        print(f"Error retrieving AI usage stats: {str(e)}")
         traceback.print_exc()
-        return jsonify({'success': False, 'message': str(e)}), 500 
+        return render_template('admin/ai_stats.html',
+                              error=str(e),
+                              days=days,
+                              stats={}) 

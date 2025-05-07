@@ -7,6 +7,7 @@ import re
 import time
 import threading
 import concurrent.futures
+from app.core.database import save_ai_usage_stat
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -122,9 +123,18 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
             # Use a more robust timeout approach with a separate thread
             def run_openrouter_with_timeout():
                 logger.info("Thread started for OpenRouter request")
+                start_time = time.time()
                 try:
                     result = analyze_with_openrouter(system_prompt, user_message)
-                    logger.info("OpenRouter thread completed successfully")
+                    response_time = time.time() - start_time
+                    logger.info(f"OpenRouter thread completed successfully in {response_time:.2f} seconds")
+                    
+                    # Get the model name from environment or use default
+                    model_name = os.environ.get("OPENROUTER_MODEL", "anthropic/claude-3-haiku-20240307")
+                    
+                    # Record the usage statistics
+                    save_ai_usage_stat("openrouter", model_name, False, response_time)
+                    
                     return result
                 except Exception as e:
                     logger.error(f"Exception in OpenRouter thread: {str(e)}")
@@ -137,6 +147,7 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
             
             try:
                 # Wait for the result with a timeout
+                start_time = time.time()
                 sections = future.result(timeout=timeout_threshold)
                 logger.info("OpenRouter request completed successfully within timeout")
                 # Clean shutdown of executor
@@ -162,7 +173,17 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
                 
                 # Fall back to OpenAI
                 logger.info("Attempting fallback to OpenAI")
-                return analyze_with_openai(system_prompt, user_message)
+                start_time = time.time()
+                result = analyze_with_openai(system_prompt, user_message)
+                response_time = time.time() - start_time
+                
+                # Get the model name from environment or use default
+                model_name = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+                
+                # Record the usage statistics as fallback
+                save_ai_usage_stat("openai", model_name, True, response_time)
+                
+                return result
             except Exception as e:
                 logger.error(f"Error during OpenRouter request: {str(e)}")
                 # Clean shutdown of executor
@@ -174,8 +195,22 @@ def analyze_with_gpt(analysis_results, is_instrumental=None):
             if not api_key:
                 logger.warning("OpenAI API key not available, skipping AI analysis")
                 return get_default_ai_response("OpenAI API key not available")
-                
+            
+            # Record start time
+            start_time = time.time()
+            
+            # Get response from OpenAI
             sections = analyze_with_openai(system_prompt, user_message)
+            
+            # Calculate response time
+            response_time = time.time() - start_time
+            
+            # Get the model name from environment or use default
+            model_name = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+            
+            # Record the usage statistics
+            save_ai_usage_stat("openai", model_name, False, response_time)
+            
             return sections
         
     except Exception as e:

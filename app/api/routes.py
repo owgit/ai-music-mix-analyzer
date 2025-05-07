@@ -7,6 +7,7 @@ import os
 import traceback
 
 from app.core.audio_analyzer import analyze_mix, convert_numpy_types
+from app.core.database import get_ai_usage_stats
 from app.api import require_api_key
 
 # Create a Blueprint for the API routes
@@ -66,5 +67,31 @@ def analyze_file(file_id):
         })
     except Exception as e:
         print(f"Error analyzing file: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500 
+
+@api_bp.route('/ai-stats', methods=['GET'])
+@require_api_key
+def ai_usage_stats():
+    """Get AI usage statistics"""
+    try:
+        # Get days parameter from query string, default to 30
+        days = request.args.get('days', default=30, type=int)
+        
+        # Limit days to reasonable range (1-365)
+        days = max(1, min(days, 365))
+        
+        # Get stats from database
+        stats = get_ai_usage_stats(days)
+        
+        if stats is None:
+            return jsonify({'error': 'Failed to retrieve AI usage statistics'}), 500
+            
+        return jsonify({
+            'days': days,
+            'stats': stats
+        })
+    except Exception as e:
+        print(f"Error retrieving AI usage stats: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500 

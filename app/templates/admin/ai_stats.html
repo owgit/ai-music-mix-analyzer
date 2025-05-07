@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Provider Statistics - Mix Analyzer Admin</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f7f9; /* Lighter, more modern background */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto; /* Add margin to top and bottom */
+            padding: 0 20px; /* Add horizontal padding */
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px; /* Increased margin */
+            flex-wrap: wrap;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        h1 {
+            margin: 0;
+            color: #2c3e50; /* Darker, more professional title color */
+            font-size: 28px; /* Slightly larger title */
+        }
+        .nav-bar {
+            background-color: #34495e; /* Modern dark blue/grey */
+            color: white;
+            padding: 12px 20px; /* Slightly more padding */
+            margin-bottom: 30px; /* Increased margin */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav-bar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 25px; /* Increased spacing */
+            font-weight: 500;
+        }
+        .button {
+            background-color: #3498db; /* A more modern blue */
+            border: none;
+            color: white;
+            padding: 10px 20px; /* Larger padding */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px; /* Slightly larger font */
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px; /* Slightly more rounded corners */
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #2980b9; /* Darker blue on hover */
+        }
+        .button-outline {
+            background-color: transparent;
+            border: 1px solid #3498db;
+            color: #3498db;
+        }
+        .button-outline:hover {
+            background-color: #3498db;
+            color: white;
+        }
+        .filter-form {
+            margin-bottom: 30px; /* Increased margin */
+            padding: 20px; /* Increased padding */
+            background-color: #ffffff; /* White background for form */
+            border-radius: 8px; /* More rounded corners */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .filter-form label {
+            font-weight: 500;
+            margin-right: 10px;
+        }
+        .filter-form select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+        .stats-card {
+            background-color: white;
+            border-radius: 8px; /* More rounded corners */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* Softer, more modern shadow */
+            padding: 25px; /* Increased padding */
+            margin-bottom: 30px; /* Increased margin */
+            transition: transform 0.2s ease-in-out;
+        }
+        .stats-card:hover {
+            transform: translateY(-3px); /* Subtle lift on hover */
+        }
+        .stats-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px; /* Increased gap */
+            margin-bottom: 30px; /* Increased margin */
+        }
+        .stats-card h2 {
+            margin-top: 0;
+            padding-bottom: 15px; /* Increased padding */
+            border-bottom: 1px solid #eaeaea; /* Lighter border */
+            color: #34495e; /* Consistent heading color */
+            font-size: 20px; /* Slightly adjusted size */
+        }
+        .provider-openai {
+            color: #10a37f; /* Keep existing provider color */
+        }
+        .provider-openrouter {
+            color: #2563eb; /* Keep existing provider color */
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px; /* Adjusted padding */
+            border-radius: 15px; /* More pill-shaped */
+            font-size: 12px;
+            font-weight: 600; /* Bolder text */
+            margin-left: 8px; /* Adjusted margin */
+        }
+        .badge-warning {
+            background-color: #f39c12; /* A more modern orange/yellow */
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #e0e0e0; /* Lighter table borders */
+        }
+        th, td {
+            padding: 14px; /* Increased padding */
+            text-align: left;
+        }
+        th {
+            background-color: #f8f9fa; /* Very light grey for headers */
+            font-weight: 600; /* Bolder headers */
+            color: #495057;
+        }
+        tr:nth-child(even) {
+            background-color: #fdfdfd; /* Subtler even row background */
+        }
+        tr:hover {
+            background-color: #f1f1f1; /* Hover effect for rows */
+        }
+        .error-message {
+            background-color: #e74c3c; /* Modern red for errors */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .info-message {
+            background-color: #3498db; /* Modern blue for info */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .stats-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <a href="/">Mix Analyzer</a>
+        <span style="margin-left: 20px">Admin Dashboard</span>
+        <span style="float: right"><a href="/">Return to App</a></span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>AI Provider Statistics</h1>
+            <button class="button" onclick="window.location.reload()">Refresh</button>
+        </div>
+        
+        {% if error %}
+        <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+        
+        <!-- Filter Form -->
+        <div class="filter-form">
+            <form method="GET">
+                <label for="days">Time Period:</label>
+                <select name="days" id="days" style="padding: 5px; margin-right: 10px;">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>Last 7 days</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>Last 30 days</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>Last 90 days</option>
+                    <option value="365" {% if days == 365 %}selected{% endif %}>Last 365 days</option>
+                </select>
+                <button type="submit" class="button">Update</button>
+            </form>
+        </div>
+        
+        <!-- Summary Stats -->
+        <div class="stats-row">
+            {% if stats and stats.by_provider %}
+                {% for provider in stats.by_provider %}
+                <div class="stats-card" style="flex: 1; min-width: 300px;">
+                    <h2 class="provider-{{ provider.provider }}">{{ provider.provider|title }}</h2>
+                    <p>
+                        <strong>Total Requests:</strong> {{ provider.count }}<br>
+                        <strong>Fallback Requests:</strong> {{ provider.fallback_count }} 
+                        {% if provider.fallback_count > 0 %}
+                        <span class="badge badge-warning">{{ (provider.fallback_count / provider.count * 100)|round(1) }}%</span>
+                        {% endif %}<br>
+                        <strong>Avg Response Time:</strong> {{ provider.avg_response_time|round(2) }} seconds
+                    </p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div style="background-color: #cce5ff; color: #004085; padding: 10px; border-radius: 5px; width: 100%;">
+                    No data available for the selected time period.
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Detailed Table -->
+        <div class="stats-card">
+            <h2>Model Usage Details</h2>
+            {% if stats and stats.by_model %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Model</th>
+                            <th>Requests</th>
+                            <th>Avg Response Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for model in stats.by_model %}
+                        <tr>
+                            <td class="provider-{{ model.provider }}">{{ model.provider|title }}</td>
+                            <td>{{ model.model }}</td>
+                            <td>{{ model.count }}</td>
+                            <td>{{ model.avg_response_time|round(2) }} seconds</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No model usage data available for the selected time period.</p>
+            {% endif %}
+        </div>
+        
+        <!-- Daily Usage Table -->
+        <div class="stats-card">
+            <h2>Daily Usage</h2>
+            {% if stats and stats.daily %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Provider</th>
+                            <th>Requests</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in stats.daily %}
+                        <tr>
+                            <td>{{ entry.date }}</td>
+                            <td class="provider-{{ entry.provider }}">{{ entry.provider|title }}</td>
+                            <td>{{ entry.count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No daily usage data available for the selected time period.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html> 
