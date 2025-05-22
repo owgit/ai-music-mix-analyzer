@@ -1,0 +1,371 @@
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+
+    <!-- Improved SEO Meta Tags -->
+    <meta name="description"
+        content="100% Free AI audio analysis for music producers worldwide. Analyze spectrum, dynamics, stereo imaging & get mix improvement tips at no cost.">
+    <meta name="keywords"
+        content="free audio analysis, no cost mix analyzer, 3D audio analysis, spatial audio mixing, AI mix analyzer, Dolby Atmos mixing, immersive audio, surround sound analysis, free music production, artificial intelligence mixing, frequency spectrum analysis, dynamic range, stereo field, EQ recommendations, free mastering assistance, frequency balance, transient analysis, harmonic content, audio mixing tool, spectral analysis, sound engineering tool, professional mixing, AI mix suggestions, spatial audio production">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Mix Analyzer">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ secure_url(request.url) }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:site_name" content="Mix Analyzer">
+    <meta property="og:url" content="{{ secure_url(request.url) }}">
+    <meta property="og:title" content="Free Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="og:description"
+        content="Free professional AI audio analysis for music producers. Analyze frequency spectrum, dynamics, stereo imaging and get mix improvement suggestions at no cost.">
+    <meta property="og:image"
+        content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ secure_url(request.url) }}">
+    <meta property="twitter:title" content="Free Mix Analyzer - AI-Powered Audio Analysis for Music Producers Worldwide">
+    <meta property="twitter:description"
+        content="Free professional AI audio analysis for music producers. Analyze frequency spectrum, dynamics, stereo imaging and get mix improvement suggestions at no cost.">
+    <meta property="twitter:image"
+        content="{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}">
+
+    <!-- Update WebApplication Schema with international context -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Free Mix Analyzer",
+        "url": "{{ secure_url(request.url_root) }}",
+        "description": "Free professional AI audio analysis for music producers worldwide. Analyze frequency spectrum, dynamics, stereo imaging and get mix improvement suggestions at no cost.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "dateModified": "{{ config.get('LAST_UPDATED', '2023-11-15') }}",
+        "inLanguage": "en",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock",
+            "priceValidUntil": "2025-12-31",
+            "availableAtOrFrom": {
+                "@type": "WebSite",
+                "url": "{{ secure_url(request.url_root) }}",
+                "name": "Free Mix Analyzer"
+            }
+        },
+        "featureList": [
+            "Free 3D spatial audio analysis",
+            "Free Dolby Atmos mix visualization",
+            "Free immersive audio measurement",
+            "Free frequency spectrum analysis",
+            "Free AI-powered dynamic range measurement",
+            "Free stereo field visualization",
+            "Free artificial intelligence harmonic content analysis",
+            "Free transient detection",
+            "Free EQ recommendations",
+            "Free spectral flatness measurement",
+            "Free AI-powered mix suggestions at no cost"
+        ]
+    }
+    </script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/styles.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/modal.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/responsive.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='css/progress-feedback.css') }}?v={{ config.get('VERSION', '1.0.1') }}">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Mix Analyzer",
+        "url": "{{ secure_url(request.url_root) }}",
+        "description": "Free AI-powered 3D audio and spatial mix analysis tool for musicians, producers, and audio engineers. Analyze frequency spectrum, dynamics, stereo imaging, and get professional 3D audio mixing recommendations at no cost",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "dateModified": "{{ config.get('LAST_UPDATED', '2023-11-15') }}",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "3D spatial audio analysis",
+            "Dolby Atmos mix visualization",
+            "Immersive audio measurement",
+            "Free frequency spectrum analysis",
+            "AI-powered dynamic range measurement",
+            "Stereo field visualization",
+            "Artificial intelligence harmonic content analysis",
+            "Transient detection",
+            "EQ recommendations",
+            "Spectral flatness measurement",
+            "AI-powered mix suggestions at no cost"
+        ]
+    }
+    </script>
+
+    <!-- Enhanced Structured Data for Analysis Sections -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "Frequency Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "Advanced frequency spectrum analysis with FFT processing to identify imbalances and masking issues",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "Dynamics Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "Dynamic range measurement with RMS analysis, crest factor calculation, and compression detection",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "Stereo Field Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "Stereo width measurement, phase correlation analysis, and mid/side balance assessment",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            },
+            {
+                "@type": "ListItem",
+                "position": 4,
+                "item": {
+                    "@type": "SoftwareApplication",
+                    "name": "AI Mix Analysis",
+                    "applicationCategory": "AudioTool",
+                    "description": "GPT-powered analysis offering genre-specific mix improvement suggestions and professional recommendations",
+                    "offers": {
+                        "@type": "Offer",
+                        "price": "0",
+                        "priceCurrency": "USD"
+                    }
+                }
+            }
+        ]
+    }
+    </script>
+
+    <!-- BreadcrumbList Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "{{ secure_url(request.url_root) }}"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Mix Analyzer",
+                "item": "{{ secure_url(request.url) }}"
+            }
+        ]
+    }
+    </script>
+
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Mix Analyzer",
+        "url": "{{ secure_url(request.url_root) }}",
+        "logo": "{{ secure_url(url_for('static', filename='img/music-analyzer-icon.svg', _external=True)) }}",
+        "description": "Free AI-powered audio analysis tool for musicians, producers, and audio engineers.",
+        "sameAs": [
+            "https://github.com/owgit/ai-music-mix-analyzer"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer support",
+            "email": "info@uygarduzgun.com"
+        }
+    }
+    </script>
+
+    <!-- HowTo Schema for Audio Analysis Process -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "HowTo",
+        "name": "How to Analyze Your Audio Mix for Free",
+        "description": "Step-by-step guide to analyze your audio mix using AI-powered technology for better music production results.",
+        "totalTime": "PT5M",
+        "tool": {
+            "@type": "HowToTool",
+            "name": "Audio file (MP3, WAV, FLAC, AIFF, M4A, PCM)"
+        },
+        "step": [
+            {
+                "@type": "HowToStep",
+                "name": "Upload Audio",
+                "text": "Drag and drop your audio file or click to select a file from your computer.",
+                "image": "{{ secure_url(url_for('static', filename='img/upload-icon.svg', _external=True)) }}",
+                "url": "{{ secure_url(request.url) }}#upload-area"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Analysis Process",
+                "text": "Our AI analyzes frequency balance, dynamics, stereo field, clarity, and more.",
+                "url": "{{ secure_url(request.url) }}#progress-container"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "View Results",
+                "text": "Review detailed analysis with visualizations and AI-powered recommendations.",
+                "url": "{{ secure_url(request.url) }}#results-section"
+            },
+            {
+                "@type": "HowToStep",
+                "name": "Implement Changes",
+                "text": "Apply the AI suggestions to improve your mix based on professional standards.",
+                "url": "{{ secure_url(request.url) }}#ai-insights-tab"
+            }
+        ]
+    }
+    </script>
+
+    <!-- Improved SoftwareApplication Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Mix Analyzer",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Any",
+        "dateModified": "{{ config.get('LAST_UPDATED', '2023-11-15') }}",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "124",
+            "bestRating": "5",
+            "worstRating": "1"
+        },
+        "screenshot": "{{ secure_url(url_for('static', filename='img/ai-mix-analyzer-og.jpg', _external=True)) }}",
+        "featureList": [
+            "AI-powered frequency spectrum analysis",
+            "Dynamic range measurement",
+            "Stereo field visualization",
+            "Harmonic content analysis",
+            "Transient detection",
+            "EQ recommendations",
+            "Spectral flatness measurement",
+            "Mix improvement suggestions"
+        ]
+    }
+    </script>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/favicon.svg') }}">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-32x32.png') }}"
+        sizes="32x32">
+    <link rel="alternate icon" type="image/png" href="{{ url_for('static', filename='img/favicon-16x16.png') }}"
+        sizes="16x16">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='img/favicon-32x32.png') }}">
+
+    {% if config.ENABLE_ANALYTICS %}
+    {% include 'analytics.html' %}
+    {% endif %}
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What audio formats are supported for 3D spatial analysis?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer supports multi-channel audio formats including Dolby Atmos (.atmos), AmbiX (.amb), and traditional formats like MP3, WAV, FLAC, AIFF, AIF, M4A, and PCM for comprehensive spatial audio analysis."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does the AI-powered 3D spatial analysis work?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Our artificial intelligence analyzes your audio file's spatial characteristics including height channels, object-based audio elements, and immersive audio parameters. The AI provides detailed insights for frequency balance, dynamic range, stereo field, clarity, harmonic content, and spatial positioning, with personalized recommendations based on genre-specific best practices for 3D audio production."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Can Mix Analyzer help with Dolby Atmos mixing?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, Mix Analyzer provides comprehensive analysis and recommendations for Dolby Atmos mixing, including object positioning, height channel balance, and immersive audio best practices. Our AI helps optimize your spatial mix for various playback systems."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is my audio data kept private?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes. Your uploaded audio files are processed on our secure servers and are not shared with third parties. Files are automatically deleted after processing is complete."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is the maximum file size I can upload?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Mix Analyzer accepts audio files up to 50MB in size for free analysis, including multi-channel and spatial audio formats."
+                }
+            }
+        ]
+    }
+    </script>

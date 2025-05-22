@@ -1,0 +1,165 @@
+<section class="upload-section" aria-labelledby="upload-section-title">
+                <h2 id="upload-section-title" class="visually-hidden">Audio Upload</h2>
+                <div class="instrumental-selection-container">
+                    <div class="track-type-selector">
+                        <label class="checkbox-container" for="instrumental-checkbox">
+                            <input type="checkbox" id="instrumental-checkbox">
+                            <span class="checkbox-text">This is an instrumental track (no vocals)</span>
+                        </label>
+                        <div class="info-tooltip">
+                            <span class="info-icon" aria-hidden="true">i</span>
+                            <div class="tooltip-content" role="tooltip">
+                                Select this if your track has no vocals. It helps our audio analysis provide more
+                                relevant frequency analysis and EQ recommendations for musicians, producers and sound
+                                engineers for free.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="instrument-hint-arrow">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        <span>Important setting</span>
+                    </div>
+                </div>
+
+                <div class="upload-container" id="upload-container">
+                    <!-- Ad banner placeholders - initially hidden, shown during analysis -->
+                    <div class="ad-wrapper left">
+                        <div class="ad-container left" id="left-ad-banner">
+                            <div class="ad-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="ad-placeholder-text">Advertisement Space</div>
+                                <p>Your ad could be here!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ad-wrapper right">
+                        <div class="ad-container right" id="right-ad-banner">
+                            <div class="ad-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40">
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="ad-placeholder-text">Advertisement Space</div>
+                                <p>Your ad could be here!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="upload-area" id="upload-area" role="button" tabindex="0"
+                        aria-label="Drag and drop audio file here or click to select file">
+                        <div class="upload-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="17 8 12 3 7 8"></polyline>
+                                <line x1="12" y1="3" x2="12" y2="15"></line>
+                            </svg>
+                        </div>
+                        <h2 class="upload-title">Drag & Drop your audio file</h2>
+                        <p class="upload-subtitle">or click to browse your files</p>
+
+                        <input type="file" id="file-input" accept=".mp3,.wav,.flac,.aiff,.aif,.m4a,.pcm,audio/*" aria-label="Upload audio file"
+                            class="visually-hidden">
+                        <div class="button-wrapper">
+                            <button type="button" class="upload-button" id="upload-button">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" style="margin-right: 8px; vertical-align: -3px;">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                Select Audio File
+                            </button>
+                            <p class="upload-help-text">MP3, WAV, FLAC, AIFF supported up to 100MB</p>
+                        </div>
+                    </div>
+
+                    <div class="processing-indicator" id="processing-indicator" style="display: none;">
+                        <div class="processing-indicator-dot"></div>
+                        <div class="processing-indicator-text" id="processing-status">Loading audio...</div>
+                    </div>
+
+                    <div class="progress-container" id="progress-container" style="display: none;">
+                        <div class="progress-header">
+                            <div class="progress-status">
+                                <svg class="progress-icon" viewBox="0 0 24 24" width="24" height="24">
+                                    <path
+                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                                        fill="currentColor" />
+                                    <path
+                                        d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+                                        fill="currentColor" class="spinner" />
+                                </svg>
+                                <span id="progress-stage">Uploading</span>
+                            </div>
+                            <span id="progress-percentage">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar"></div>
+                        </div>
+                        <p id="progress-text">Preparing your audio file...</p>
+
+                        <!-- Mobile Ad Banner - Only visible on mobile devices -->
+                        <div class="mobile-ad-banner" id="mobile-ad-banner">
+                            <div class="mobile-ad-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="30" height="30">
+                                    <path
+                                        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 22.08V12" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="mobile-ad-text">
+                                    <div class="mobile-ad-title">Advertisement Space</div>
+                                    <p>Your ad could be here!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="progress-steps">
+                            <div class="progress-step active" id="step-upload">
+                                <div class="step-indicator"></div>
+                                <span>Upload</span>
+                            </div>
+                            <div class="progress-step" id="step-analyze">
+                                <div class="step-indicator"></div>
+                                <span>Analyze</span>
+                            </div>
+                            <div class="progress-step" id="step-visualize">
+                                <div class="step-indicator"></div>
+                                <span>Visualize</span>
+                            </div>
+                            <div class="progress-step" id="step-ai">
+                                <div class="step-indicator"></div>
+                                <span>AI Insights</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
