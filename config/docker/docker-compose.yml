@@ -52,7 +52,8 @@ services:
       - /tmp:exec,size=1G
       - /dev/shm:size=2G
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     deploy:
       resources:
         limits:
