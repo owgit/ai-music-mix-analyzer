@@ -51,7 +51,19 @@ fi
 # Change to the project root directory
 cd "$PROJECT_ROOT"
 echo "Project root: $PROJECT_ROOT"
-echo "Environment: $(detect_environment)"
+
+ENVIRONMENT=$(detect_environment)
+echo "Environment: $ENVIRONMENT"
+
+# Load production environment variables if in production
+if [[ "$ENVIRONMENT" == "production" ]]; then
+    if [[ -f "config/production.env" ]]; then
+        echo "Loading production environment variables..."
+        source config/production.env
+    else
+        echo "Warning: config/production.env not found. Please create it from config/production.env.example"
+    fi
+fi
 
 # Check for requirements.txt
 if [[ ! -f "requirements.txt" ]]; then
@@ -75,13 +87,39 @@ echo "Using requirements.txt from: $PROJECT_ROOT/requirements.txt"
 
 echo "Updating Mix Analyzer from Git..."
 
-# Pull latest changes
-echo "Pulling latest changes..."
-git pull
+# Check current remote and branch
+CURRENT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "unknown")
+CURRENT_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+
+echo "Current remote: $CURRENT_REMOTE"
+echo "Current branch: $CURRENT_BRANCH"
+
+# For production, switch to private repository and UserPage branch
+if [[ "$ENVIRONMENT" == "production" ]]; then
+    echo "Production environment detected - switching to private repository..."
+    
+    # Add private remote if it doesn't exist
+    if ! git remote get-url private >/dev/null 2>&1; then
+        echo "Adding private remote..."
+        git remote add private git@github.com:owgit/ai-music-mix-analyzer-private.git
+    fi
+    
+    # Fetch from private remote
+    echo "Fetching from private repository..."
+    git fetch private
+    
+    # Switch to UserPage branch from private remote
+    echo "Switching to UserPage branch..."
+    git checkout -B UserPage private/UserPage || git checkout UserPage && git pull private UserPage
+else
+    # For local development, pull from current setup
+    echo "Pulling latest changes..."
+    git pull
+fi
 
 # Check if pull was successful
 if [[ $? -ne 0 ]]; then
-    echo "Error: Git pull failed. Aborting update."
+    echo "Error: Git pull/checkout failed. Aborting update."
     exit 1
 fi
 
