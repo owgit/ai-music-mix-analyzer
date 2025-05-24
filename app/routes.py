@@ -15,6 +15,7 @@ from flask_httpauth import HTTPBasicAuth
 from app.core.audio_analyzer import analyze_mix, generate_visualizations, convert_numpy_types, generate_3d_spatial_visualization
 from app.core.openai_analyzer import analyze_with_gpt
 from app.core.database import calculate_file_hash, find_song_by_hash, save_song, delete_song, get_db_connection, get_ai_usage_stats
+from app.core.utils import is_valid_audio_file
 
 # Create a Blueprint for the main routes
 main_bp = Blueprint('main', __name__)
@@ -28,17 +29,6 @@ def verify_password(username, password):
     if username == admin_user and password == admin_pass:
         return username
     return None
-
-def allowed_file(filename):
-    """Check if the file has an allowed extension"""
-    ALLOWED_EXTENSIONS = {'mp3', 'wav', 'flac', 'aiff', 'aif', 'm4a', 'pcm', 'ogg'}
-    
-    # Handle files without extension but with valid content type
-    if '.' not in filename:
-        return False
-    
-    extension = filename.rsplit('.', 1)[1].lower()
-    return extension in ALLOWED_EXTENSIONS
 
 @main_bp.route('/')
 def index():
@@ -118,7 +108,7 @@ def upload_file():
         print("No file selected")
         return jsonify({'error': 'No file selected'}), 400
     
-    if file and allowed_file(file.filename):
+    if file and is_valid_audio_file(file.filename):
         # Get the instrumental flag
         is_instrumental = request.form.get('is_instrumental', 'false').lower() == 'true'
         print(f"Is instrumental: {is_instrumental}")

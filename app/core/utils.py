@@ -30,7 +30,7 @@ def is_valid_audio_file(filename):
     Returns:
         Boolean indicating if the file has a valid audio extension
     """
-    allowed_extensions = {'mp3', 'wav', 'flac', 'aiff', 'ogg'}
+    allowed_extensions = {'mp3', 'wav', 'flac', 'aiff', 'aif', 'm4a', 'pcm', 'ogg'}
     return '.' in filename and get_file_extension(filename) in allowed_extensions
 
 def generate_unique_filename(filename):
