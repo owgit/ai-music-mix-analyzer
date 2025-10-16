@@ -16,6 +16,15 @@
   <p>Analyze, visualize, and optimize your mixes with professional-grade audio tools</p>
 </div>
 
+## 🚨 Important Notice: Private Branch for Advanced Features
+
+A new **private branch** exists that contains critical features including **user authentication** and advanced proprietary algorithms. This private branch represents the core of the application and is not part of the public open-source repository.
+
+**Collaborators & Monetization:**  
+If you are interested in contributing to these advanced features, collaborating on development, or discussing monetization opportunities, I am open to suggestions and partnership proposals! Please reach out directly via [GitHub](https://github.com/owgit), [my website](https://uygarduzgun.com), or create an issue to start a discussion.
+
+Let's innovate together!
+
 ## ✨ What is Music Mix Analyzer?
 
 Music Mix Analyzer is an open-source, Python-based web application designed for professional audio analysis. It provides in-depth insights into your music mixes with advanced DSP algorithms, beautiful visualizations, and AI-powered recommendations.
@@ -112,4 +121,4 @@ Developed by Uygar Duzgun
 
 ## 🔑 Keywords
 
-audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, sound engineering, spectral analysis, waveform visualization, audio processing, DSP, python audio tools, mix analytics, mixanalytic, AI mix feedback, GPT-4o
+audio analysis, music production tool, mix analyzer, mastering assistant, frequency analysis, stereo field analyzer, dynamic range measurement, phase correlation, music production software, audio engineering, DSP, AI audio, open source music tool, python audio
